@@ -54,10 +54,11 @@ body:not(:has(> .sidebar)) > .main { max-width: 480px; margin: 40px auto; paddin
 .row { display: flex; gap: 16px; flex-wrap: wrap; }
 .row > * { flex: 1 1 0; min-width: 200px; }
 
-/* ---------- 4. Top bar (docs/04 Layout, CR-11) ----------
-   Three zones on one row: NSU logo (left), UniFix wordmark (centre), tools
-   (right, signed-in pages only). The two outer columns are equal (1fr), so
-   the wordmark stays centred whether or not the right zone is shown. */
+/* ---------- 4. Top bar (docs/04 Layout, CR-11 amended) ----------
+   Three zones on one row: empty left zone, centre group (NSU logo + UniFix
+   wordmark), tools (right, signed-in pages only). The two outer columns are
+   equal (1fr), so the centre group stays centred whether or not the right
+   zone is shown. */
 .topbar {
   display: grid;
   grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
@@ -73,25 +74,12 @@ body:not(:has(> .sidebar)) > .main { max-width: 480px; margin: 40px auto; paddin
 .topbar-right { justify-self: end; display: flex; align-items: center; gap: 14px; min-width: 0; max-width: 100%; }
 /* Only the search box shrinks; the bell and user menu keep their size on one line. */
 .topbar-right > :not(.topbar-search) { flex-shrink: 0; white-space: nowrap; }
-.topbar-logo { display: block; height: 36px; width: auto; }
 
-/* UniFix wordmark: navy "U" square + name, subtitle underneath. The square is
-   36px like the NSU logo, so both sit on the same centre line. */
+/* Centre group: NSU logo beside the UniFix wordmark, subtitle underneath.
+   align-items: center puts the logo and the text block on one centre line. */
 .brand { display: flex; align-items: center; gap: 10px; color: var(--navy); font-weight: bold; font-size: 18px; line-height: 1.15; }
 .brand:hover { text-decoration: none; }
-.brand i {
-  width: 36px;
-  height: 36px;
-  flex: none;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  border-radius: 7px;
-  background: var(--navy);
-  color: #fff;
-  font-style: normal;
-  font-size: 19px;
-}
+.topbar-logo { display: block; height: 36px; width: auto; flex: none; }
 .brand small { display: block; font-weight: normal; font-size: 11px; color: var(--muted); }
 
 /* Search: magnifier icon on the left; collapses to just the icon on phones. */
@@ -318,12 +306,16 @@ form:has(input[name="login_type"][value="staff"]:checked) .tab-panel[data-tab="s
 }
 
 /* ---------- 13b. Phones and small tablets (NFR-05) ---------- */
+@media (max-width: 360px) {
+  /* Very narrow phones: then the wordmark shrinks too. */
+  .brand { font-size: 16px; }
+  .brand small { font-size: 10px; }
+}
 @media (max-width: 800px) {
   body:has(> .sidebar) { display: block; }
-  /* Phones: smaller wordmark; search collapses to its magnifier icon. */
-  .brand { font-size: 16px; gap: 8px; }
-  .brand i { width: 30px; height: 30px; font-size: 16px; }
-  .brand small { font-size: 10px; }
+  /* Phones: the logo shrinks first; search collapses to its magnifier icon. */
+  .brand { gap: 8px; }
+  .topbar-logo { height: 30px; }
   .topbar-search { flex: 0 0 36px; width: 36px; min-width: 36px; padding: 8px 0 8px 34px; background-position: center; margin-right: auto; }
   .topbar-search::placeholder { color: transparent; }
   .topbar-search:focus { flex-basis: 180px; width: 180px; background-position: 10px center; }

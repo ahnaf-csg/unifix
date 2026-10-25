@@ -1,15 +1,14 @@
 {% load static %}
-{# Top bar on every page (docs/04 Layout, CR-11): NSU logo left, UniFix wordmark centre, #}
-{# tools right. Signed-out pages (login, register) have no right zone. #}
+{# Top bar on every page (docs/04 Layout, CR-11 amended): empty left zone, NSU logo + #}
+{# UniFix wordmark centred together, tools right. Signed-out pages have no right zone. #}
 <header class="topbar">
-  <div class="topbar-left">
-    <img class="topbar-logo" src="{% static 'img/nsu_logo.png' %}" alt="North South University" width="36" height="36">
-  </div>
+  {# Empty on desktop: keeps the centre group centred; reserved for a future mobile menu button. #}
+  <div class="topbar-left"></div>
 
   <div class="topbar-center">
     {# "/" sends signed-in users to their role home and everyone else to login. #}
     <a class="brand" href="/">
-      <i aria-hidden="true">U</i>
+      <img class="topbar-logo" src="{% static 'img/nsu_logo.png' %}" alt="North South University" width="36" height="36">
       <span>UniFix<small>{% if user.is_authenticated and not user.is_student %}Admin Console{% else %}NSU Campus Services{% endif %}</small></span>
     </a>
   </div>
