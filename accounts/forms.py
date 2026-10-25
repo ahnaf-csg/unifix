@@ -29,6 +29,11 @@ class LoginForm(AuthenticationForm):
         "use_student_tab": "This is a student account. Please use the Student tab.",
     }
 
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        # The login identifier is an email: type="email" gives phones the email keyboard.
+        self.fields["username"].widget.input_type = "email"
+
     def clean_username(self):
         # Emails are stored in lower case, so compare in lower case.
         return self.cleaned_data["username"].strip().lower()

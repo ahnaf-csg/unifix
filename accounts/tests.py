@@ -288,6 +288,10 @@ class LoginTypeTests(TestCase):
         self.assertContains(response, "Staff accounts are created by the Super Admin.")
         self.assertContains(response, reverse("accounts:register"))
 
+    def test_tc35_email_field_is_type_email(self):
+        response = self.client.get(reverse("accounts:login"))
+        self.assertContains(response, 'type="email" name="username"')
+
     def test_tc31_student_on_staff_tab_is_refused(self):
         self.assert_refused(
             self.post(self.student, "staff"), "This is a student account. Please use the Student tab."

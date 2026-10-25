@@ -33,6 +33,7 @@ Rules:
 | C-15 profile and password change | TC-20 to TC-22, TC-26 |
 | Friendly 403 and 404 pages (I-34) | TC-28, TC-29 |
 | VR-15 login type must match the role (CR-10) | TC-30 to TC-34 |
+| P-01 email field type | TC-35 |
 | Seed data (`05` §7) | TC-23 to TC-25 |
 
 ## 3. Test Cases (Sprint 1)
@@ -73,6 +74,7 @@ Rules:
 | TC-32 | `accounts/tests.py` | Dept Admin and Super Admin log in on the Student tab (VR-15) | Refused: "This is a staff account. Please use the Staff tab." |
 | TC-33 | `accounts/tests.py` | Suspended student on the Staff tab; deleted admin on the Student tab (VR-11, VR-15) | "Account inactive", not the tab message |
 | TC-34 | `accounts/tests.py` | Log in with a missing or unknown `login_type` | Not signed in |
+| TC-35 | `accounts/tests.py` | Open the login page | The email field is `type="email"` |
 
 ## 4. Manual Checklist (each sprint)
 
@@ -83,7 +85,7 @@ Run `python manage.py seed_demo` and `python manage.py runserver`, then for each
 2. Every enabled sidebar link opens without an error; disabled links show the sprint they arrive in.
 3. Opening another role's page gives 403.
 4. Profile: save name and phone; change password; log out.
-5. Top bar: NSU logo left, UniFix wordmark centred, tools right, logo and wordmark on one centre line. Check at 1440, 1280, 1024 and 900 px: the tools never overlap the wordmark.
+5. Top bar: NSU logo and UniFix wordmark centred together as one unit on one centre line, left zone empty, tools right. Check at 1440, 1280, 1024 and 900 px: the tools never overlap the centre group.
 6. Repeat at phone width (375 px): no horizontal page scroll, search shows as an icon, sidebar scrolls sideways.
 7. Error pages: open another role's page (403) and a missing URL (404). The 404 page only shows with `DEBUG=False`; run `python manage.py runserver --insecure` so the CSS still loads, then set `DEBUG=True` again.
 8. Super Admin only: `/django-admin/` opens and lists users, departments and categories.
