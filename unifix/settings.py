@@ -6,6 +6,7 @@ root (copy `.env.example` to `.env`). Names follow docs/05_data_dictionary.md.
 """
 
 import os
+import sys
 from pathlib import Path
 
 from django.core.exceptions import ImproperlyConfigured
@@ -98,6 +99,11 @@ AUTH_PASSWORD_VALIDATORS = [
     {"NAME": "django.contrib.auth.password_validation.CommonPasswordValidator"},
     {"NAME": "django.contrib.auth.password_validation.NumericPasswordValidator"},
 ]
+
+# Tests only (`manage.py test`): a fast, insecure hasher so the suite runs quickly
+# (I-33). Real passwords always use Django's default (PBKDF2) hasher.
+if len(sys.argv) > 1 and sys.argv[1] == "test":
+    PASSWORD_HASHERS = ["django.contrib.auth.hashers.MD5PasswordHasher"]
 
 
 # Internationalization
