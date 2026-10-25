@@ -10,6 +10,15 @@ from .models import User
 PASSWORD = "Campus-Pass-77"
 
 
+def login_data(user_or_email, password=PASSWORD, login_type=None):
+    """POST data for the login form; picks the matching tab unless told otherwise."""
+    email = getattr(user_or_email, "email", user_or_email)
+    if login_type is None:
+        user = User.objects.filter(email=email.lower()).first()
+        login_type = "student" if user is None or user.is_student() else "staff"
+    return {"login_type": login_type, "username": email, "password": password}
+
+
 def make_user(email, role=User.Role.STUDENT, **extra):
     if role == User.Role.STUDENT:
         extra.setdefault("student_id", email.split("@")[0])
@@ -57,7 +66,7 @@ class InactiveAccountTests(TestCase):
     """VR-11: suspended and deleted accounts cannot log in (TC-05 to TC-07)."""
 
     def login(self, email):
-        return self.client.post(reverse("accounts:login"), {"username": email, "password": PASSWORD})
+        return self.client.post(reverse("accounts:login"), login_data(email))
 
     def test_tc05_suspended_account_sees_account_inactive(self):
         make_user("s@northsouth.edu").suspend()
@@ -84,7 +93,7 @@ class InactiveAccountTests(TestCase):
     def test_tc08_wrong_password_shows_generic_error(self):
         make_user("s@northsouth.edu")
         response = self.client.post(
-            reverse("accounts:login"), {"username": "s@northsouth.edu", "password": "wrong"}
+            reverse("accounts:login"), login_data("s@northsouth.edu", password="wrong")
         )
         self.assertNotContains(response, "Account inactive")
         self.assertNotIn("_auth_user_id", self.client.session)
@@ -148,10 +157,8 @@ class RoleRedirectTests(TestCase):
         self.dept_admin = make_user("fac@northsouth.edu", User.Role.DEPT_ADMIN, department=department)
         self.super_admin = make_user("boss@northsouth.edu", User.Role.SUPER_ADMIN)
 
-    def login(self, user, **extra):
-        return self.client.post(
-            reverse("accounts:login"), {"username": user.email, "password": PASSWORD, **extra}
-        )
+    def login(self, user):
+        return self.client.post(reverse("accounts:login"), login_data(user))
 
     def test_tc15_each_role_lands_on_its_home(self):
         cases = [
@@ -250,6 +257,64 @@ class ProfileTests(TestCase):
         self.assertEqual(response.status_code, 200)
         self.user.refresh_from_db()
         self.assertTrue(self.user.check_password(PASSWORD))
+
+
+class LoginTypeTests(TestCase):
+    """VR-15: the Student/Staff tab must match the account role (TC-30 to TC-34)."""
+
+    def setUp(self):
+        department = Department.objects.create(name="Security", code="SEC")
+        self.student = make_user("student@northsouth.edu")
+        self.dept_admin = make_user("sec@northsouth.edu", User.Role.DEPT_ADMIN, department=department)
+        self.super_admin = make_user("boss@northsouth.edu", User.Role.SUPER_ADMIN)
+
+    def post(self, user, login_type):
+        return self.client.post(reverse("accounts:login"), login_data(user, login_type=login_type))
+
+    def assert_refused(self, response, message):
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, message)
+        self.assertNotIn("_auth_user_id", self.client.session)
+
+    def test_tc30_login_page_has_both_tabs_student_by_default(self):
+        response = self.client.get(reverse("accounts:login"))
+        self.assertContains(
+            response,
+            '<input type="radio" name="login_type" value="student" id="id_login_type_0" required checked>',
+            html=True,
+        )
+        self.assertContains(response, "Use your @northsouth.edu student email.")
+        self.assertContains(response, "For department coordinators and administrators.")
+        self.assertContains(response, "Staff accounts are created by the Super Admin.")
+        self.assertContains(response, reverse("accounts:register"))
+
+    def test_tc31_student_on_staff_tab_is_refused(self):
+        self.assert_refused(
+            self.post(self.student, "staff"), "This is a student account. Please use the Student tab."
+        )
+
+    def test_tc32_staff_on_student_tab_is_refused(self):
+        for user in [self.dept_admin, self.super_admin]:
+            with self.subTest(role=user.role):
+                self.assert_refused(
+                    self.post(user, "student"), "This is a staff account. Please use the Staff tab."
+                )
+
+    def test_tc33_inactive_account_on_wrong_tab_sees_account_inactive_first(self):
+        self.student.suspend()
+        self.dept_admin.soft_delete()
+        for user, wrong_tab in [(self.student, "staff"), (self.dept_admin, "student")]:
+            with self.subTest(role=user.role):
+                response = self.post(user, wrong_tab)
+                self.assert_refused(response, "Account inactive")
+                self.assertNotContains(response, "Please use the")
+
+    def test_tc34_missing_or_unknown_login_type_is_refused(self):
+        for login_type in ["", "admin"]:
+            with self.subTest(login_type=login_type):
+                response = self.post(self.student, login_type)
+                self.assertEqual(response.status_code, 200)
+                self.assertNotIn("_auth_user_id", self.client.session)
 
 
 class ErrorPageTests(TestCase):

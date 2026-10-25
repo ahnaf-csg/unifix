@@ -246,6 +246,31 @@ input[readonly] { background: #f6f8fb; color: var(--muted); }
 .form-help ul { padding-left: 16px; }
 .form-error { font-size: 12px; color: var(--danger); margin-top: 5px; }
 
+/* ---------- 10b. Tabs (P-01 login type, CR-10) ----------
+   Each tab is a <label class="tab"> around a radio button. The radio stays
+   focusable (so Tab and arrow keys work) but is visually hidden. */
+.tab-list { display: flex; border: 0; border-bottom: 1px solid var(--border); margin-bottom: 14px; }
+.tab {
+  position: relative;
+  flex: 1;
+  text-align: center;
+  padding: 10px 12px;
+  margin-bottom: -1px;
+  border-bottom: 3px solid transparent;
+  border-radius: 6px 6px 0 0;
+  color: var(--muted);
+  font-weight: bold;
+  cursor: pointer;
+}
+.tab input { position: absolute; opacity: 0; width: 1px; height: 1px; padding: 0; border: 0; }
+.tab:has(input:checked) { color: var(--primary); background: var(--primary-soft); border-bottom-color: var(--primary); }
+.tab:has(input:focus-visible) { outline: 2px solid var(--primary); outline-offset: 2px; }
+.tab-panel { margin-bottom: 14px; }
+/* Show the panel for the checked login type; Student is the default. */
+.tab-panel[data-tab="staff"] { display: none; }
+form:has(input[name="login_type"][value="staff"]:checked) .tab-panel[data-tab="staff"] { display: block; }
+form:has(input[name="login_type"][value="staff"]:checked) .tab-panel[data-tab="student"] { display: none; }
+
 /* ---------- 11. Messages (Django message levels) ---------- */
 .alert-info, .alert-success, .alert-warning, .alert-error {
   border-radius: 6px;
