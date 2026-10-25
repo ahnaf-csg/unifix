@@ -8,7 +8,7 @@ Tracks feedback and the changes it causes, iteration by iteration, so each phase
 2. **Each accepted change becomes a change request** (`CR-xx`) linked to the feedback and to the IDs it affects (C-xx, VR-xx, S-xx, UC-xx, model or field names).
 3. **Impact is checked before work starts.** If a CR touches a foundation file (03 or 05), it is flagged so the diagrams in 06 are updated too.
 4. **Status flow for each CR:** Proposed → Accepted / Deferred / Rejected → Done.
-5. **Each iteration ends with a version tag** in Git (`v0.1-iter1`, `v0.2-iter2`, …) and a summary of what changed.
+5. **Each iteration ends with a version tag** in Git and a summary of what changed. Planning iterations: `v0.1.x` (e.g. `v0.1.3-planning`). Code sprints: `v0.2-sprint1`, `v0.3-sprint2`, `v0.4-sprint3`, `v0.5-sprint4`. Final release: `v1.0`.
 
 ## 2. Versions
 
@@ -19,6 +19,12 @@ Tracks feedback and the changes it causes, iteration by iteration, so each phase
 | v0.1.1 | Planning v1.1 | Oct 2026 | Search scope, system workflow, palette, this log |
 | v0.1.2 | Planning v1.2 | Oct 2026 | Header spacing; full consistency verification and fixes |
 | v0.1.3 | Planning v1.3 | Oct 2026 | ER diagram drawn for database planning |
+| v0.1.4 | Planning v1.4 | Oct 2026 | Sprint 1 pre-build doc fixes (CR-09) |
+| v0.2-sprint1 | Sprint 1 | planned | Setup, accounts, roles, login/register, profile, Django admin, seed |
+| v0.3-sprint2 | Sprint 2 | planned | Complaint submission and student pages |
+| v0.4-sprint3 | Sprint 3 | planned | Admin console and full lifecycle |
+| v0.5-sprint4 | Sprint 4 | planned | Remaining core features |
+| v1.0 | Final release | planned | Tested, documented, demo-ready |
 
 ## 3. Feedback Register
 
@@ -32,6 +38,7 @@ Tracks feedback and the changes it causes, iteration by iteration, so each phase
 | FB-06 | Oct 2026 | Team | Top area of screens feels cluttered | CR-06 |
 | FB-07 | Oct 2026 | Team | Verify all documents are aligned before building | CR-07 |
 | FB-08 | Oct 2026 | Team | Plan the database visually before creating demo data | CR-08 |
+| FB-09 | Oct 2026 | Claude Code review | Pre-build review found gaps: sprint coverage, User model details, missing file names, CSS not reusable, sidebar, search fields, room format, ER footnote, tag scheme | CR-09 |
 
 ## 4. Change Requests
 
@@ -45,6 +52,7 @@ Tracks feedback and the changes it causes, iteration by iteration, so each phase
 | CR-06 | FB-06 | More spacing in top bar and page header | `unifix.css`, mockups | Done (keep in view) |
 | CR-07 | FB-07 | Consistency fixes from the verification pass | 01–06, mockups; see `09_verification_report.md` | Done (planning) |
 | CR-08 | FB-08 | ER diagram with keys and cardinalities, matching `05` §3 | `06` §3, `diagrams/er_diagram.*` | Done (planning) |
+| CR-09 | FB-09 | Sprint 1 pre-build doc fixes (`09` I-17 to I-30) | C-10, C-15, C-16, C-18, VR-11, S-03, `User`, `Complaint.room`, `Complaint.tracking_id`, `05` §2, §5–7, `06` §3, `diagrams/er_diagram.*` | Done (planning) |
 
 ## 5. Iteration Template
 
@@ -65,4 +73,4 @@ Retrospective: keep … / change …
 
 - One GitHub Issue per CR, titled `CR-xx: …`, labelled `feedback`, `foundation` (if 03/05 change) and the sprint.
 - Pull requests reference the CR (`Closes #12, CR-06`).
-- Tag each iteration (`git tag v0.2-iter2`) so any earlier version can be shown or restored.
+- Tag each iteration (`git tag v0.2-sprint1`) so any earlier version can be shown or restored.

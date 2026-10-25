@@ -31,7 +31,7 @@ Team: Sami Mohammad Abdullah, Ahnaf Tazwar Unmesh.
 
 ## Mockups
 
-`mockups/` contains the sample screens (PNG) and their HTML sources. `mockups/unifix.css` is the draft design system (colours, badges, buttons, cards, tables) and can be reused as `static/css/unifix.css` when building.
+`mockups/` contains the sample screens (PNG) and their HTML sources. `mockups/unifix.css` is the draft stylesheet used only to render the mockups on a fixed 1440 × 900 canvas; it is not responsive and is not reused as-is. The app's `static/css/unifix.css` is ported from it (responsive, one `:root` block, all status badges), using the tokens and classes listed in `05_data_dictionary.md` §5–6.
 
 ## Verification
 

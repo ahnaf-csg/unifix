@@ -5,7 +5,7 @@ Students report campus issues with photo, video or PDF evidence; complaints are 
 
 **Team:** Sami Mohammad Abdullah, Ahnaf Tazwar Unmesh
 **Stack:** Django, Django templates, vanilla CSS/JS, SQLite (development)
-**Status:** planning complete (docs v0.1.3); Sprint 1 next
+**Status:** planning complete (docs v0.1.4); Sprint 1 in progress
 
 ## Documentation
 

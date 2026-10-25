@@ -2,13 +2,13 @@
 
 18 screens. Each lists what it shows, its buttons, and which data it reads (R) or writes (W). URL and template names follow `05_data_dictionary.md`.
 
-**Layout:** every signed-in page uses `base.html`: a top bar (logo, notification bell with unread count, user menu) and a role-specific left sidebar.
+**Layout:** every signed-in page uses `base.html` (with `partials/topbar.html`, `partials/sidebar.html`, `partials/messages.html`): a top bar (logo, search, notification bell with unread count, user menu) and a role-specific left sidebar. Until notifications are built (Sprint 3, C-11) the bell is shown without a count.
 
 | Sidebar | Links |
 |---|---|
 | Student | Home · New complaint · My complaints · Notifications · Profile |
 | Dept Admin | Dashboard · Complaint queue · Students · Notifications · Profile |
-| Super Admin | Dashboard · Complaint queue (all) · Reports · Users · Notifications · Profile |
+| Super Admin | Dashboard · Complaint queue (all) · Students · Reports · Users · Notifications · Profile |
 
 ## Search (top bar, every signed-in page)
 
@@ -62,7 +62,7 @@ Search reuses the existing list pages with a `?q=` parameter instead of adding n
 ### S-03 My complaints
 `student:complaint_list` · `student/complaint_list.html`
 
-- Shows: table of own complaints and supported complaints; filters by status; search by title or tracking ID.
+- Shows: table of own complaints and supported complaints; filters by status; search by tracking ID, title or room.
 - Buttons: row → S-04.
 - R: Complaint, Support.
 

@@ -16,9 +16,9 @@ The foundation (workflow states and data dictionary) is fixed during the design 
 | P0. Proposal | Topic, scope, initial UI concepts | Approved proposal (done) |
 | P1. Requirements | Actors, features, rules, screen inventory | `02_requirements.md`, `04_screens.md`, SRS |
 | P2. Design | Use case, class, ER, sequence, activity, state diagrams; mockups; data dictionary | `05`, `06`, diagram files, mockups |
-| Sprint 1 | Project setup, custom User model, roles, login/register, departments and categories via Django admin, seed data | Users can log in by role |
+| Sprint 1 | Project setup, custom User model, roles, login/register, profile and password change (C-15), departments and categories via Django admin, seed data (departments, categories, users) | Users can log in by role |
 | Sprint 2 | Complaint submission with media, duplicate check and "Me too", routing, student pages (home, list, detail) | End-to-end student submission |
-| Sprint 3 | Admin console: queue, complaint detail with 5 action buttons, verification with due date, resolve with proof photo, history, notifications | Full complaint lifecycle |
+| Sprint 3 | Admin console: queue, complaint detail with 5 action buttons, verification with due date, resolve with proof photo, withdraw (C-10), history, notifications | Full complaint lifecycle |
 | Sprint 4 | Confirm/reopen, rating, student records, Super Admin (users, reassign, reports), dashboards, search | All core features |
 | P3. Testing and finalization | Test cases, bug fixes, demo script, final report, optional features if time allows | Final report and demo |
 
