@@ -22,3 +22,6 @@ Thumbs.db
 
 # Generated documents
 *.pdf
+
+# Claude Code (local config, worktrees)
+.claude/
