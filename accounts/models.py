@@ -87,6 +87,18 @@ class User(AbstractUser):
     def is_super_admin(self):
         return self.role == self.Role.SUPER_ADMIN
 
+    def can_view_complaint(self, complaint):
+        """Who may open a complaint at all (VR-01, VR-02).
+
+        Students: their own complaints (full view) and ones they support
+        (limited view; the view decides which). Dept Admins: their department.
+        """
+        if self.is_super_admin():
+            return True
+        if self.is_dept_admin():
+            return complaint.department_id == self.department_id
+        return complaint.reporter_id == self.pk or complaint.supports.filter(student=self).exists()
+
     # --- Validation and saving -------------------------------------------
 
     def clean(self):
