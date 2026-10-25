@@ -16,6 +16,7 @@ from django.core.files.uploadedfile import SimpleUploadedFile
 from django.core.management import call_command
 from django.http import Http404
 from django.test import TestCase, override_settings
+from django.urls import reverse, reverse_lazy
 from django.utils import timezone
 
 from accounts.models import User
@@ -49,7 +50,24 @@ def upload(name, kind=None):
     return SimpleUploadedFile(name, FILE_BYTES[kind])
 
 
-class SeedDemoTests(TestCase):
+class TempMediaMixin:
+    """Uploaded files go to a temporary MEDIA_ROOT that is deleted afterwards."""
+
+    @classmethod
+    def setUpClass(cls):
+        super().setUpClass()
+        cls.media_root = tempfile.mkdtemp()
+        cls.media_override = override_settings(MEDIA_ROOT=cls.media_root)
+        cls.media_override.enable()
+
+    @classmethod
+    def tearDownClass(cls):
+        cls.media_override.disable()
+        shutil.rmtree(cls.media_root, ignore_errors=True)
+        super().tearDownClass()
+
+
+class SeedDemoTests(TempMediaMixin, TestCase):
     def seed(self):
         call_command("seed_demo", stdout=StringIO())
 
@@ -79,25 +97,35 @@ class SeedDemoTests(TestCase):
             self.client.login(username="rafiq.hasan@northsouth.edu", password=DEMO_PASSWORD)
         )
 
+    def test_tc49_seed_complaints_cover_every_status_with_consistent_history(self):
+        self.seed()
+        self.assertEqual(
+            set(Complaint.objects.values_list("status", flat=True)), set(Complaint.Status.values)
+        )
+        complaints = list(Complaint.objects.all())
+        self.assertTrue(any(c.is_overdue for c in complaints))
+        self.assertTrue(any(c.status == "reopened" and c.reopen_count == 1 for c in complaints))
+        self.assertTrue(Support.objects.exists())
+        for complaint in complaints:
+            with self.subTest(complaint=complaint.tracking_id):
+                updates = list(complaint.updates.all())
+                self.assertEqual(updates[0].action, ComplaintUpdate.Action.SUBMITTED)
+                self.assertEqual(updates[0].created_at, complaint.created_at)
+                times = [u.created_at for u in updates]
+                self.assertEqual(times, sorted(times))
+                self.assertEqual(updates[-1].to_status, complaint.status)
+                if complaint.category.requires_attachment:
+                    self.assertTrue(complaint.attachments.exists())  # VR-08 holds for seed data too
+        # Running it again adds nothing.
+        counts = (Complaint.objects.count(), Attachment.objects.count(), Notification.objects.count())
+        self.seed()
+        self.assertEqual(
+            (Complaint.objects.count(), Attachment.objects.count(), Notification.objects.count()), counts
+        )
 
-class ComplaintFixtures(TestCase):
-    """Two departments, their admins, a Super Admin and three students.
 
-    Uploaded files go to a temporary MEDIA_ROOT that is deleted afterwards.
-    """
-
-    @classmethod
-    def setUpClass(cls):
-        super().setUpClass()
-        cls.media_root = tempfile.mkdtemp()
-        cls.media_override = override_settings(MEDIA_ROOT=cls.media_root)
-        cls.media_override.enable()
-
-    @classmethod
-    def tearDownClass(cls):
-        cls.media_override.disable()
-        shutil.rmtree(cls.media_root, ignore_errors=True)
-        super().tearDownClass()
+class ComplaintFixtures(TempMediaMixin, TestCase):
+    """Two departments, their admins, a Super Admin and three students."""
 
     @classmethod
     def setUpTestData(cls):
@@ -112,7 +140,7 @@ class ComplaintFixtures(TestCase):
         def user(email, role=User.Role.STUDENT, **extra):
             if role == User.Role.STUDENT:
                 extra.setdefault("student_id", email.split("@")[0])
-            return User.objects.create_user(f"{email}@northsouth.edu", "pw", full_name=email, role=role, **extra)
+            return User.objects.create_user(f"{email}@northsouth.edu", "pw", full_name=f"Name {email}", role=role, **extra)
 
         cls.it_admin = user("it.admin", User.Role.DEPT_ADMIN, department=cls.it)
         cls.fac_admin = user("fac.admin", User.Role.DEPT_ADMIN, department=cls.fac)
@@ -319,3 +347,196 @@ class ComplaintAccessTests(ComplaintFixtures):
         self.assertFalse(has_full_view(self.other, complaint))  # supporter: limited
         self.assertTrue(has_full_view(self.it_admin, complaint))
         self.assertFalse(has_full_view(self.fac_admin, complaint))
+
+
+class NewComplaintPageTests(ComplaintFixtures):
+    """S-02: the two-step form (docs/03 §6), C-02, C-03, VR-07, VR-08."""
+
+    url = reverse_lazy("student:complaint_new")
+
+    def setUp(self):
+        self.client.force_login(self.reporter)
+
+    def check(self, category=None, building="nac", room="512"):
+        category = category or self.projector
+        return self.client.get(
+            self.url, {"step": "check", "category": category.pk, "building": building, "room": room}
+        )
+
+    def post(self, category=None, files=(), **extra):
+        data = {
+            "category": (category or self.projector).pk,
+            "building": "nac",
+            "room": "512",
+            "title": "Projector flickers",
+            "description": "It flickers every few minutes.",
+            "attachments": list(files),
+            **extra,
+        }
+        return self.client.post(self.url, data)
+
+    def test_tc50_step_one_lists_active_categories_grouped_by_department(self):
+        self.network.is_active = False
+        self.network.save()
+        response = self.client.get(self.url)
+        self.assertContains(response, '<optgroup label="IT Services">')
+        self.assertContains(response, "Projector &amp; AV")
+        self.assertNotContains(response, ">Network<")
+        self.assertContains(response, "Check for similar issues")
+
+    def test_tc51_check_without_matches_opens_step_two(self):
+        response = self.check()
+        self.assertContains(response, "Details and files")
+        self.assertContains(response, 'type="hidden" name="category"')
+        self.assertContains(response, "Change")
+        self.assertFalse(Complaint.objects.exists())  # nothing saved between steps
+
+    def test_tc52_check_with_matches_shows_limited_summaries_and_labels(self):
+        theirs = self.submit(reporter=self.other)
+        mine = self.submit(room="5 12")  # the same room, written differently
+        supported = self.submit(reporter=self.stranger)
+        supported.support(self.reporter)
+        response = self.check()
+        self.assertContains(response, "Similar open complaints found")
+        self.assertContains(response, reverse("student:complaint_action", args=[theirs.tracking_id, "support"]))
+        self.assertContains(response, "You reported this")
+        self.assertContains(response, "You support this")
+        self.assertNotContains(response, reverse("student:complaint_action", args=[mine.tracking_id, "support"]))
+        self.assertNotContains(response, "HDMI input is dead.")  # no description (VR-01)
+        self.assertNotContains(response, self.other.full_name)  # no reporter (VR-01)
+        self.assertContains(response, "Continue with a new complaint")
+
+    def test_tc53_submit_creates_complaint_without_repeating_the_check(self):
+        self.submit(reporter=self.other)  # an open match exists
+        response = self.post(files=[upload("photo.jpg")])
+        complaint = Complaint.objects.get(reporter=self.reporter)
+        self.assertRedirects(response, reverse("student:complaint_detail", args=[complaint.tracking_id]))
+        self.assertEqual((complaint.department, complaint.attachments.count()), (self.it, 1))
+
+    def test_tc54_submit_errors_vr07_vr08_and_changed_location(self):
+        response = self.post(files=[upload("photo.jpg", kind="pdf")])
+        self.assertContains(response, "does not match")
+        response = self.post(files=[upload(f"p{i}.png") for i in range(6)])
+        self.assertContains(response, "at most 5 files")
+        response = self.post(category=self.electrical)
+        self.assertContains(response, "needs at least one")
+        self.assertFalse(Complaint.objects.exists())
+        self.network.is_active = False
+        self.network.save()
+        response = self.post(category=self.network)  # deactivated between the steps
+        self.assertRedirects(response, self.url)
+        self.assertFalse(Complaint.objects.exists())
+
+
+class MeTooTests(ComplaintFixtures):
+    """C-03, VR-09 through student:complaint_action."""
+
+    def test_tc55_me_too_post_only_and_limited_view_after(self):
+        complaint = self.submit()
+        url = reverse("student:complaint_action", args=[complaint.tracking_id, "support"])
+        self.client.force_login(self.other)
+        self.assertEqual(self.client.get(url).status_code, 405)
+        response = self.client.post(url)
+        self.assertRedirects(response, reverse("student:complaint_detail", args=[complaint.tracking_id]))
+        self.assertTrue(complaint.supports.filter(student=self.other).exists())
+        response = self.client.post(url, follow=True)  # twice
+        self.assertContains(response, "already support")
+        rate_url = reverse("student:complaint_action", args=[complaint.tracking_id, "rate"])
+        self.assertEqual(self.client.post(rate_url).status_code, 404)  # arrives in Sprint 4
+        self.client.force_login(self.reporter)
+        response = self.client.post(url, follow=True)
+        self.assertContains(response, "your own complaint")
+
+
+class ComplaintDetailTests(ComplaintFixtures):
+    """S-04, VR-01, NFR-03."""
+
+    def setUp(self):
+        self.complaint = self.submit(files=[upload("photo.jpg")])
+        self.complaint.support(self.other)
+        self.complaint.updates.create(actor=self.it_admin, action="note", note="Public note from IT.")
+        self.complaint.updates.create(actor=self.it_admin, action="note", note="Internal only.", is_internal=True)
+        self.url = reverse("student:complaint_detail", args=[self.complaint.tracking_id])
+        attachment = self.complaint.attachments.get()
+        self.file_url = reverse("student:attachment", args=[self.complaint.tracking_id, attachment.pk])
+
+    def test_tc56_reporter_full_view_without_names(self):
+        self.client.force_login(self.reporter)
+        response = self.client.get(self.url)
+        self.assertContains(response, "HDMI input is dead.")
+        self.assertContains(response, self.file_url)
+        self.assertContains(response, "Public note from IT.")
+        self.assertNotContains(response, "Internal only.")
+        self.assertContains(response, "IT Services")  # the admin is shown by department
+        for name in [self.it_admin.full_name, self.other.full_name]:
+            self.assertNotContains(response, name)  # never a person's name (VR-01)
+
+    def test_tc57_supporter_limited_view_stranger_404_admin_403(self):
+        self.client.force_login(self.other)
+        response = self.client.get(self.url)
+        self.assertContains(response, self.complaint.title)
+        self.assertContains(response, "limited view")
+        self.assertNotContains(response, "HDMI input is dead.")
+        self.assertNotContains(response, self.file_url)
+        self.assertNotContains(response, self.reporter.full_name)
+        self.assertContains(response, "Reporter")
+        self.client.force_login(self.stranger)
+        self.assertEqual(self.client.get(self.url).status_code, 404)
+        self.client.force_login(self.it_admin)
+        self.assertEqual(self.client.get(self.url).status_code, 403)  # admins use the console (Sprint 3)
+
+    def test_tc58_files_only_through_the_checked_view(self):
+        self.client.force_login(self.reporter)
+        response = self.client.get(self.file_url)
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response["Content-Type"], "image/jpeg")
+        self.assertEqual(b"".join(response.streaming_content), FILE_BYTES["jpg"])
+        for user in [self.other, self.stranger]:  # supporter (limited view) and stranger
+            self.client.force_login(user)
+            self.assertEqual(self.client.get(self.file_url).status_code, 404)
+        self.client.logout()
+        self.assertEqual(self.client.get(self.file_url).status_code, 302)  # to login
+        self.client.force_login(self.reporter)
+        stored = self.complaint.attachments.get().file.name
+        self.assertEqual(self.client.get(f"/media/{stored}").status_code, 404)  # no public route
+
+
+class StudentListPageTests(ComplaintFixtures):
+    """S-01 and S-03."""
+
+    def test_tc59_my_complaints_lists_own_and_supported_with_filter_and_search(self):
+        own = self.submit(room="512")
+        supported = self.submit(reporter=self.other, room="L3")
+        supported.support(self.reporter)
+        hidden = self.submit(reporter=self.stranger)
+        Complaint.objects.filter(pk=own.pk).update(status=Complaint.Status.UNDER_REVIEW)
+        self.client.force_login(self.reporter)
+        url = reverse("student:complaint_list")
+        response = self.client.get(url)
+        self.assertContains(response, own.tracking_id)
+        self.assertContains(response, supported.tracking_id)
+        self.assertContains(response, "Supported")
+        self.assertNotContains(response, hidden.tracking_id)
+        response = self.client.get(url, {"status": "under_review"})
+        self.assertContains(response, own.tracking_id)
+        self.assertNotContains(response, supported.tracking_id)
+        for query in ["l3", supported.tracking_id.lower()]:
+            response = self.client.get(url, {"q": query})
+            self.assertContains(response, supported.tracking_id)
+            self.assertNotContains(response, own.tracking_id)
+        response = self.client.get(url, {"q": hidden.tracking_id})
+        self.assertContains(response, "No complaints match")  # VR-14: no results, not an error
+        self.assertNotContains(response, reverse("student:complaint_detail", args=[hidden.tracking_id]))
+
+    def test_tc60_home_cards_and_sidebar_links(self):
+        open_one = self.submit()
+        resolved = self.submit()
+        Complaint.objects.filter(pk=resolved.pk).update(status="resolved", resolved_at=timezone.now())
+        self.submit(reporter=self.other).support(self.reporter)
+        self.client.force_login(self.reporter)
+        response = self.client.get(reverse("student:home"))
+        counts = [response.context[key] for key in ["open_count", "awaiting_count", "closed_count", "supported_count"]]
+        self.assertEqual(counts, [1, 1, 0, 1])
+        self.assertContains(response, open_one.tracking_id)
+        self.assertContains(response, f'href="{reverse("student:complaint_new")}"')
+        self.assertContains(response, f'href="{reverse("student:complaint_list")}"')

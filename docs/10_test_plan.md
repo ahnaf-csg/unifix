@@ -18,7 +18,7 @@ Rules:
 - Run everything with `python manage.py test`; all tests must pass before a pull request.
 - Tests use Django's fast MD5 password hasher (set in `unifix/settings.py` only when running `manage.py test`, I-33). The Sprint 1 suite runs in under a second.
 
-## 2. Coverage by Rule (Sprint 1)
+## 2. Coverage by Rule (Sprints 1 and 2)
 
 | Rule / feature | Test cases |
 |---|---|
@@ -34,9 +34,18 @@ Rules:
 | Friendly 403 and 404 pages (I-34) | TC-28, TC-29 |
 | VR-15 login type must match the role (CR-10) | TC-30 to TC-34 |
 | P-01 email field type | TC-35 |
-| Seed data (`05` §7) | TC-23 to TC-25 |
+| Seed data (`05` §7) | TC-23 to TC-25, TC-49 |
+| *Sprint 2:* C-02 submission and C-04 routing | TC-36, TC-37, TC-40, TC-53 |
+| VR-07 file type, content, size, count; files kept intact and cleaned up | TC-38, TC-47, TC-48, TC-54 |
+| VR-08 required attachment | TC-39, TC-54 |
+| Duplicate rule and two-step S-02 (`03` §6) | TC-41, TC-50 to TC-53 |
+| C-03 Me too, VR-09 | TC-42, TC-43, TC-55 |
+| VR-01 limited view, actor names, 404; VR-02 groundwork | TC-45, TC-46, TC-52, TC-56, TC-57 |
+| NFR-03 private files | TC-58 |
+| Computed values (`03` §5) | TC-44 |
+| S-01, S-03 (and VR-14 groundwork) | TC-59, TC-60 |
 
-## 3. Test Cases (Sprint 1)
+## 3. Test Cases
 
 | ID | File | Checks | Expected |
 |---|---|---|---|
@@ -93,6 +102,18 @@ Rules:
 | TC-46 | `complaints/tests.py` | `get_complaint_for_user()` and `has_full_view()` | 404 for a stranger, another department and an unknown ID; full view for the reporter and own-department admin, not for a supporter |
 | TC-47 | `complaints/tests.py` | Run the VR-07 check twice on a file, then submit it | Stored bytes equal the uploaded bytes (the check rewinds the file) |
 | TC-48 | `complaints/tests.py` | Submit with two files and force an error after they are written | No complaint in the database and no new files on disk |
+| TC-49 | `complaints/tests.py` | Run `seed_demo`, then again (`05` §7) | Complaints in all 9 statuses, an overdue and a reopened one, supporters; each history starts with `submitted` at `created_at`, is in time order and ends at the current status; VR-08 holds; the second run adds no complaints, files or notifications |
+| TC-50 | `complaints/tests.py` | Open S-02 step 1 with one category deactivated | Categories grouped by department (`<optgroup>`); the inactive one is missing; "Check for similar issues" |
+| TC-51 | `complaints/tests.py` | Check a location with no open matches | Step 2 opens with the location as hidden fields and a Change link; nothing saved |
+| TC-52 | `complaints/tests.py` | Check a location with matches: another student's, own (room "5 12" vs "512"), one already supported | Me too only on the other student's; "You reported this", "You support this"; no description or reporter name (VR-01); Continue link |
+| TC-53 | `complaints/tests.py` | Submit step 2 while an open match exists | Complaint created and S-04 opens; the duplicate check is not repeated |
+| TC-54 | `complaints/tests.py` | Submit with a renamed PDF, 6 files, no file for a required category, a category deactivated between the steps | Form errors (VR-07, VR-08); back to step 1 for the deactivated category; nothing saved |
+| TC-55 | `complaints/tests.py` | Me too by GET, by POST, twice, on own complaint; post an unbuilt action | 405; supported and S-04 opens; "already support"; "your own complaint"; 404 |
+| TC-56 | `complaints/tests.py` | Reporter opens S-04 with a public and an internal note | Description, file link and public note shown; internal note hidden; admin shown as "IT Services"; no person's name |
+| TC-57 | `complaints/tests.py` | Supporter, stranger and Dept Admin open S-04 | Limited view (no description, files or reporter name; "Reporter" label); 404; 403 |
+| TC-58 | `complaints/tests.py` | Open a file as reporter, supporter, stranger, signed out; open its `/media/` path | 200 with the right type and bytes; 404; 404; login redirect; 404 (NFR-03) |
+| TC-59 | `complaints/tests.py` | S-03 with own, supported and someone else's complaints; status filter; search by room and tracking ID | Own and supported (labelled) only; filter and `?q=` work; another student's ID finds nothing (VR-14) |
+| TC-60 | `complaints/tests.py` | S-01 with one open, one resolved and one supported complaint | Cards 1, 1, 0, 1; recent complaints; New complaint and My complaints links enabled |
 
 ## 4. Manual Checklist (each sprint)
 
