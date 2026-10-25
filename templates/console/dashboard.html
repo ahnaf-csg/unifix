@@ -1,0 +1,22 @@
+{% extends "base.html" %}
+{% block title %}Dashboard{% endblock %}
+{% block content %}
+{# A-01 Dashboard: placeholder until Sprints 3-4 (cards, tables and charts follow) #}
+<h1 class="page-title">Dashboard</h1>
+<p class="page-sub">{% if user.is_super_admin %}All departments{% else %}{{ user.department.name }}{% endif %} · the complaint queue and charts arrive in Sprints 3 and 4.</p>
+<div class="card">
+  <h2>Categories routed to {% if user.is_super_admin %}each department{% else %}your department{% endif %}</h2>
+  <table>
+    <tr><th>Department</th><th>Code</th><th>Categories</th></tr>
+    {% for department in departments %}
+      <tr>
+        <td>{{ department.name }}</td>
+        <td class="text-mono">{{ department.code }}</td>
+        <td>{% for category in department.categories.all %}{{ category.name }}{% if not forloop.last %}, {% endif %}{% empty %}<span class="text-muted">None yet</span>{% endfor %}</td>
+      </tr>
+    {% empty %}
+      <tr><td colspan="3" class="text-muted">No departments yet. Add them in the Django admin panel.</td></tr>
+    {% endfor %}
+  </table>
+</div>
+{% endblock %}

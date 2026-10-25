@@ -1,0 +1,28 @@
+{# Top bar on every page (docs/04 Layout). Signed-out pages show only the brand. #}
+<header class="topbar">
+  <a class="brand" href="{% url 'accounts:login' %}">
+    <span>UniFix<small>{% if user.is_authenticated and not user.is_student %}Admin Console{% else %}NSU Campus Services{% endif %}</small></span>
+  </a>
+  {% if user.is_authenticated %}
+    {# Search (C-18) is built in Sprint 4; shown disabled so the layout is final. #}
+    <input class="topbar-search" type="search" aria-label="Search" disabled
+           title="Search arrives in Sprint 4"
+           placeholder="{% if user.is_student %}Search your complaints by tracking ID, title or room{% else %}Search complaints, students, tracking IDs{% endif %}">
+    {# Notifications (C-11) are built in Sprint 3; until then the bell has no count. #}
+    <span class="bell" title="Notifications arrive in Sprint 3">Notifications</span>
+    <div class="user-menu">
+      <span class="avatar">{{ user.full_name|slice:":1"|upper }}</span>
+      <span>
+        {{ user.full_name }}
+        <small>
+          {{ user.get_role_display }}{% if user.is_student and user.student_id %} · {{ user.student_id }}{% endif %}{% if user.department %} · {{ user.department.name }}{% endif %}
+        </small>
+      </span>
+      {# Logout must be a POST in Django 5. #}
+      <form method="post" action="{% url 'accounts:logout' %}">
+        {% csrf_token %}
+        <button class="btn btn-sm" type="submit">Log out</button>
+      </form>
+    </div>
+  {% endif %}
+</header>

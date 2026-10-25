@@ -1,0 +1,280 @@
+/* UniFix stylesheet: the only CSS file (CLAUDE.md).
+   Ported from docs/mockups/unifix.css. Token and class names follow
+   docs/05_data_dictionary.md §5 and §6. No animations, gradients or
+   shadows beyond a 1px card shadow. */
+
+/* ---------- 1. Design tokens (docs/05 §6) ---------- */
+:root {
+  --navy: #14294a;
+  --navy-2: #1d3a66;
+  --bg: #eef2f7;
+  --surface: #ffffff;
+  --border: #e1e4ea;
+  --text: #1c2433;
+  --muted: #667085;
+  --primary: #1d5bbf;
+  --primary-soft: #e3ecfb;
+  --danger: #c0352b;
+  --ok: #1a7f4b;
+  --warn: #b26a00;
+}
+
+/* ---------- 2. Base ---------- */
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+  font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  font-size: 14px;
+  line-height: 1.45;
+  color: var(--text);
+  background: var(--bg);
+  min-height: 100vh;
+}
+a { color: var(--primary); text-decoration: none; }
+a:hover { text-decoration: underline; }
+h1, h2, h3 { color: var(--navy); line-height: 1.25; }
+h2 { font-size: 15px; margin-bottom: 12px; }
+p + p { margin-top: 8px; }
+
+/* ---------- 3. Page layout ----------
+   Signed-in pages: top bar across the top, sidebar on the left, main on the right.
+   Pages without a sidebar (login, register) centre a single card. */
+body:has(> .sidebar) {
+  display: grid;
+  grid-template-columns: 232px 1fr;
+  grid-template-rows: auto 1fr;
+}
+body:has(> .sidebar) > .topbar { grid-column: 1 / -1; }
+
+.main { padding: 30px 34px; min-width: 0; }
+body:not(:has(> .sidebar)) > .main { max-width: 480px; margin: 40px auto; padding: 0 16px; }
+
+.breadcrumb { font-size: 12px; color: var(--muted); margin-bottom: 8px; }
+.page-title { font-size: 22px; margin-bottom: 6px; }
+.page-sub { color: var(--muted); margin-bottom: 26px; }
+.row { display: flex; gap: 16px; flex-wrap: wrap; }
+.row > * { flex: 1 1 0; min-width: 200px; }
+
+/* ---------- 4. Top bar ---------- */
+.topbar {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  min-height: 60px;
+  background: var(--surface);
+  border-bottom: 1px solid var(--border);
+  padding-right: 24px;
+}
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  align-self: stretch;
+  width: 232px;
+  padding: 0 20px;
+  background: var(--navy);
+  color: #fff;
+  font-weight: bold;
+  font-size: 17px;
+}
+.brand:hover { text-decoration: none; }
+.brand small { display: block; font-weight: normal; font-size: 11px; color: #9fb3d4; }
+.topbar-search {
+  flex: 1;
+  max-width: 360px;
+  border: 1px solid #e6eaf0;
+  background: #f6f8fb;
+  border-radius: 6px;
+  padding: 8px 12px;
+  font: inherit;
+  font-size: 13px;
+}
+.bell {
+  margin-left: auto;
+  position: relative;
+  font-size: 13px;
+  color: var(--muted);
+  background: #f1f4f9;
+  border-radius: 6px;
+  padding: 8px 12px;
+}
+.bell-count {
+  position: absolute;
+  top: -6px;
+  right: -6px;
+  background: var(--danger);
+  color: #fff;
+  border-radius: 9px;
+  font-size: 10px;
+  padding: 1px 6px;
+}
+.user-menu {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding-left: 18px;
+  border-left: 1px solid var(--border);
+  font-size: 13px;
+}
+.user-menu small { display: block; color: var(--muted); font-size: 11px; }
+.avatar {
+  width: 32px;
+  height: 32px;
+  flex: none;
+  border-radius: 50%;
+  background: #dfe7f5;
+  color: var(--primary);
+  font-weight: bold;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* ---------- 5. Sidebar ---------- */
+.sidebar { background: var(--navy); padding: 18px 12px; }
+.sidebar-label {
+  font-size: 10px;
+  letter-spacing: .8px;
+  font-weight: bold;
+  text-transform: uppercase;
+  color: #7f95ba;
+  margin: 6px 10px 8px;
+}
+.sidebar-link {
+  display: block;
+  padding: 9px 10px;
+  margin-bottom: 2px;
+  border-radius: 6px;
+  color: #d3ddef;
+}
+.sidebar-link:hover { background: var(--navy-2); text-decoration: none; }
+.sidebar-link-active { background: var(--navy-2); color: #fff; font-weight: bold; border-left: 3px solid #6ea2ff; }
+/* Pages not built yet are listed but not clickable. */
+.sidebar-link[aria-disabled="true"] { opacity: .5; cursor: default; }
+.sidebar-link[aria-disabled="true"]:hover { background: none; }
+
+/* ---------- 6. Cards ---------- */
+.card {
+  background: var(--surface);
+  border: 1px solid #dde3ec;
+  border-radius: 8px;
+  padding: 16px;
+  box-shadow: 0 1px 1px rgba(20, 41, 74, .05);
+}
+.card + .card { margin-top: 16px; }
+.row > .card + .card { margin-top: 0; }
+.card-stat { border-top: 3px solid var(--primary); }
+.row > .card-stat:nth-child(2) { border-top-color: #0d8a7a; }
+.row > .card-stat:nth-child(3) { border-top-color: var(--warn); }
+.row > .card-stat:nth-child(4) { border-top-color: #6b4fd8; }
+.row > .card-stat:nth-child(5) { border-top-color: var(--ok); }
+.stat-label { font-size: 12px; color: var(--muted); }
+.stat-value { font-size: 26px; font-weight: bold; margin-top: 4px; }
+.stat-note { font-size: 11px; color: var(--muted); margin-top: 2px; }
+
+/* ---------- 7. Tables ---------- */
+table { width: 100%; border-collapse: collapse; }
+th {
+  text-align: left;
+  font-size: 11px;
+  font-weight: bold;
+  color: #4a5a75;
+  background: #f3f6fb;
+  padding: 8px 10px;
+  border-bottom: 1px solid var(--border);
+}
+td { padding: 10px; border-bottom: 1px solid #eef0f3; vertical-align: middle; }
+
+/* ---------- 8. Status badges and flags (docs/05 §5) ---------- */
+.badge-submitted, .badge-under-review, .badge-verified, .badge-in-progress, .badge-resolved,
+.badge-closed, .badge-reopened, .badge-rejected, .badge-withdrawn {
+  display: inline-block;
+  font-size: 11px;
+  font-weight: bold;
+  padding: 3px 8px;
+  border-radius: 10px;
+}
+.badge-submitted { background: #eef0f3; color: #475467; }
+.badge-under-review { background: #efeafd; color: #5b3fc4; }
+.badge-verified { background: #e5effd; color: #1d5bbf; }
+.badge-in-progress { background: #fff3df; color: #9a5b00; }
+.badge-resolved { background: #dff5f1; color: #0d7266; }
+.badge-closed { background: #e3f4e9; color: #1a7f4b; }
+.badge-reopened { background: #fdeadd; color: #b0490c; }
+.badge-rejected { background: #fce6e4; color: #b42318; }
+.badge-withdrawn { background: transparent; color: #475467; border: 1px solid #c8cfda; }
+.flag-overdue { color: var(--danger); font-size: 11px; font-weight: bold; }
+.pri-high { color: var(--danger); font-weight: bold; }
+.pri-medium { color: var(--warn); font-weight: bold; }
+.pri-low { color: var(--muted); font-weight: bold; }
+
+/* ---------- 9. Buttons ---------- */
+.btn {
+  display: inline-block;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 8px 14px;
+  background: var(--surface);
+  color: var(--text);
+  font: inherit;
+  font-size: 13px;
+  font-weight: bold;
+  cursor: pointer;
+}
+.btn:hover { text-decoration: none; border-color: #c8cfda; }
+.btn-primary { background: var(--primary); border-color: var(--primary); color: #fff; }
+.btn-primary:hover { border-color: var(--navy-2); }
+.btn-danger { color: var(--danger); border-color: #f0c4bf; }
+.btn-sm { padding: 5px 10px; font-size: 12px; }
+.btn[disabled] { opacity: .45; cursor: not-allowed; }
+
+/* ---------- 10. Forms ---------- */
+.form-field { margin-bottom: 14px; }
+.form-field label { display: block; font-size: 12px; font-weight: bold; margin-bottom: 6px; }
+input, select, textarea {
+  width: 100%;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 9px 11px;
+  background: #fff;
+  font: inherit;
+  font-size: 13px;
+  color: var(--text);
+}
+input:focus, select:focus, textarea:focus { outline: 2px solid var(--primary-soft); border-color: var(--primary); }
+input[readonly] { background: #f6f8fb; color: var(--muted); }
+.form-help { font-size: 11px; color: var(--muted); margin-top: 5px; }
+.form-help ul { padding-left: 16px; }
+.form-error { font-size: 12px; color: var(--danger); margin-top: 5px; }
+
+/* ---------- 11. Messages (Django message levels) ---------- */
+.alert-info, .alert-success, .alert-warning, .alert-error {
+  border-radius: 6px;
+  padding: 10px 12px;
+  margin-bottom: 14px;
+  font-size: 13px;
+  border: 1px solid;
+}
+.alert-info { background: var(--primary-soft); border-color: #c9d9f6; color: #173f80; }
+.alert-success { background: #e3f4e9; border-color: #b9e0c7; color: var(--ok); }
+.alert-warning { background: #fff8e6; border-color: #f1dca6; color: #7a5200; }
+.alert-error { background: #fce6e4; border-color: #f0c4bf; color: #b42318; }
+
+/* ---------- 12. Text helpers ---------- */
+.text-muted { color: var(--muted); }
+.text-mono { font-family: ui-monospace, Consolas, monospace; font-size: 12px; color: var(--muted); }
+
+/* ---------- 13. Phones and small tablets (NFR-05) ---------- */
+@media (max-width: 800px) {
+  body:has(> .sidebar) { display: block; }
+  .topbar { flex-wrap: wrap; gap: 10px; padding: 0 12px 10px 0; }
+  .brand { width: auto; min-height: 60px; }
+  .topbar-search { order: 5; flex-basis: 100%; max-width: none; margin-left: 12px; }
+  .user-menu { padding-left: 10px; }
+  .user-menu small { display: none; }
+  .sidebar { display: flex; gap: 4px; overflow-x: auto; padding: 8px; }
+  .sidebar-label { display: none; }
+  .sidebar-link { white-space: nowrap; margin: 0; }
+  .sidebar-link-active { border-left: none; border-bottom: 3px solid #6ea2ff; }
+  .main { padding: 20px 16px; }
+  body:not(:has(> .sidebar)) > .main { margin-top: 20px; }
+}

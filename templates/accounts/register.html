@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+{% block title %}Register{% endblock %}
+{% block content %}
+{# P-02 Register (students only) #}
+<div class="card">
+  <h1 class="page-title">Create a student account</h1>
+  <p class="page-sub">For North South University students. Staff accounts are created by the Super Admin.</p>
+  <form method="post" novalidate>
+    {% csrf_token %}
+    {% for error in form.non_field_errors %}<div class="alert-error">{{ error }}</div>{% endfor %}
+    {% for field in form %}
+      <div class="form-field">
+        <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+        {{ field }}
+        {% if field.help_text %}<div class="form-help">{{ field.help_text|safe }}</div>{% endif %}
+        {% for error in field.errors %}<div class="form-error">{{ error }}</div>{% endfor %}
+      </div>
+    {% endfor %}
+    <button class="btn btn-primary" type="submit">Create account</button>
+  </form>
+  <p class="form-help">Already registered? <a href="{% url 'accounts:login' %}">Log in</a></p>
+</div>
+{% endblock %}

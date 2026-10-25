@@ -1,0 +1,12 @@
+{% extends "base.html" %}
+{% block title %}Home{% endblock %}
+{% block content %}
+{# S-01 Student home: placeholder until Sprint 2 (cards, tables and notifications follow) #}
+<h1 class="page-title">Welcome, {{ user.full_name }}</h1>
+<p class="page-sub">Here's where your campus reports will stand.</p>
+<div class="card">
+  <h2>Your complaints</h2>
+  <p class="text-muted">Reporting an issue, tracking it and "Me too" arrive in Sprint 2. Your complaints will be listed here.</p>
+  <p><button class="btn btn-primary" type="button" disabled title="Coming in Sprint 2">+ New complaint</button></p>
+</div>
+{% endblock %}
