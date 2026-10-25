@@ -182,6 +182,19 @@ class RoleRedirectTests(TestCase):
         self.client.force_login(self.super_admin)
         self.assertEqual(self.client.get(reverse("student:home")).status_code, 403)
 
+    def test_tc27_root_url_sends_each_user_to_the_right_place(self):
+        login = reverse("accounts:login")
+        self.assertRedirects(self.client.get("/", follow=True), login)
+        cases = [
+            (self.student, "student:home"),
+            (self.dept_admin, "console:dashboard"),
+            (self.super_admin, "console:dashboard"),
+        ]
+        for user, home in cases:
+            with self.subTest(role=user.role):
+                self.client.force_login(user)
+                self.assertRedirects(self.client.get("/", follow=True), reverse(home))
+
     def test_tc19_logout_needs_post_and_signs_out(self):
         self.client.force_login(self.student)
         self.assertEqual(self.client.get(reverse("accounts:logout")).status_code, 405)
