@@ -20,7 +20,7 @@ Tracks feedback and the changes it causes, iteration by iteration, so each phase
 | v0.1.2 | Planning v1.2 | Oct 2026 | Header spacing; full consistency verification and fixes |
 | v0.1.3 | Planning v1.3 | Oct 2026 | ER diagram drawn for database planning |
 | v0.1.4 | Planning v1.4 | Oct 2026 | Sprint 1 pre-build doc fixes (CR-09) |
-| v0.2-sprint1 | Sprint 1 | planned | Setup, accounts, roles, login/register, profile, Django admin, seed |
+| v0.2-sprint1 | Sprint 1 | Oct 2026 | Setup, accounts, roles, login/register, profile, Django admin, seed |
 | v0.3-sprint2 | Sprint 2 | planned | Complaint submission and student pages |
 | v0.4-sprint3 | Sprint 3 | planned | Admin console and full lifecycle |
 | v0.5-sprint4 | Sprint 4 | planned | Remaining core features |
@@ -41,6 +41,7 @@ Tracks feedback and the changes it causes, iteration by iteration, so each phase
 | FB-09 | Oct 2026 | Claude Code review | Pre-build review found gaps: sprint coverage, User model details, missing file names, CSS not reusable, sidebar, search fields, room format, ER footnote, tag scheme | CR-09 |
 | FB-10 | Oct 2026 | Team (Sprint 1 review) | Students and staff should choose how they log in; staff should not see the register link | CR-10 |
 | FB-11 | Oct 2026 | Team (Sprint 1 review) | Top bar should show the NSU logo, with the UniFix wordmark centred and tools on the right | CR-11 |
+| FB-12 | Oct 2026 | Claude Code review + team (Sprint 2 planning) | Pre-build review found gaps for Sprint 2 (submit method, limited view, private files, file limits, notifications timing, timeline privacy); team chose a two-step S-02 so files upload once | CR-12 |
 
 ## 4. Change Requests
 
@@ -57,6 +58,7 @@ Tracks feedback and the changes it causes, iteration by iteration, so each phase
 | CR-09 | FB-09 | Sprint 1 pre-build doc fixes (`09` I-17 to I-30) | C-10, C-15, C-16, C-18, VR-11, S-03, `User`, `Complaint.room`, `Complaint.tracking_id`, `05` §2, §5–7, `06` §3, `diagrams/er_diagram.*` | Done (planning) |
 | CR-10 | FB-10 | Student/Staff tabs on P-01; wrong tab refused | P-01, VR-15, `login_type` (`05` §3), tab classes (`05` §5), TC-30 to TC-34 | Done (Sprint 1) |
 | CR-11 | FB-11 | Three-zone top bar with NSU logo. *Amended (clarified by team):* NSU logo moves to the centre beside the wordmark, replacing the "U" square; left zone left empty | `04` Layout, `static/img/nsu_logo.png`, top bar classes (`05` §5) | Done (Sprint 1, amended) |
+| CR-12 | FB-12 | Sprint 2 pre-build doc fixes (`09` I-36 to I-52) and decisions (`07`): two-step S-02, `submit()`, limited view fields and actor naming, 5-file limit, private files via `student:attachment`, `Notification` now, seed plan | C-02, C-03, C-06, VR-01, VR-07, VR-09, NFR-03, S-01 to S-04, `Complaint.submit()`, `tracking_id`, `location`, `status_badge_class`, `Attachment.file`, `03` §0, §4, §6, `05` §3, §4, §7, `06` §4 | Accepted (Sprint 2) |
 
 ## 5. Iteration Template
 
@@ -80,9 +82,18 @@ Goal: users can log in by role.
 Feedback received: FB-09 (pre-build review), FB-10, FB-11 (Sprint 1 review)
 Change requests: CR-09 (done before coding), CR-10, CR-11 (done in the review round)
 Foundation touched (03/05)? yes, 05 in CR-09 → ER diagram footnote updated
-Built / changed: project setup; `accounts.User`; `Department`, `Category`; login, logout, register; role redirect; profile and password change; base layout and stylesheet; `seed_demo`; 25 tests (`10_test_plan.md`)
+Built / changed: project setup; `accounts.User`; `Department`, `Category`; login, logout, register; role redirect; profile and password change; base layout and stylesheet; `seed_demo`; 25 tests, 35 after the review round (`10_test_plan.md`)
 Carried over to next iteration: `User.can_view_complaint()` (needs `Complaint`, Sprint 2); complaints in `seed_demo` (Sprints 2–3)
 Retrospective: Keep: plan checkpoint before building. Change: confirm UI placement details with a sketch before implementing.
+
+### Iteration 2 (v0.3-sprint2): Oct 2026 (in progress)
+Goal: end-to-end student submission.
+Feedback received: FB-12 (Sprint 2 pre-build review)
+Change requests: CR-12 (doc fixes done before coding)
+Foundation touched (03/05)? yes, 03 §0, §4, §6 and 05 §3, §4, §7 → system workflow figure to be redrawn (`09` §4)
+Built / changed: (filled in at the end of the sprint)
+Carried over to next iteration: (filled in at the end of the sprint)
+Retrospective: (filled in at the sprint review)
 
 ## 7. Suggested GitHub Practice
 

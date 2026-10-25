@@ -9,8 +9,8 @@
 **Walkthrough**
 
 1. **Access.** A user logs in on the Student or Staff tab; the system checks `account_state` (suspended or deleted accounts are blocked), refuses a tab that does not match the role (VR-15), and opens the home page for the user's role.
-2. **Report.** The student fills the complaint form. The system validates fields and files, then searches for open complaints with the same category and location.
-3. **Duplicate branch.** If one exists, the student can support it ("Me too") instead of submitting. Otherwise a complaint `UF-xxxx` is created, routed to the category's department, and that department's admins are notified.
+2. **Report.** The student first chooses the category and location (form step 1). The system searches for open complaints with the same category and location (§6) before any details or files are entered.
+3. **Duplicate branch.** If one exists, the student can support it ("Me too") instead of submitting. Otherwise the student enters the title, description and files (step 2); the system validates them and creates a complaint `UF-xxxx`, routed to the category's department, and that department's admins are notified. *(The figure shows validation before the duplicate check; it is redrawn with the next diagram update.)*
 4. **Review.** The complaint appears in the department queue. An admin starts review and decides whether it is valid: invalid complaints are rejected with a reason; valid ones are verified with a priority and due date.
 5. **Work.** The admin starts work and marks the complaint resolved with a note and optional proof photo. The student is notified at each step; overdue complaints are flagged on dashboards.
 6. **Confirmation.** The student confirms the fix (Closed) or reopens it within 7 days, which returns it to the admin for more work.
@@ -79,7 +79,7 @@ Every action runs one model method (see `05_data_dictionary.md`), which writes t
 | Button | `Complaint` changes | Other records created | Notified |
 |---|---|---|---|
 | Submit | New row: `status=submitted`, `department` from category, `tracking_id` | `Attachment` rows; `ComplaintUpdate(action=submitted)` | Dept Admins of the department |
-| Me too | `updated_at=now` | `Support` row; `ComplaintUpdate(action=support)` | – |
+| Me too | `updated_at=now` (open statuses only; never the reporter, never twice: VR-09) | `Support` row; `ComplaintUpdate(action=support)` | – |
 | Withdraw | `status=withdrawn` | `ComplaintUpdate(action=withdraw)` | – |
 | Start review | `status=under_review` | `ComplaintUpdate(action=start_review)` | Reporter |
 | Verify | `status=verified`, `priority`, `due_date`, `verified_at=now` | `ComplaintUpdate(action=verify)` | Reporter |
@@ -106,6 +106,15 @@ Every action runs one model method (see `05_data_dictionary.md`), which writes t
 ## 6. Duplicate Rule
 
 A complaint is a possible duplicate when another complaint has the **same category**, the **same building**, the **same room** (case-insensitive, spaces ignored; if either room is blank, building alone is compared) and an **open status**. Matches are shown as limited summaries (VR-01).
+
+**When the check runs.** The New complaint form (S-02) has two steps so files are uploaded only once:
+
+1. **Step 1:** category, building, room → **Check for similar issues** runs `Complaint.find_duplicates()`. Nothing is saved.
+   - Matches: shown with **Me too** (runs `support()`) and **Continue with a new complaint**. The student's own complaints are labelled "You reported this" and ones they already support "You support this"; neither has a Me too button (VR-09).
+   - No matches: the student goes straight to step 2.
+2. **Step 2:** title, description, attachments → **Submit** runs `Complaint.submit()`. Category and location are carried over from step 1 (not saved in between) and shown read-only with a **Change** link back to step 1.
+
+On final submit the server checks the carried-over values again (valid building; category exists and is active, with an active department). The duplicate check is not repeated.
 
 ## 7. Due Dates After Reopening
 

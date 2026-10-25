@@ -59,6 +59,7 @@ Authentication uses Django's `AllowAllUsersModelBackend`; the login form's `conf
 | `date_joined` | DateTime (built-in) | Auto |
 
 Methods: `is_student()`, `is_dept_admin()`, `is_super_admin()`, `can_view_complaint(complaint)`, `suspend()`, `reactivate()`, `soft_delete()`.
+`can_view_complaint(complaint)` is `True` for the reporter, a supporter (limited view, VR-01), a Dept Admin of the complaint's department (VR-02) and the Super Admin; otherwise `False`. Which view a student gets (full or limited) is decided by whether they are the reporter.
 
 **Login form field** (P-01, VR-15): `login_type`, choices `student` (Student, default) and `staff` (Staff). Not stored; checked against `role` at login (`student` → `student`; `staff` → `dept_admin` or `super_admin`).
 
@@ -83,7 +84,7 @@ Methods: `is_student()`, `is_dept_admin()`, `is_super_admin()`, `can_view_compla
 
 | Field | Type | Rules |
 |---|---|---|
-| `tracking_id` | CharField(12) | Unique; `UF-` + primary key zero-padded to 4 digits (`UF-0001`) |
+| `tracking_id` | CharField(12), null | Unique; `UF-` + primary key zero-padded to 4 digits (`UF-0001`). The primary key exists only after the first insert, so `save()` inserts with NULL and fills the ID straight after, inside the same transaction (NULLs never clash in a unique column) |
 | `reporter` | FK → User | Student who submitted |
 | `category` | FK → Category | |
 | `department` | FK → Department | Copied from category; changed only by reassign |
@@ -101,13 +102,14 @@ Methods: `is_student()`, `is_dept_admin()`, `is_super_admin()`, `can_view_compla
 
 Methods (each validates the transition, writes `ComplaintUpdate`, sends notifications):
 `start_review(actor)`, `verify(actor, priority, due_date)`, `reject(actor, reason)`, `start_work(actor, note="")`, `resolve(actor, note, proof_file=None)`, `confirm(student)`, `reopen(student, reason)`, `withdraw(student)`, `reassign(actor, department, reason)`, `add_note(actor, note, is_internal)`, `support(student)`, `rate(student, stars, comment="")`.
-Class method: `find_duplicates(category, building, room)`.
-Properties: `is_overdue`, `can_reopen`, `support_count`, `affected_count`, `allowed_actions(user)`.
+Class methods: `submit(reporter, category, building, room, title, description, files)` creates the complaint, its `Attachment` rows, `ComplaintUpdate(action=submitted)` and the Dept Admin notifications in one transaction (C-02, C-04; checks VR-08); `find_duplicates(category, building, room)` returns open matches (`03` §6).
+Properties: `is_overdue`, `can_reopen`, `support_count`, `affected_count`, `allowed_actions(user)`, `location` (building label + room, e.g. "NAC 512"), `status_badge_class` (e.g. `badge-under-review`, used by `partials/status_badge.html`).
 
 **Action mapping** (one row per button; names must match across layers):
 
 | Button | URL action slug | Model method | `ComplaintUpdate.action` | Resulting status |
 |---|---|---|---|---|
+| Submit | (form post to `student:complaint_new`) | `submit()` | `submitted` | `submitted` |
 | Me too | `support` | `support()` | `support` | unchanged |
 | Withdraw | `withdraw` | `withdraw()` | `withdraw` | `withdrawn` |
 | Start review | `start_review` | `start_review()` | `start_review` | `under_review` |
@@ -126,11 +128,11 @@ Properties: `is_overdue`, `can_reopen`, `support_count`, `affected_count`, `allo
 | Field | Type | Rules |
 |---|---|---|
 | `complaint` | FK → Complaint | |
-| `file` | FileField | `media/complaints/<tracking_id>/` |
+| `file` | FileField | `media/complaints/<tracking_id>/<uuid>.<ext>`: a random name on disk; never served directly, only through `student:attachment` (NFR-03) |
 | `kind` | CharField choices | `evidence`, `proof_of_fix` |
-| `original_name` | CharField(255) | |
-| `mime_type` | CharField(100) | Checked against extension (VR-07) |
-| `size_bytes` | PositiveInteger | ≤ 15 MB |
+| `original_name` | CharField(255) | Name shown to users |
+| `mime_type` | CharField(100) | Detected from the file's content with the `filetype` library and checked against the extension (VR-07) |
+| `size_bytes` | PositiveInteger | ≤ 15 MB; at most 5 evidence files per complaint (VR-07) |
 | `uploaded_by` | FK → User | |
 | `uploaded_at` | DateTime | Auto |
 
@@ -190,6 +192,7 @@ Properties: `is_overdue`, `can_reopen`, `support_count`, `affected_count`, `allo
 | student | `complaint_list` | `/student/complaints/` | S-03 |
 | student | `complaint_detail` | `/student/complaints/<tracking_id>/` | S-04 |
 | student | `complaint_action` | `/student/complaints/<tracking_id>/<action>/` | support, withdraw, confirm, reopen, rate |
+| student | `attachment` | `/student/complaints/<tracking_id>/files/<id>/` | S-04 (sends an evidence or proof file after a permission check) |
 | notifications | `list` | `/notifications/` | S-05, A-06 |
 | notifications | `mark_all_read` | `/notifications/read-all/` | S-05, A-06 (form post) |
 | console | `dashboard` | `/console/` | A-01 |
@@ -267,4 +270,4 @@ No animations, gradients or shadows beyond a 1 px card shadow.
 
 Demo accounts: one Super Admin, one Dept Admin per department, about 10 students, and complaints in every status (including overdue and reopened examples).
 
-`seed_demo` grows by sprint: Sprint 1 seeds departments, categories and accounts; complaints are added in Sprints 2–3 as their models and actions are built.
+`seed_demo` grows by sprint: Sprint 1 seeds departments, categories and accounts; Sprint 2 adds complaints in every status, with supporters, history rows, notifications and small generated sample files, all dated relative to the day the command runs (so overdue examples stay overdue). Until the Sprint 3 action methods exist, the seed writes these rows directly to match `03` §4; from Sprint 3 it calls the real methods. Running the command again adds nothing.

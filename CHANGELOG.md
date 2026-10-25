@@ -3,6 +3,11 @@
 Format: [Keep a Changelog](https://keepachangelog.com). Versions match Git tags. Reasons for changes are in `docs/08_iteration_log.md`.
 
 ## [Unreleased]
+### Changed
+- Docs (CR-12): Sprint 2 pre-build fixes I-36 to I-52. S-02 becomes a two-step form (category and location → duplicate check → details and files); VR-01 lists the limited-view fields and student pages name actors by role or department; VR-07 allows at most 5 files; VR-09 allows supporting open complaints only; files are served only through `student:attachment` (NFR-03); `Complaint.submit()`, `location` and `status_badge_class` added to `05`; Sprint 2 seed plan; decisions in `07`.
+- Docs: retrospectives are recorded in `08` iteration entries; `08` Iteration 1 test count and `v0.2-sprint1` date corrected; README status.
+
+## [0.2-sprint1] - 2026-10
 ### Added
 - Sprint 1: Django 5.2 project with apps `accounts`, `complaints`, `notifications`, `console`; settings from `.env`; pinned `requirements.txt`.
 - Custom `accounts.User` with email login, roles, department and account state (C-01); `Department` and `Category` in the Django admin at `/django-admin/` (C-16).

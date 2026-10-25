@@ -94,6 +94,6 @@ Run `python manage.py seed_demo` and `python manage.py runserver`, then for each
 
 | Sprint | Rules to cover |
 |---|---|
-| 2 | VR-01, VR-07, VR-08, VR-09, duplicate rule (`03` §6) |
+| 2 | VR-01 (limited view, role/department actor names, 404 for others, private files), VR-07 (type, content match, 15 MB, 5 files), VR-08, VR-09 (own, twice, not open), duplicate rule and two-step S-02 (`03` §6), C-04 routing, `submit()` history and notifications, `can_view_complaint()`, S-01 and S-03 lists and filters, Sprint 2 seed data. Test cases TC-36 onwards are added here with the code. |
 | 3 | VR-02, VR-03, VR-04, VR-05, VR-06 |
 | 4 | VR-10, VR-12, VR-14 |
