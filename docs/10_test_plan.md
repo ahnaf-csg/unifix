@@ -76,6 +76,22 @@ Rules:
 | TC-34 | `accounts/tests.py` | Log in with a missing or unknown `login_type` | Not signed in |
 | TC-35 | `accounts/tests.py` | Open the login page | The email field is `type="email"` |
 
+### Sprint 2
+
+| ID | File | Checks | Expected |
+|---|---|---|---|
+| TC-36 | `complaints/tests.py` | Submit two complaints | Tracking IDs are `UF-` + zero-padded primary key |
+| TC-37 | `complaints/tests.py` | Submit with a JPG and a PDF (C-02, C-04) | Status `submitted`; department from the category; one `submitted` history row; two attachments with detected types and random names under `complaints/<tracking_id>/`; only that department's admin notified |
+| TC-38 | `complaints/tests.py` | Files: `.gif`, a PDF renamed `.jpg`, 15 MB + 1 byte, 6 files, one bad file in a batch (VR-07) | Each refused with a message; nothing saved |
+| TC-39 | `complaints/tests.py` | Category with `requires_attachment` and no file; with a file; category without the flag (VR-08) | Refused; accepted; accepted |
+| TC-40 | `complaints/tests.py` | Submit as a Dept Admin; submit to an inactive category | Both refused |
+| TC-41 | `complaints/tests.py` | `find_duplicates()` with rooms "L 3"/"l3", another room, building, category, a closed match and a blank room (`03` §6) | Only open matches with the same category, building and normalised room; a blank room matches on building |
+| TC-42 | `complaints/tests.py` | Another student presses Me too (C-03) | `Support` row, `support` history row, `updated_at` bumped; students affected = 2 |
+| TC-43 | `complaints/tests.py` | Me too on own complaint, twice, as an admin, on a rejected complaint (VR-09) | All refused; one supporter |
+| TC-44 | `complaints/tests.py` | `location`, `status_badge_class`, `is_overdue` per status, `can_reopen` at 7 and 8 days (`03` §5) | "NAC 512"; `badge-under-review`; overdue only for verified, in progress, reopened; reopen allowed up to 7 days |
+| TC-45 | `complaints/tests.py` | `can_view_complaint()` for reporter, supporter, stranger, own-department admin, other admin, Super Admin (VR-01, VR-02) | True, True, False, True, False, True |
+| TC-46 | `complaints/tests.py` | `get_complaint_for_user()` and `has_full_view()` | 404 for a stranger, another department and an unknown ID; full view for the reporter and own-department admin, not for a supporter |
+
 ## 4. Manual Checklist (each sprint)
 
 Run `python manage.py seed_demo` and `python manage.py runserver`, then for each demo role (student, Dept Admin, Super Admin):
