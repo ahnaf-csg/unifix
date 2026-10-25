@@ -5,7 +5,7 @@ Students report campus issues with photo, video or PDF evidence; complaints are 
 
 **Team:** Sami Mohammad Abdullah, Ahnaf Tazwar Unmesh
 **Stack:** Django, Django templates, vanilla CSS/JS, SQLite (development)
-**Status:** planning complete (docs v0.1.4); Sprint 1 in progress
+**Status:** Sprint 1 (accounts, roles, login/register, profile, setup) built on `feature/sprint-1`
 
 ## Documentation
 
@@ -13,4 +13,38 @@ All planning lives in [`docs/`](docs/00_README.md). Start with the index. The da
 
 ## Running locally
 
-Setup instructions are added in Sprint 1.
+Requires Python 3.13. Commands are for Windows PowerShell. In Git Bash use `source .venv/Scripts/activate` and `cp`; on macOS/Linux use `python3 -m venv .venv`, `source .venv/bin/activate` and `cp`.
+
+```
+py -3.13 -m venv .venv
+.venv\Scripts\activate
+pip install -r requirements.txt
+copy .env.example .env            # then set SECRET_KEY (command in the file)
+python manage.py migrate
+python manage.py seed_demo
+python manage.py runserver
+```
+
+Open http://localhost:8000. The Django admin panel is at http://localhost:8000/django-admin/ (Super Admin only).
+
+Checks before a pull request:
+
+```
+python manage.py test
+python docs/verify_docs.py
+```
+
+### Demo accounts
+
+Created by `python manage.py seed_demo` (local development only). All share the password `unifix-demo-2026`.
+
+| Role | Email |
+|---|---|
+| Super Admin | `superadmin@northsouth.edu` |
+| Dept Admin, Facilities Management | `fac.admin@northsouth.edu` |
+| Dept Admin, IT Services | `it.admin@northsouth.edu` |
+| Dept Admin, Housekeeping | `hk.admin@northsouth.edu` |
+| Dept Admin, Security | `sec.admin@northsouth.edu` |
+| Student (Rafiq Hasan) | `rafiq.hasan@northsouth.edu` |
+
+Nine more students are listed in `complaints/management/commands/seed_demo.py`.

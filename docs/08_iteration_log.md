@@ -69,7 +69,18 @@ Carried over to next iteration:
 Retrospective: keep … / change …
 ```
 
-## 6. Suggested GitHub Practice
+## 6. Iterations
+
+### Iteration 1 (v0.2-sprint1): Oct 2026
+Goal: users can log in by role.
+Feedback received: FB-09 (pre-build review)
+Change requests: CR-09 (accepted, done before coding)
+Foundation touched (03/05)? yes, 05 in CR-09 → ER diagram footnote updated
+Built / changed: project setup; `accounts.User`; `Department`, `Category`; login, logout, register; role redirect; profile and password change; base layout and stylesheet; `seed_demo`; 25 tests (`10_test_plan.md`)
+Carried over to next iteration: `User.can_view_complaint()` (needs `Complaint`, Sprint 2); complaints in `seed_demo` (Sprints 2–3)
+Retrospective: keep … / change … (to be filled in at the sprint review)
+
+## 7. Suggested GitHub Practice
 
 - One GitHub Issue per CR, titled `CR-xx: …`, labelled `feedback`, `foundation` (if 03/05 change) and the sprint.
 - Pull requests reference the CR (`Closes #12, CR-06`).
