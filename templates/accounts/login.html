@@ -1,0 +1,48 @@
+{% extends "base.html" %}
+{% block title %}Log in{% endblock %}
+{% block content %}
+{# P-01 Login with Student / Staff tabs (CR-10, VR-15) #}
+<div class="card">
+  <h1 class="page-title">Log in</h1>
+  <p class="page-sub">Choose how you log in, then enter your email and password.</p>
+  <form method="post">
+    {% csrf_token %}
+
+    {# Tabs are radio buttons: Tab moves to the group, arrow keys switch tabs. #}
+    <fieldset class="tab-list" aria-label="Log in as">
+      {% for radio in form.login_type %}
+        <label class="tab" for="{{ radio.id_for_label }}">{{ radio.tag }} {{ radio.choice_label }}</label>
+      {% endfor %}
+    </fieldset>
+
+    {# CSS shows the panel that matches the checked tab (static/css/unifix.css §Tabs). #}
+    <div class="tab-panel" data-tab="student">
+      <p class="text-muted">Use your @northsouth.edu student email.</p>
+    </div>
+    <div class="tab-panel" data-tab="staff">
+      <p class="text-muted">For department coordinators and administrators.</p>
+    </div>
+
+    {% for error in form.non_field_errors %}<div class="alert-error">{{ error }}</div>{% endfor %}
+    {% for error in form.login_type.errors %}<div class="alert-error">{{ error }}</div>{% endfor %}
+    {% for field in form %}
+      {% if field.name != "login_type" %}
+        <div class="form-field">
+          <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+          {{ field }}
+          {% for error in field.errors %}<div class="form-error">{{ error }}</div>{% endfor %}
+        </div>
+      {% endif %}
+    {% endfor %}
+    <input type="hidden" name="next" value="{{ next }}">
+    <button class="btn btn-primary" type="submit">Log in</button>
+
+    <div class="tab-panel" data-tab="student">
+      <p class="form-help">New student? <a href="{% url 'accounts:register' %}">Create an account</a></p>
+    </div>
+    <div class="tab-panel" data-tab="staff">
+      <p class="form-help">Staff accounts are created by the Super Admin.</p>
+    </div>
+  </form>
+</div>
+{% endblock %}

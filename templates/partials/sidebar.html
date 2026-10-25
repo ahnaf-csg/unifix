@@ -1,0 +1,22 @@
+{% with page=request.resolver_match.view_name %}
+{# Role-specific sidebar (docs/04 Layout). Pages from later sprints are listed but disabled. #}
+<nav class="sidebar" aria-label="Main">
+  {% if user.is_student %}
+    <div class="sidebar-label">Student</div>
+    <a class="sidebar-link{% if page == 'student:home' %} sidebar-link-active{% endif %}" href="{% url 'student:home' %}">Home</a>
+    <span class="sidebar-link" aria-disabled="true" title="Coming in Sprint 2">New complaint</span>
+    <span class="sidebar-link" aria-disabled="true" title="Coming in Sprint 2">My complaints</span>
+  {% else %}
+    <div class="sidebar-label">{% if user.is_super_admin %}Super admin{% else %}{{ user.department.name }}{% endif %}</div>
+    <a class="sidebar-link{% if page == 'console:dashboard' %} sidebar-link-active{% endif %}" href="{% url 'console:dashboard' %}">Dashboard</a>
+    <span class="sidebar-link" aria-disabled="true" title="Coming in Sprint 3">Complaint queue{% if user.is_super_admin %} (all){% endif %}</span>
+    <span class="sidebar-link" aria-disabled="true" title="Coming in Sprint 4">Students</span>
+    {% if user.is_super_admin %}
+      <span class="sidebar-link" aria-disabled="true" title="Coming in Sprint 4">Reports</span>
+      <span class="sidebar-link" aria-disabled="true" title="Coming in Sprint 4">Users</span>
+    {% endif %}
+  {% endif %}
+  <span class="sidebar-link" aria-disabled="true" title="Coming in Sprint 3">Notifications</span>
+  <a class="sidebar-link{% if page == 'accounts:profile' %} sidebar-link-active{% endif %}" href="{% url 'accounts:profile' %}">Profile</a>
+</nav>
+{% endwith %}

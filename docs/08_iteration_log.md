@@ -8,7 +8,7 @@ Tracks feedback and the changes it causes, iteration by iteration, so each phase
 2. **Each accepted change becomes a change request** (`CR-xx`) linked to the feedback and to the IDs it affects (C-xx, VR-xx, S-xx, UC-xx, model or field names).
 3. **Impact is checked before work starts.** If a CR touches a foundation file (03 or 05), it is flagged so the diagrams in 06 are updated too.
 4. **Status flow for each CR:** Proposed → Accepted / Deferred / Rejected → Done.
-5. **Each iteration ends with a version tag** in Git (`v0.1-iter1`, `v0.2-iter2`, …) and a summary of what changed.
+5. **Each iteration ends with a version tag** in Git and a summary of what changed. Planning iterations: `v0.1.x` (e.g. `v0.1.3-planning`). Code sprints: `v0.2-sprint1`, `v0.3-sprint2`, `v0.4-sprint3`, `v0.5-sprint4`. Final release: `v1.0`.
 
 ## 2. Versions
 
@@ -19,6 +19,12 @@ Tracks feedback and the changes it causes, iteration by iteration, so each phase
 | v0.1.1 | Planning v1.1 | Oct 2026 | Search scope, system workflow, palette, this log |
 | v0.1.2 | Planning v1.2 | Oct 2026 | Header spacing; full consistency verification and fixes |
 | v0.1.3 | Planning v1.3 | Oct 2026 | ER diagram drawn for database planning |
+| v0.1.4 | Planning v1.4 | Oct 2026 | Sprint 1 pre-build doc fixes (CR-09) |
+| v0.2-sprint1 | Sprint 1 | planned | Setup, accounts, roles, login/register, profile, Django admin, seed |
+| v0.3-sprint2 | Sprint 2 | planned | Complaint submission and student pages |
+| v0.4-sprint3 | Sprint 3 | planned | Admin console and full lifecycle |
+| v0.5-sprint4 | Sprint 4 | planned | Remaining core features |
+| v1.0 | Final release | planned | Tested, documented, demo-ready |
 
 ## 3. Feedback Register
 
@@ -32,6 +38,9 @@ Tracks feedback and the changes it causes, iteration by iteration, so each phase
 | FB-06 | Oct 2026 | Team | Top area of screens feels cluttered | CR-06 |
 | FB-07 | Oct 2026 | Team | Verify all documents are aligned before building | CR-07 |
 | FB-08 | Oct 2026 | Team | Plan the database visually before creating demo data | CR-08 |
+| FB-09 | Oct 2026 | Claude Code review | Pre-build review found gaps: sprint coverage, User model details, missing file names, CSS not reusable, sidebar, search fields, room format, ER footnote, tag scheme | CR-09 |
+| FB-10 | Oct 2026 | Team (Sprint 1 review) | Students and staff should choose how they log in; staff should not see the register link | CR-10 |
+| FB-11 | Oct 2026 | Team (Sprint 1 review) | Top bar should show the NSU logo, with the UniFix wordmark centred and tools on the right | CR-11 |
 
 ## 4. Change Requests
 
@@ -45,6 +54,9 @@ Tracks feedback and the changes it causes, iteration by iteration, so each phase
 | CR-06 | FB-06 | More spacing in top bar and page header | `unifix.css`, mockups | Done (keep in view) |
 | CR-07 | FB-07 | Consistency fixes from the verification pass | 01–06, mockups; see `09_verification_report.md` | Done (planning) |
 | CR-08 | FB-08 | ER diagram with keys and cardinalities, matching `05` §3 | `06` §3, `diagrams/er_diagram.*` | Done (planning) |
+| CR-09 | FB-09 | Sprint 1 pre-build doc fixes (`09` I-17 to I-30) | C-10, C-15, C-16, C-18, VR-11, S-03, `User`, `Complaint.room`, `Complaint.tracking_id`, `05` §2, §5–7, `06` §3, `diagrams/er_diagram.*` | Done (planning) |
+| CR-10 | FB-10 | Student/Staff tabs on P-01; wrong tab refused | P-01, VR-15, `login_type` (`05` §3), tab classes (`05` §5), TC-30 to TC-34 | Done (Sprint 1) |
+| CR-11 | FB-11 | Three-zone top bar with NSU logo. *Amended (clarified by team):* NSU logo moves to the centre beside the wordmark, replacing the "U" square; left zone left empty | `04` Layout, `static/img/nsu_logo.png`, top bar classes (`05` §5) | Done (Sprint 1, amended) |
 
 ## 5. Iteration Template
 
@@ -61,8 +73,19 @@ Carried over to next iteration:
 Retrospective: keep … / change …
 ```
 
-## 6. Suggested GitHub Practice
+## 6. Iterations
+
+### Iteration 1 (v0.2-sprint1): Oct 2026
+Goal: users can log in by role.
+Feedback received: FB-09 (pre-build review), FB-10, FB-11 (Sprint 1 review)
+Change requests: CR-09 (done before coding), CR-10, CR-11 (done in the review round)
+Foundation touched (03/05)? yes, 05 in CR-09 → ER diagram footnote updated
+Built / changed: project setup; `accounts.User`; `Department`, `Category`; login, logout, register; role redirect; profile and password change; base layout and stylesheet; `seed_demo`; 25 tests (`10_test_plan.md`)
+Carried over to next iteration: `User.can_view_complaint()` (needs `Complaint`, Sprint 2); complaints in `seed_demo` (Sprints 2–3)
+Retrospective: Keep: plan checkpoint before building. Change: confirm UI placement details with a sketch before implementing.
+
+## 7. Suggested GitHub Practice
 
 - One GitHub Issue per CR, titled `CR-xx: …`, labelled `feedback`, `foundation` (if 03/05 change) and the sprint.
 - Pull requests reference the CR (`Closes #12, CR-06`).
-- Tag each iteration (`git tag v0.2-iter2`) so any earlier version can be shown or restored.
+- Tag each iteration (`git tag v0.2-sprint1`) so any earlier version can be shown or restored.

@@ -18,7 +18,7 @@ Purpose: confirm that requirements, workflow, screens, data dictionary, diagrams
 | V-10 | Mockups only show data and buttons allowed by the rules | Manual | Pass (after removing "View details" from S-02) |
 | V-11 | Every core feature traces to screens, rules, use cases and model elements | Traceability matrix (§3) | Pass |
 | V-12 | Workflow diagram, transitions table, state diagram and status list agree | Manual | Pass |
-| V-13 | Plan sprints cover every core feature | Manual | Pass (after adding C-18 to Sprint 4) |
+| V-13 | Plan sprints cover every core feature | Manual | Pass (after adding C-18 to Sprint 4, and C-15 to Sprint 1 and C-10 to Sprint 3 in CR-09) |
 
 ## 2. Issues Found and Fixed
 
@@ -40,12 +40,31 @@ Purpose: confirm that requirements, workflow, screens, data dictionary, diagrams
 | I-14 | C-18 (search) not assigned to any sprint or person | Low | Added to Sprint 4 and the work split | 01 |
 | I-15 | No seed data defined, though mockups and demo rely on it | Low | Seed departments, categories and demo accounts defined | 05 |
 | I-16 | Example ID `CR-06` in the GitHub section clashed with real CR numbering | Low | Changed to `CR-xx` | 08 |
+| I-17 | C-10 Withdraw and C-15 Profile had owners but no sprint; V-13 had been marked Pass | Medium | C-15 added to Sprint 1, C-10 to Sprint 3; V-13 note updated | 01, 09 |
+| I-18 | `seed_demo` was described as seeding complaints, which do not exist until Sprint 2 | Low | Seed grows by sprint: Sprint 1 departments, categories, accounts | 05 |
+| I-19 | Unclear whether inherited `username`, `first_name`, `last_name` are removed or left unused | Medium | Removed; custom `UserManager`; `REQUIRED_FIELDS = ["full_name"]` | 05 |
+| I-20 | No names for the permission module, seed command or template partials | Medium | Added `accounts/permissions.py`, `seed_demo.py` path, `partials/topbar.html`, `sidebar.html`, `messages.html`, `status_badge.html` | 04, 05 |
+| I-21 | Nobody was given access to the Django admin panel needed for C-16 | Medium | Super Admin accounts get `is_staff` and `is_superuser`; permissions matrix row added | 02, 05 |
+| I-22 | `student_id` "unique when present" would clash on blank values for admins | Medium | Stored as NULL when empty (`null=True, blank=True, unique=True`), matching the ER diagram | 05 |
+| I-23 | Mockup CSS is fixed-size (not responsive), lacks `badge-withdrawn`, repeats `:root`, and uses tokens and classes not in `05` | Medium | `05` §5–6 list all tokens, priority and component classes; `00` no longer says the mockup CSS is reused as-is | 00, 05 |
+| I-24 | Super Admin could see all students on A-04 but had no sidebar link to it | Low | Students added to the Super Admin sidebar | 04 |
+| I-25 | S-03 searched by title or tracking ID, but the Search table also matched room | Low | S-03 searches tracking ID, title or room | 04 |
+| I-26 | `room` examples repeated the building ("NAC 512"), clashing with the separate `building` field and hotspot grouping | Low | `room` stores the label only (`512`, `L3`); pages show building + room; hotspots group by building + room; building labels defined | 05 |
+| I-27 | ER diagram did not mention the undrawn `ComplaintUpdate.from_department` / `to_department` relationship | Low | Added to the figure footnote and the `06` caption | 06, diagrams |
+| I-28 | VR-11 asks for an "Account inactive" message, but Django's default backend shows a generic login error | Low | `AllowAllUsersModelBackend` with the check in `confirm_login_allowed()` | 05 |
+| I-29 | The notification bell's unread count depends on notifications, which are built in Sprint 3 | Low | Bell shown without a count until Sprint 3 | 04 |
+| I-30 | Tag scheme in `08` (`v0.1-iter1`) differed from the real tag (`v0.1.3-planning`); tracking ID generation unspecified | Low | Tag scheme defined (planning `v0.1.x`, sprints `v0.2-sprint1` … , final `v1.0`); tracking ID = `UF-` + zero-padded pk | 05, 07, 08 |
+| I-31 | After a failed profile save, the top bar showed the unsaved name | Low | Profile form edits a fresh copy of the user, not `request.user` | `accounts/views.py` |
+| I-32 | `.claude/` (local tool config and worktrees) was not ignored by Git | Low | Added to `.gitignore` | `.gitignore` |
+| I-33 | Test suite took about 50 s because of password hashing | Low | MD5 hasher when running tests only | `unifix/settings.py` |
+| I-34 | 403 and 404 showed Django's plain pages with no way back | Low | `403.html` and `404.html` extend `base.html` with a link home | 04, 05, templates |
+| I-35 | `/` routing by role was untested | Low | Verified correct (via the login page); test added | `accounts/tests.py` |
 
 ## 3. Traceability Matrix
 
 | Feature | Screens | Rules | Use cases | Model elements |
 |---|---|---|---|---|
-| C-01 Accounts and roles | P-01, P-02 | VR-11, VR-13 | UC-01, UC-02 | `User.role`, `account_state` |
+| C-01 Accounts and roles | P-01, P-02 | VR-11, VR-13, VR-15 | UC-01, UC-02 | `User.role`, `account_state`, `login_type` |
 | C-02 Submission | S-02 | VR-07, VR-08 | UC-03 | `Complaint`, `Attachment` |
 | C-03 Duplicates and Me too | S-02, S-03 | VR-01, VR-09 | UC-04, UC-05 | `find_duplicates()`, `support()`, `Support` |
 | C-04 Routing | S-02, A-02 | VR-02 | UC-03 | `Complaint.department`, `Category.department` |
@@ -67,7 +86,7 @@ Purpose: confirm that requirements, workflow, screens, data dictionary, diagrams
 ## 4. Remaining Open Items (decided later, not inconsistencies)
 
 - Keep-in-view items in `07_decision_log.md` (Super Admin fallback, soft delete, withdraw, rating, charts, search extension, header spacing, supporter notifications, due date after reopen).
-- 14 of 18 screens still need mockups (CR-03).
+- 14 of 18 screens still need mockups (CR-03). Existing mockups predate CR-09: the S-01/S-02 search placeholder omits room, the SA-01 sidebar has no Students link, and class names are draft names; they are refreshed when the remaining mockups are drawn.
 - Sprint dates depend on semester deadlines.
 - The submitted proposal (v2 PDF) predates these decisions and is superseded by this documentation set.
 - Course diagrams (use case, class, ER, sequence, activity) still to be drawn from `06`.
@@ -76,4 +95,4 @@ Purpose: confirm that requirements, workflow, screens, data dictionary, diagrams
 
 1. Run the automated checks (V-01 to V-05) with the verification script kept alongside these docs.
 2. Walk through the manual checks V-06 to V-13 for any section that changed.
-3. Log new issues here as I-17, I-18, … and link fixes to a CR in `08_iteration_log.md`.
+3. Log new issues here as I-36, I-37, … and link fixes to a CR in `08_iteration_log.md`.

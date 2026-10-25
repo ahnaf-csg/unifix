@@ -1,0 +1,11 @@
+{% extends "base.html" %}
+{% block title %}No access{% endblock %}
+{% block content %}
+{# 403: shown when a role check refuses a page (accounts/permissions.py) (I-34) #}
+<div class="card">
+  <h1 class="page-title">You don't have access to this page</h1>
+  <p class="page-sub">This page belongs to a different role. If you think this is wrong, contact the Super Admin.</p>
+  {# "/" sends signed-in users to their role home and everyone else to login. #}
+  <a class="btn btn-primary" href="/">Back to your home</a>
+</div>
+{% endblock %}

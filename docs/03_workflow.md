@@ -8,7 +8,7 @@
 
 **Walkthrough**
 
-1. **Access.** A user logs in; the system checks `account_state` (suspended or deleted accounts are blocked) and opens the home page for the user's role.
+1. **Access.** A user logs in on the Student or Staff tab; the system checks `account_state` (suspended or deleted accounts are blocked), refuses a tab that does not match the role (VR-15), and opens the home page for the user's role.
 2. **Report.** The student fills the complaint form. The system validates fields and files, then searches for open complaints with the same category and location.
 3. **Duplicate branch.** If one exists, the student can support it ("Me too") instead of submitting. Otherwise a complaint `UF-xxxx` is created, routed to the category's department, and that department's admins are notified.
 4. **Review.** The complaint appears in the department queue. An admin starts review and decides whether it is valid: invalid complaints are rejected with a reason; valid ones are verified with a priority and due date.

@@ -1,0 +1,4 @@
+{# Django messages, styled by level: alert-info, alert-success, alert-warning, alert-error. #}
+{% for message in messages %}
+  <div class="alert-{{ message.level_tag }}" role="status">{{ message }}</div>
+{% endfor %}

@@ -18,6 +18,15 @@
 | Oct 2026 | Complaint stores its own `department` | Allows Super Admin reassignment |
 | Oct 2026 | Supported complaints shown in a limited view (VR-01) | Privacy of the reporter; confirmed by team |
 | Oct 2026 | Reopened complaints keep the original due date | Simple; overdue stays visible; confirmed by team |
+| Oct 2026 | Super Admin accounts get Django admin access (`is_staff`, `is_superuser`) | One place to manage departments and categories (C-16) |
+| Oct 2026 | `room` stores the room label only; building comes from `building` | Avoids repeating the building; clean hotspot grouping |
+| Oct 2026 | Version tags: planning `v0.1.x`, sprints `v0.2-sprint1` … `v0.5-sprint4`, final `v1.0` | Tags line up with sprints |
+| Oct 2026 | Login page has Student and Staff tabs; a wrong tab is refused (VR-15) | Clearer login for each group; staff are told their accounts come from the Super Admin (CR-10) |
+| Oct 2026 | Login tabs are radio buttons styled with CSS, no JavaScript | Keyboard-accessible by default; the chosen tab is submitted with the form |
+| Oct 2026 | Top bar: NSU logo left, UniFix wordmark centre, tools right | University identity visible on every page (CR-11) |
+| Oct 2026 | CR-11 amended: NSU logo centred beside the wordmark (clarified by team) | One centred identity unit; the left zone stays free for a future mobile menu button |
+| Oct 2026 | Friendly 403 and 404 pages using `base.html` | Users always have a way back home (I-34) |
+| Oct 2026 | Tests use the MD5 password hasher (tests only) | Faster test runs; real passwords still use Django's default hasher (I-33) |
 
 ## Keep in View
 
@@ -43,3 +52,5 @@ Instructor feedback and iteration changes are tracked in `08_iteration_log.md`.
 | Oct 2026 | v1.1: search scope (C-18, VR-14), system workflow diagram, colour palette, iteration log | 02, 03, 04, 05, 08 |
 | Oct 2026 | v1.2: header spacing; verification fixes (see `09_verification_report.md`) | 01–08 |
 | Oct 2026 | v1.3: ER diagram; supported-complaint limited view and reopen due-date behaviour confirmed by team | 06, 07 |
+| Oct 2026 | v1.4 (CR-09): Sprint 1 pre-build fixes from the Claude Code review (I-17 to I-30): sprint coverage, User model details, file and partial names, CSS tokens and classes, Super Admin sidebar, search fields, room format, ER footnote, version tags | 00, 01, 02, 04, 05, 06, 07, 08, 09, `diagrams/er_diagram.*` |
+| Oct 2026 | Sprint 1 review: login type tabs and VR-15 (CR-10), three-zone top bar (CR-11), review fixes I-31 to I-35 (error pages, fast test hasher) | 02, 04, 05, 07, 08, 09, 10 |

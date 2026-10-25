@@ -22,6 +22,7 @@ Departments and categories are configured through Django's built-in admin panel 
 | View student records and complaint history | – | ✓ (view only) | ✓ |
 | Edit, suspend, delete (soft) user accounts | – | – | ✓ |
 | Reports dashboard (all departments) | – | – | ✓ |
+| Django admin panel (departments, categories) | – | – | ✓ |
 | Edit own profile, change password | ✓ | ✓ | ✓ |
 
 ## 3. Core Features
@@ -43,7 +44,7 @@ Departments and categories are configured through Django's built-in admin panel 
 | C-13 | Super Admin complaint control | Acts on any complaint and reassigns complaints between departments with a reason. |
 | C-14 | Dashboards and reports | Student home, Dept Admin dashboard and Super Admin reports (see section 4). |
 | C-15 | Profile | Edit name and phone; change password. |
-| C-16 | Setup | Departments and categories managed in the Django admin panel. |
+| C-16 | Setup | Departments and categories managed in the Django admin panel (Super Admin accounts have `is_staff` and `is_superuser`). |
 | C-17 | Student rating | After closing, the student rates the resolution 1–5 stars with an optional comment, once per complaint. *(Keep in view)* |
 | C-18 | Search | Role-scoped search bar in the top bar (see `04_screens.md` §Search). An exact tracking ID opens the complaint directly. |
 
@@ -92,6 +93,7 @@ Charts are static (no animation): Chart.js with animation disabled, or plain CSS
 | VR-12 | Only the Super Admin can edit, suspend or delete users, and reassign complaints. |
 | VR-13 | Registration requires an `@northsouth.edu` email address that is not already registered. |
 | VR-14 | Search results only include records the user is allowed to see (VR-01, VR-02). |
+| VR-15 | Login is refused when the chosen login type does not match the account role (Student tab: `student`; Staff tab: `dept_admin`, `super_admin`). Inactive accounts see "Account inactive" first (VR-11). |
 
 ## 7. Non-Functional Requirements
 

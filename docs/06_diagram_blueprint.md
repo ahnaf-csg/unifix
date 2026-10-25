@@ -58,7 +58,7 @@ Enumerations to draw: Role, AccountState, Status, Priority, Building, Action (in
 
 ![UniFix ER diagram](diagrams/er_diagram.png)
 
-*Figure: entities, keys and cardinalities from `05_data_dictionary.md`. Editable source: `diagrams/er_diagram.svg`. The Mermaid source below is a text version of the same relationships.*
+*Figure: entities, keys and cardinalities from `05_data_dictionary.md`. Editable source: `diagrams/er_diagram.svg`. Foreign keys listed in the boxes but not drawn as lines (for clarity) are named in the figure's footnote: `Attachment.uploaded_by`, `Notification.complaint`, `ComplaintUpdate.from_department` / `to_department`. The Mermaid source below is a text version of the drawn relationships.*
 
 ### ER Diagram Source (Mermaid)
 

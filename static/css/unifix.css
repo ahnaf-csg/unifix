@@ -1,0 +1,328 @@
+/* UniFix stylesheet: the only CSS file (CLAUDE.md).
+   Ported from docs/mockups/unifix.css. Token and class names follow
+   docs/05_data_dictionary.md §5 and §6. No animations, gradients or
+   shadows beyond a 1px card shadow. */
+
+/* ---------- 1. Design tokens (docs/05 §6) ---------- */
+:root {
+  --navy: #14294a;
+  --navy-2: #1d3a66;
+  --bg: #eef2f7;
+  --surface: #ffffff;
+  --border: #e1e4ea;
+  --text: #1c2433;
+  --muted: #667085;
+  --primary: #1d5bbf;
+  --primary-soft: #e3ecfb;
+  --danger: #c0352b;
+  --ok: #1a7f4b;
+  --warn: #b26a00;
+}
+
+/* ---------- 2. Base ---------- */
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+  font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  font-size: 14px;
+  line-height: 1.45;
+  color: var(--text);
+  background: var(--bg);
+  min-height: 100vh;
+}
+a { color: var(--primary); text-decoration: none; }
+a:hover { text-decoration: underline; }
+h1, h2, h3 { color: var(--navy); line-height: 1.25; }
+h2 { font-size: 15px; margin-bottom: 12px; }
+p + p { margin-top: 8px; }
+
+/* ---------- 3. Page layout ----------
+   Signed-in pages: top bar across the top, sidebar on the left, main on the right.
+   Pages without a sidebar (login, register) centre a single card. */
+body:has(> .sidebar) {
+  display: grid;
+  grid-template-columns: 232px 1fr;
+  grid-template-rows: auto 1fr;
+}
+body:has(> .sidebar) > .topbar { grid-column: 1 / -1; }
+
+.main { padding: 30px 34px; min-width: 0; }
+body:not(:has(> .sidebar)) > .main { max-width: 480px; margin: 40px auto; padding: 0 16px; }
+
+.breadcrumb { font-size: 12px; color: var(--muted); margin-bottom: 8px; }
+.page-title { font-size: 22px; margin-bottom: 6px; }
+.page-sub { color: var(--muted); margin-bottom: 26px; }
+.row { display: flex; gap: 16px; flex-wrap: wrap; }
+.row > * { flex: 1 1 0; min-width: 200px; }
+
+/* ---------- 4. Top bar (docs/04 Layout, CR-11 amended) ----------
+   Three zones on one row: empty left zone, centre group (NSU logo + UniFix
+   wordmark), tools (right, signed-in pages only). The two outer columns are
+   equal (1fr), so the centre group stays centred whether or not the right
+   zone is shown. */
+.topbar {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
+  align-items: center;
+  gap: 16px;
+  min-height: 64px;
+  padding: 8px 24px;
+  background: var(--surface);
+  border-bottom: 1px solid var(--border);
+}
+.topbar-left { justify-self: start; display: flex; align-items: center; }
+.topbar-center { justify-self: center; }
+.topbar-right { justify-self: end; display: flex; align-items: center; gap: 14px; min-width: 0; max-width: 100%; }
+/* Only the search box shrinks; the bell and user menu keep their size on one line. */
+.topbar-right > :not(.topbar-search) { flex-shrink: 0; white-space: nowrap; }
+
+/* Centre group: NSU logo beside the UniFix wordmark, subtitle underneath.
+   align-items: center puts the logo and the text block on one centre line. */
+.brand { display: flex; align-items: center; gap: 10px; color: var(--navy); font-weight: bold; font-size: 18px; line-height: 1.15; }
+.brand:hover { text-decoration: none; }
+.topbar-logo { display: block; height: 36px; width: auto; flex: none; }
+.brand small { display: block; font-weight: normal; font-size: 11px; color: var(--muted); }
+
+/* Search: magnifier icon on the left; collapses to just the icon on phones. */
+.topbar-search {
+  width: 260px;
+  min-width: 120px;
+  flex: 0 1 260px;
+  border: 1px solid #e6eaf0;
+  border-radius: 6px;
+  padding: 8px 12px 8px 32px;
+  background: #f6f8fb url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='none' stroke='%23667085' stroke-width='2' stroke-linecap='round'%3E%3Ccircle cx='7' cy='7' r='5'/%3E%3Cpath d='m11 11 4 4'/%3E%3C/svg%3E") no-repeat 10px center;
+  font: inherit;
+  font-size: 13px;
+}
+.bell {
+  position: relative;
+  white-space: nowrap;
+  font-size: 13px;
+  color: var(--muted);
+  background: #f1f4f9;
+  border-radius: 6px;
+  padding: 8px 12px;
+}
+.bell-count {
+  position: absolute;
+  top: -6px;
+  right: -6px;
+  background: var(--danger);
+  color: #fff;
+  border-radius: 9px;
+  font-size: 10px;
+  padding: 1px 6px;
+}
+.user-menu {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding-left: 18px;
+  border-left: 1px solid var(--border);
+  font-size: 13px;
+}
+.user-menu small { display: block; color: var(--muted); font-size: 11px; white-space: nowrap; }
+.avatar {
+  width: 32px;
+  height: 32px;
+  flex: none;
+  border-radius: 50%;
+  background: #dfe7f5;
+  color: var(--primary);
+  font-weight: bold;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* ---------- 5. Sidebar ---------- */
+.sidebar { background: var(--navy); padding: 18px 12px; }
+.sidebar-label {
+  font-size: 10px;
+  letter-spacing: .8px;
+  font-weight: bold;
+  text-transform: uppercase;
+  color: #7f95ba;
+  margin: 6px 10px 8px;
+}
+.sidebar-link {
+  display: block;
+  padding: 9px 10px;
+  margin-bottom: 2px;
+  border-radius: 6px;
+  color: #d3ddef;
+}
+.sidebar-link:hover { background: var(--navy-2); text-decoration: none; }
+.sidebar-link-active { background: var(--navy-2); color: #fff; font-weight: bold; border-left: 3px solid #6ea2ff; }
+/* Pages not built yet are listed but not clickable. */
+.sidebar-link[aria-disabled="true"] { opacity: .5; cursor: default; }
+.sidebar-link[aria-disabled="true"]:hover { background: none; }
+
+/* ---------- 6. Cards ---------- */
+.card {
+  background: var(--surface);
+  border: 1px solid #dde3ec;
+  border-radius: 8px;
+  padding: 16px;
+  box-shadow: 0 1px 1px rgba(20, 41, 74, .05);
+}
+.card + .card { margin-top: 16px; }
+.row > .card + .card { margin-top: 0; }
+.card-stat { border-top: 3px solid var(--primary); }
+.row > .card-stat:nth-child(2) { border-top-color: #0d8a7a; }
+.row > .card-stat:nth-child(3) { border-top-color: var(--warn); }
+.row > .card-stat:nth-child(4) { border-top-color: #6b4fd8; }
+.row > .card-stat:nth-child(5) { border-top-color: var(--ok); }
+.stat-label { font-size: 12px; color: var(--muted); }
+.stat-value { font-size: 26px; font-weight: bold; margin-top: 4px; }
+.stat-note { font-size: 11px; color: var(--muted); margin-top: 2px; }
+
+/* ---------- 7. Tables ---------- */
+table { width: 100%; border-collapse: collapse; }
+th {
+  text-align: left;
+  font-size: 11px;
+  font-weight: bold;
+  color: #4a5a75;
+  background: #f3f6fb;
+  padding: 8px 10px;
+  border-bottom: 1px solid var(--border);
+}
+td { padding: 10px; border-bottom: 1px solid #eef0f3; vertical-align: middle; }
+
+/* ---------- 8. Status badges and flags (docs/05 §5) ---------- */
+.badge-submitted, .badge-under-review, .badge-verified, .badge-in-progress, .badge-resolved,
+.badge-closed, .badge-reopened, .badge-rejected, .badge-withdrawn {
+  display: inline-block;
+  font-size: 11px;
+  font-weight: bold;
+  padding: 3px 8px;
+  border-radius: 10px;
+}
+.badge-submitted { background: #eef0f3; color: #475467; }
+.badge-under-review { background: #efeafd; color: #5b3fc4; }
+.badge-verified { background: #e5effd; color: #1d5bbf; }
+.badge-in-progress { background: #fff3df; color: #9a5b00; }
+.badge-resolved { background: #dff5f1; color: #0d7266; }
+.badge-closed { background: #e3f4e9; color: #1a7f4b; }
+.badge-reopened { background: #fdeadd; color: #b0490c; }
+.badge-rejected { background: #fce6e4; color: #b42318; }
+.badge-withdrawn { background: transparent; color: #475467; border: 1px solid #c8cfda; }
+.flag-overdue { color: var(--danger); font-size: 11px; font-weight: bold; }
+.pri-high { color: var(--danger); font-weight: bold; }
+.pri-medium { color: var(--warn); font-weight: bold; }
+.pri-low { color: var(--muted); font-weight: bold; }
+
+/* ---------- 9. Buttons ---------- */
+.btn {
+  display: inline-block;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 8px 14px;
+  background: var(--surface);
+  color: var(--text);
+  font: inherit;
+  font-size: 13px;
+  font-weight: bold;
+  cursor: pointer;
+}
+.btn:hover { text-decoration: none; border-color: #c8cfda; }
+.btn-primary { background: var(--primary); border-color: var(--primary); color: #fff; }
+.btn-primary:hover { border-color: var(--navy-2); }
+.btn-danger { color: var(--danger); border-color: #f0c4bf; }
+.btn-sm { padding: 5px 10px; font-size: 12px; }
+.btn[disabled] { opacity: .45; cursor: not-allowed; }
+
+/* ---------- 10. Forms ---------- */
+.form-field { margin-bottom: 14px; }
+.form-field label { display: block; font-size: 12px; font-weight: bold; margin-bottom: 6px; }
+input, select, textarea {
+  width: 100%;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 9px 11px;
+  background: #fff;
+  font: inherit;
+  font-size: 13px;
+  color: var(--text);
+}
+input:focus, select:focus, textarea:focus { outline: 2px solid var(--primary-soft); border-color: var(--primary); }
+input[readonly] { background: #f6f8fb; color: var(--muted); }
+.form-help { font-size: 11px; color: var(--muted); margin-top: 5px; }
+.form-help ul { padding-left: 16px; }
+.form-error { font-size: 12px; color: var(--danger); margin-top: 5px; }
+
+/* ---------- 10b. Tabs (P-01 login type, CR-10) ----------
+   Each tab is a <label class="tab"> around a radio button. The radio stays
+   focusable (so Tab and arrow keys work) but is visually hidden. */
+.tab-list { display: flex; border: 0; border-bottom: 1px solid var(--border); margin-bottom: 14px; }
+.tab {
+  position: relative;
+  flex: 1;
+  text-align: center;
+  padding: 10px 12px;
+  margin-bottom: -1px;
+  border-bottom: 3px solid transparent;
+  border-radius: 6px 6px 0 0;
+  color: var(--muted);
+  font-weight: bold;
+  cursor: pointer;
+}
+.tab input { position: absolute; opacity: 0; width: 1px; height: 1px; padding: 0; border: 0; }
+.tab:has(input:checked) { color: var(--primary); background: var(--primary-soft); border-bottom-color: var(--primary); }
+.tab:has(input:focus-visible) { outline: 2px solid var(--primary); outline-offset: 2px; }
+.tab-panel { margin-bottom: 14px; }
+/* Show the panel for the checked login type; Student is the default. */
+.tab-panel[data-tab="staff"] { display: none; }
+form:has(input[name="login_type"][value="staff"]:checked) .tab-panel[data-tab="staff"] { display: block; }
+form:has(input[name="login_type"][value="staff"]:checked) .tab-panel[data-tab="student"] { display: none; }
+
+/* ---------- 11. Messages (Django message levels) ---------- */
+.alert-info, .alert-success, .alert-warning, .alert-error {
+  border-radius: 6px;
+  padding: 10px 12px;
+  margin-bottom: 14px;
+  font-size: 13px;
+  border: 1px solid;
+}
+.alert-info { background: var(--primary-soft); border-color: #c9d9f6; color: #173f80; }
+.alert-success { background: #e3f4e9; border-color: #b9e0c7; color: var(--ok); }
+.alert-warning { background: #fff8e6; border-color: #f1dca6; color: #7a5200; }
+.alert-error { background: #fce6e4; border-color: #f0c4bf; color: #b42318; }
+
+/* ---------- 12. Text helpers ---------- */
+.text-muted { color: var(--muted); }
+.text-mono { font-family: ui-monospace, Consolas, monospace; font-size: 12px; color: var(--muted); }
+
+/* ---------- 13a. Narrower screens: keep the centred wordmark clear ---------- */
+@media (max-width: 1300px) {
+  .user-menu > span:not(.avatar) { display: none; }  /* name and role; the avatar stays */
+}
+@media (max-width: 1000px) {
+  /* Logo and wordmark on the first row, tools on a second row. */
+  .topbar { row-gap: 8px; column-gap: 8px; padding: 8px 12px; }
+  .topbar-right { grid-column: 1 / -1; justify-self: stretch; justify-content: flex-end; gap: 8px; }
+  .user-menu { padding-left: 8px; border-left: none; }
+}
+
+/* ---------- 13b. Phones and small tablets (NFR-05) ---------- */
+@media (max-width: 360px) {
+  /* Very narrow phones: then the wordmark shrinks too. */
+  .brand { font-size: 16px; }
+  .brand small { font-size: 10px; }
+}
+@media (max-width: 800px) {
+  body:has(> .sidebar) { display: block; }
+  /* Phones: the logo shrinks first; search collapses to its magnifier icon. */
+  .brand { gap: 8px; }
+  .topbar-logo { height: 30px; }
+  .topbar-search { flex: 0 0 36px; width: 36px; min-width: 36px; padding: 8px 0 8px 34px; background-position: center; margin-right: auto; }
+  .topbar-search::placeholder { color: transparent; }
+  .topbar-search:focus { flex-basis: 180px; width: 180px; background-position: 10px center; }
+  .sidebar { display: flex; gap: 4px; overflow-x: auto; padding: 8px; }
+  .sidebar-label { display: none; }
+  .sidebar-link { white-space: nowrap; margin: 0; }
+  .sidebar-link-active { border-left: none; border-bottom: 3px solid #6ea2ff; }
+  .main { padding: 20px 16px; }
+  body:not(:has(> .sidebar)) > .main { margin-top: 20px; }
+}

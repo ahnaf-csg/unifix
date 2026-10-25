@@ -21,13 +21,18 @@ Source of truth for names. Code, templates and diagrams must match exactly.
 ```
 unifix/                 Django project settings and root urls
 accounts/               User model, login, register, profile, user records
+accounts/permissions.py Role mixins and decorators (the one place for permission checks)
 complaints/             Models: Department, Category, Complaint, Attachment, ComplaintUpdate, Support, Rating;
                         student-facing views (URL namespace `student`)
+complaints/management/commands/seed_demo.py
+                        Demo data command (`python manage.py seed_demo`)
 notifications/          Notification model and list view
 console/                Admin-side views (dashboard, queue, actions, students, users, reports)
-templates/              base.html, partials/, accounts/, student/, console/, notifications/
+templates/              base.html, 403.html, 404.html, partials/, accounts/, student/, console/, notifications/
+templates/partials/     topbar.html, sidebar.html, messages.html, status_badge.html
 static/css/unifix.css   Single stylesheet (design tokens at the top)
 static/js/unifix.js     Small helpers only (form toggles, file previews, charts)
+static/img/nsu_logo.png NSU logo shown in the top bar
 media/                  Uploaded files (not committed to Git)
 docs/                   These documents
 ```
@@ -36,21 +41,26 @@ docs/                   These documents
 
 ### accounts.User (extends Django `AbstractUser`)
 
-Login uses email: `USERNAME_FIELD = "email"`; the inherited `username`, `first_name` and `last_name` are not used (`full_name` replaces them).
+Login uses email: `USERNAME_FIELD = "email"`, `REQUIRED_FIELDS = ["full_name"]`. The inherited `username`, `first_name` and `last_name` are removed (set to `None` on the model; `full_name` replaces them), so a custom `UserManager` creates users by email.
+
+Authentication uses Django's `AllowAllUsersModelBackend`; the login form's `confirm_login_allowed()` rejects suspended and deleted accounts with "Account inactive" (VR-11).
 
 | Field | Type | Rules |
 |---|---|---|
 | `email` | EmailField | Unique; login identifier; students must use `@northsouth.edu` |
 | `full_name` | CharField(120) | Required |
-| `student_id` | CharField(20) | Students only; unique when present |
+| `student_id` | CharField(20), null | Students only; unique when present; stored as NULL (not "") when empty (`null=True, blank=True, unique=True`) |
 | `phone` | CharField(20) | Optional |
 | `role` | CharField choices | `student`, `dept_admin`, `super_admin` |
 | `department` | FK → Department, null | Required for `dept_admin`; empty otherwise |
 | `account_state` | CharField choices | `active`, `suspended`, `deleted`; default `active` |
 | `is_active` | Boolean (built-in) | `False` when `account_state` is not `active` |
+| `is_staff`, `is_superuser` | Boolean (built-in) | `True` only for `super_admin` (Django admin access, C-16) |
 | `date_joined` | DateTime (built-in) | Auto |
 
 Methods: `is_student()`, `is_dept_admin()`, `is_super_admin()`, `can_view_complaint(complaint)`, `suspend()`, `reactivate()`, `soft_delete()`.
+
+**Login form field** (P-01, VR-15): `login_type`, choices `student` (Student, default) and `staff` (Staff). Not stored; checked against `role` at login (`student` → `student`; `staff` → `dept_admin` or `super_admin`).
 
 ### complaints.Department
 
@@ -73,14 +83,14 @@ Methods: `is_student()`, `is_dept_admin()`, `is_super_admin()`, `can_view_compla
 
 | Field | Type | Rules |
 |---|---|---|
-| `tracking_id` | CharField(12) | Unique, generated `UF-0001` |
+| `tracking_id` | CharField(12) | Unique; `UF-` + primary key zero-padded to 4 digits (`UF-0001`) |
 | `reporter` | FK → User | Student who submitted |
 | `category` | FK → Category | |
 | `department` | FK → Department | Copied from category; changed only by reassign |
 | `title` | CharField(120) | Required |
 | `description` | TextField | Required |
-| `building` | CharField choices | `nac`, `sac`, `library`, `admin_building`, `plaza`, `other` |
-| `room` | CharField(30) | Optional (e.g. NAC 512) |
+| `building` | CharField choices | `nac` (NAC), `sac` (SAC), `library` (Library), `admin_building` (Admin Building), `plaza` (Plaza), `other` (Other) |
+| `room` | CharField(30) | Optional; room label only, without the building (e.g. `512`, `L3`). Pages show building label + room ("NAC 512"); reports group locations by building + room. |
 | `status` | CharField choices | See `03_workflow.md` §1 |
 | `priority` | CharField choices, null | `low`, `medium`, `high`; set on verify |
 | `due_date` | DateField, null | Set on verify; must be after today |
@@ -211,6 +221,21 @@ The Django admin panel stays at `/django-admin/` to avoid confusion with the con
 | withdrawn | `badge-withdrawn` | Grey outline |
 | overdue (flag) | `flag-overdue` | Red text |
 
+Priority text: `pri-high` (red), `pri-medium` (amber), `pri-low` (muted grey).
+
+**Component classes** (in `unifix.css`; mockup HTML uses shorter draft names):
+
+| Component | Classes |
+|---|---|
+| Layout | `topbar`, `topbar-left`, `topbar-center`, `topbar-right`, `sidebar`, `sidebar-label`, `sidebar-link`, `sidebar-link-active`, `main`, `breadcrumb`, `page-title`, `page-sub`, `row` |
+| Top bar | `brand` (centre group: NSU logo + UniFix wordmark), `topbar-logo` (NSU logo inside `brand`), `topbar-search`, `bell`, `bell-count`, `user-menu`, `avatar` |
+| Cards | `card`, `card-stat`, `stat-label`, `stat-value`, `stat-note` |
+| Buttons | `btn`, `btn-primary`, `btn-danger`, `btn-sm` (disabled buttons use the `disabled` attribute) |
+| Forms | `form-field`, `form-help`, `form-error` |
+| Tabs | `tab-list` (group), `tab` (one tab; the active tab is the checked radio button), `tab-panel` (content shown for a tab) |
+| Messages | `alert-info`, `alert-success`, `alert-warning`, `alert-error` (Django message levels) |
+| Text | `text-muted`, `text-mono` |
+
 ## 6. Design Tokens (top of `unifix.css`)
 
 | Token | Value | Use |
@@ -219,9 +244,15 @@ The Django admin panel stays at `/django-admin/` to avoid confusion with the con
 | `--navy-2` | `#1d3a66` | Active sidebar item |
 | `--bg` | `#eef2f7` | Page background |
 | `--surface` | `#ffffff` | Cards, tables, forms |
+| `--border` | `#e1e4ea` | Card, table and input borders |
+| `--text` | `#1c2433` | Body text |
+| `--muted` | `#667085` | Secondary text, help text |
 | `--primary` | `#1d5bbf` | Primary buttons, links |
+| `--primary-soft` | `#e3ecfb` | Selected and info backgrounds |
 | `--danger` | `#c0352b` | Reject, reopen, overdue |
-| Card accents | blue, teal, amber, purple, green | Top border of dashboard stat cards |
+| `--ok` | `#1a7f4b` | Success messages, closed |
+| `--warn` | `#b26a00` | Warnings, medium priority |
+| Card accents | blue `#1d5bbf`, teal `#0d8a7a`, amber `#b26a00`, purple `#6b4fd8`, green `#1a7f4b` | Top border of dashboard stat cards |
 
 No animations, gradients or shadows beyond a 1 px card shadow.
 
@@ -235,3 +266,5 @@ No animations, gradients or shadows beyond a 1 px card shadow.
 | Security (`SEC`) | Lost access card (no), Safety hazard (yes) |
 
 Demo accounts: one Super Admin, one Dept Admin per department, about 10 students, and complaints in every status (including overdue and reopened examples).
+
+`seed_demo` grows by sprint: Sprint 1 seeds departments, categories and accounts; complaints are added in Sprints 2–3 as their models and actions are built.

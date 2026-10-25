@@ -1,6 +1,6 @@
 import re,glob,os
 HERE=os.path.dirname(os.path.abspath(__file__))
-D={os.path.basename(f):open(f,encoding='utf-8').read() for f in sorted(glob.glob(os.path.join(HERE,'0*.md')))}
+D={os.path.basename(f):open(f,encoding='utf-8').read() for f in sorted(glob.glob(os.path.join(HERE,'[01][0-9]_*.md')))}
 allt='\n'.join(D.values())
 def defined(prefix,src):
     return set(re.findall(r'^\| ('+prefix+r'-\d+) \|',src,re.M))

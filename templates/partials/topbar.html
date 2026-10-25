@@ -1,0 +1,40 @@
+{% load static %}
+{# Top bar on every page (docs/04 Layout, CR-11 amended): empty left zone, NSU logo + #}
+{# UniFix wordmark centred together, tools right. Signed-out pages have no right zone. #}
+<header class="topbar">
+  {# Empty on desktop: keeps the centre group centred; reserved for a future mobile menu button. #}
+  <div class="topbar-left"></div>
+
+  <div class="topbar-center">
+    {# "/" sends signed-in users to their role home and everyone else to login. #}
+    <a class="brand" href="/">
+      <img class="topbar-logo" src="{% static 'img/nsu_logo.png' %}" alt="North South University" width="36" height="36">
+      <span>UniFix<small>{% if user.is_authenticated and not user.is_student %}Admin Console{% else %}NSU Campus Services{% endif %}</small></span>
+    </a>
+  </div>
+
+  {% if user.is_authenticated %}
+    <div class="topbar-right">
+      {# Search (C-18) is built in Sprint 4; shown disabled so the layout is final. #}
+      <input class="topbar-search" type="search" aria-label="Search" disabled
+             title="Search arrives in Sprint 4"
+             placeholder="{% if user.is_student %}Search your complaints by tracking ID, title or room{% else %}Search complaints, students, tracking IDs{% endif %}">
+      {# Notifications (C-11) are built in Sprint 3; until then the bell has no count. #}
+      <span class="bell" title="Notifications arrive in Sprint 3">Notifications</span>
+      <div class="user-menu">
+        <span class="avatar" title="{{ user.full_name }}">{{ user.full_name|slice:":1"|upper }}</span>
+        <span>
+          {{ user.full_name }}
+          <small>
+            {{ user.get_role_display }}{% if user.is_student and user.student_id %} · {{ user.student_id }}{% endif %}{% if user.department %} · {{ user.department.name }}{% endif %}
+          </small>
+        </span>
+        {# Logout must be a POST in Django 5. #}
+        <form method="post" action="{% url 'accounts:logout' %}">
+          {% csrf_token %}
+          <button class="btn btn-sm" type="submit">Log out</button>
+        </form>
+      </div>
+    </div>
+  {% endif %}
+</header>

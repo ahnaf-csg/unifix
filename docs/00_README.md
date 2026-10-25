@@ -16,6 +16,8 @@ Team: Sami Mohammad Abdullah, Ahnaf Tazwar Unmesh.
 | `07_decision_log.md` | Decisions, keep-in-view items, change history | Every change |
 | `08_iteration_log.md` | Feedback and change requests per iteration, with versions | Every feedback round |
 | `09_verification_report.md` | Consistency checks, issues found and fixed, traceability matrix | Before each build phase |
+| `10_test_plan.md` | Test approach, test cases (TC-xx) mapped to rules, manual checklist | Each sprint |
+| `walkthroughs/` | Per-sprint walkthrough of every new or changed file (`sprint-1.md`, …) | Each sprint |
 
 ## Rules for keeping the docs and code in sync
 
@@ -31,11 +33,11 @@ Team: Sami Mohammad Abdullah, Ahnaf Tazwar Unmesh.
 
 ## Mockups
 
-`mockups/` contains the sample screens (PNG) and their HTML sources. `mockups/unifix.css` is the draft design system (colours, badges, buttons, cards, tables) and can be reused as `static/css/unifix.css` when building.
+`mockups/` contains the sample screens (PNG) and their HTML sources. `mockups/unifix.css` is the draft stylesheet used only to render the mockups on a fixed 1440 × 900 canvas; it is not responsive and is not reused as-is. The app's `static/css/unifix.css` is ported from it (responsive, one `:root` block, all status badges), using the tokens and classes listed in `05_data_dictionary.md` §5–6.
 
 ## Verification
 
-Run `python verify_docs.py` inside `docs/` to re-check IDs, URL names, statuses, history actions and fields across files (see `09_verification_report.md`).
+Run `python docs/verify_docs.py` from the project root to re-check IDs, URL names, statuses, history actions and fields across files (see `09_verification_report.md`).
 
 ## Rebuilding the PDF
 
