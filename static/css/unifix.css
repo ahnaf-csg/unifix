@@ -269,7 +269,7 @@ input[readonly] { background: #f6f8fb; color: var(--muted); }
   .topbar { flex-wrap: wrap; gap: 10px; padding: 0 12px 10px 0; }
   .brand { width: auto; min-height: 60px; }
   .topbar-search { order: 5; flex-basis: 100%; max-width: none; margin-left: 12px; }
-  .user-menu { padding-left: 10px; }
+  .user-menu { padding-left: 12px; border-left: none; }
   .user-menu small { display: none; }
   .sidebar { display: flex; gap: 4px; overflow-x: auto; padding: 8px; }
   .sidebar-label { display: none; }
