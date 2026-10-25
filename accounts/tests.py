@@ -250,3 +250,22 @@ class ProfileTests(TestCase):
         self.assertEqual(response.status_code, 200)
         self.user.refresh_from_db()
         self.assertTrue(self.user.check_password(PASSWORD))
+
+
+class ErrorPageTests(TestCase):
+    """I-34: friendly error pages that use base.html (TC-28, TC-29). Tests run with DEBUG off."""
+
+    def test_tc28_403_page_explains_and_links_home(self):
+        self.client.force_login(make_user("student@northsouth.edu"))
+        response = self.client.get(reverse("console:dashboard"))
+        self.assertEqual(response.status_code, 403)
+        self.assertTemplateUsed(response, "403.html")
+        self.assertTemplateUsed(response, "base.html")
+        self.assertContains(response, "Back to your home", status_code=403)
+
+    def test_tc29_404_page_explains_and_links_home(self):
+        response = self.client.get("/no-such-page/")
+        self.assertEqual(response.status_code, 404)
+        self.assertTemplateUsed(response, "404.html")
+        self.assertContains(response, "Page not found", status_code=404)
+        self.assertContains(response, 'href="/"', status_code=404)
