@@ -16,6 +16,7 @@ Rules:
 - Every validation rule (VR-xx) has at least one automated test before its sprint is done.
 - Test methods are named `test_tcNN_<what>` so failures map to this file.
 - Run everything with `python manage.py test`; all tests must pass before a pull request.
+- Tests use Django's fast MD5 password hasher (set in `unifix/settings.py` only when running `manage.py test`, I-33). The Sprint 1 suite runs in under a second.
 
 ## 2. Coverage by Rule (Sprint 1)
 
@@ -26,10 +27,12 @@ Rules:
 | `student_id` stored as NULL | TC-03 |
 | VR-11 suspended and deleted accounts cannot log in | TC-04 to TC-08 |
 | VR-13 registration with an unused `@northsouth.edu` email | TC-09 to TC-14 |
-| P-01 role redirect | TC-15, TC-16 |
+| P-01 role redirect; `/` routes by role | TC-15, TC-16, TC-27 |
 | Server-side role checks (VR-02 groundwork) | TC-17, TC-18 |
 | Logout | TC-19 |
-| C-15 profile and password change | TC-20 to TC-22 |
+| C-15 profile and password change | TC-20 to TC-22, TC-26 |
+| Friendly 403 and 404 pages (I-34) | TC-28, TC-29 |
+| VR-15 login type must match the role (CR-10) | TC-30 to TC-34 |
 | Seed data (`05` §7) | TC-23 to TC-25 |
 
 ## 3. Test Cases (Sprint 1)
@@ -61,17 +64,29 @@ Rules:
 | TC-23 | `complaints/tests.py` | Run `seed_demo` | 4 departments, 11 categories, 1 Super Admin, 1 Dept Admin per department, 10 students |
 | TC-24 | `complaints/tests.py` | Run `seed_demo` twice | No duplicates |
 | TC-25 | `complaints/tests.py` | Log in with a seeded student | Login succeeds with the demo password |
+| TC-26 | `accounts/tests.py` | Save the profile with a valid new name and an invalid phone (I-31) | Error shown; the top bar still shows the saved name; nothing saved |
+| TC-27 | `accounts/tests.py` | Open `/` signed out, and as each role (I-35) | Login page; student → S-01; Dept Admin and Super Admin → A-01 |
+| TC-28 | `accounts/tests.py` | Student opens A-01 (I-34) | 403 with `403.html` inside `base.html` and a "Back to your home" link |
+| TC-29 | `accounts/tests.py` | Open a URL that does not exist (I-34) | 404 with `404.html` and a link to `/` |
+| TC-30 | `accounts/tests.py` | Open the login page (CR-10) | Student tab checked by default; both hints, the staff note and the register link are in the page |
+| TC-31 | `accounts/tests.py` | Student logs in on the Staff tab (VR-15) | Refused: "This is a student account. Please use the Student tab." |
+| TC-32 | `accounts/tests.py` | Dept Admin and Super Admin log in on the Student tab (VR-15) | Refused: "This is a staff account. Please use the Staff tab." |
+| TC-33 | `accounts/tests.py` | Suspended student on the Staff tab; deleted admin on the Student tab (VR-11, VR-15) | "Account inactive", not the tab message |
+| TC-34 | `accounts/tests.py` | Log in with a missing or unknown `login_type` | Not signed in |
 
 ## 4. Manual Checklist (each sprint)
 
 Run `python manage.py seed_demo` and `python manage.py runserver`, then for each demo role (student, Dept Admin, Super Admin):
 
-1. Log in; the correct home page opens.
+1. Log in on the matching tab; the correct home page opens. Log in on the wrong tab; the message names the right tab (VR-15).
+   Keyboard only: Tab reaches the login type tabs, arrow keys switch them, the focused tab has an outline.
 2. Every enabled sidebar link opens without an error; disabled links show the sprint they arrive in.
 3. Opening another role's page gives 403.
 4. Profile: save name and phone; change password; log out.
-5. Repeat at phone width (375 px): no horizontal page scroll, sidebar scrolls sideways.
-6. Super Admin only: `/django-admin/` opens and lists users, departments and categories.
+5. Top bar: NSU logo left, UniFix wordmark centred, tools right, logo and wordmark on one centre line. Check at 1440, 1280, 1024 and 900 px: the tools never overlap the wordmark.
+6. Repeat at phone width (375 px): no horizontal page scroll, search shows as an icon, sidebar scrolls sideways.
+7. Error pages: open another role's page (403) and a missing URL (404). The 404 page only shows with `DEBUG=False`; run `python manage.py runserver --insecure` so the CSS still loads, then set `DEBUG=True` again.
+8. Super Admin only: `/django-admin/` opens and lists users, departments and categories.
 
 ## 5. Planned for Later Sprints
 

@@ -12,8 +12,17 @@ Format: [Keep a Changelog](https://keepachangelog.com). Versions match Git tags.
 - `seed_demo` command: departments, categories and demo accounts.
 - 25 automated tests (TC-01 to TC-25), `docs/10_test_plan.md`, `docs/walkthroughs/sprint-1.md`.
 
+- Sprint 1 review (FB-10, FB-11): Student and Staff login tabs, and a login on the wrong tab is refused (CR-10, VR-15); three-zone top bar with the NSU logo, centred UniFix wordmark and tools on the right (CR-11).
+- Friendly `403.html` and `404.html` pages with a link home (I-34).
+- 9 more tests (TC-26 to TC-34); 34 in total.
+
 ### Changed
 - `docs/verify_docs.py` also checks `10_test_plan.md`.
+- Tests use a fast password hasher; the suite runs in under a second instead of about 50 s (I-33).
+- `.claude/` is ignored by Git (I-32).
+
+### Fixed
+- After a failed profile save, the top bar no longer shows the unsaved name (I-31).
 - Docs v0.1.4 (CR-09): Sprint 1 pre-build fixes from a documentation review: C-15 moved to Sprint 1 and C-10 to Sprint 3; User model details (email-only login, `student_id` NULL when empty, Django admin access for Super Admin, "Account inactive" message); names for the permission module, seed command and template partials; full CSS token and class list; Students link for Super Admin; room-only `room` field; ER diagram footnote; version tag scheme.
 
 ## [0.1.3-planning] - 2026-10
