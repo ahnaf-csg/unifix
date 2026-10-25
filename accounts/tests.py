@@ -218,6 +218,17 @@ class ProfileTests(TestCase):
         self.assertTrue(self.user.check_password(new))
         self.assertEqual(self.client.get(reverse("accounts:profile")).status_code, 200)
 
+    def test_tc26_failed_profile_save_keeps_saved_name_in_top_bar(self):
+        # A valid new name with an invalid phone (over 20 characters): the save fails.
+        response = self.client.post(
+            reverse("accounts:profile"), {"full_name": "Unsaved Name", "phone": "1" * 25}
+        )
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.context["user"].full_name, "Test User")  # top bar
+        self.assertContains(response, "at most 20 characters")
+        self.user.refresh_from_db()
+        self.assertEqual(self.user.full_name, "Test User")
+
     def test_tc22_wrong_old_password_is_rejected(self):
         response = self.client.post(
             reverse("accounts:password_change"),

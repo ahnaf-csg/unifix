@@ -8,6 +8,7 @@ from django.shortcuts import redirect, render
 from django.urls import reverse
 
 from .forms import LoginForm, ProfileForm, RegisterForm
+from .models import User
 from .permissions import signed_in_required
 
 
@@ -49,7 +50,9 @@ def register(request):
 def profile(request):
     """S-06 / A-07 Profile: edit name and phone (C-15). Shared by all roles."""
     if request.method == "POST":
-        form = ProfileForm(request.POST, instance=request.user)
+        # Edit a fresh copy: a ModelForm writes the posted values onto its instance
+        # even when they are invalid, and request.user feeds the top bar (I-31).
+        form = ProfileForm(request.POST, instance=User.objects.get(pk=request.user.pk))
         if form.is_valid():
             form.save()
             messages.success(request, "Profile saved.")
