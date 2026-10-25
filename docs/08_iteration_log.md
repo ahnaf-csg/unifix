@@ -56,7 +56,7 @@ Tracks feedback and the changes it causes, iteration by iteration, so each phase
 | CR-08 | FB-08 | ER diagram with keys and cardinalities, matching `05` §3 | `06` §3, `diagrams/er_diagram.*` | Done (planning) |
 | CR-09 | FB-09 | Sprint 1 pre-build doc fixes (`09` I-17 to I-30) | C-10, C-15, C-16, C-18, VR-11, S-03, `User`, `Complaint.room`, `Complaint.tracking_id`, `05` §2, §5–7, `06` §3, `diagrams/er_diagram.*` | Done (planning) |
 | CR-10 | FB-10 | Student/Staff tabs on P-01; wrong tab refused | P-01, VR-15, `login_type` (`05` §3), tab classes (`05` §5), TC-30 to TC-34 | Done (Sprint 1) |
-| CR-11 | FB-11 | Three-zone top bar with NSU logo | `04` Layout, `static/img/nsu_logo.png`, top bar classes (`05` §5) | Done (Sprint 1) |
+| CR-11 | FB-11 | Three-zone top bar with NSU logo. *Amended (clarified by team):* NSU logo moves to the centre beside the wordmark, replacing the "U" square; left zone left empty | `04` Layout, `static/img/nsu_logo.png`, top bar classes (`05` §5) | Done (Sprint 1, amended) |
 
 ## 5. Iteration Template
 
@@ -82,7 +82,7 @@ Change requests: CR-09 (done before coding), CR-10, CR-11 (done in the review ro
 Foundation touched (03/05)? yes, 05 in CR-09 → ER diagram footnote updated
 Built / changed: project setup; `accounts.User`; `Department`, `Category`; login, logout, register; role redirect; profile and password change; base layout and stylesheet; `seed_demo`; 25 tests (`10_test_plan.md`)
 Carried over to next iteration: `User.can_view_complaint()` (needs `Complaint`, Sprint 2); complaints in `seed_demo` (Sprints 2–3)
-Retrospective: keep … / change … (to be filled in at the sprint review)
+Retrospective: Keep: plan checkpoint before building. Change: confirm UI placement details with a sketch before implementing.
 
 ## 7. Suggested GitHub Practice
 

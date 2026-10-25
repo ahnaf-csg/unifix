@@ -228,7 +228,7 @@ Priority text: `pri-high` (red), `pri-medium` (amber), `pri-low` (muted grey).
 | Component | Classes |
 |---|---|
 | Layout | `topbar`, `topbar-left`, `topbar-center`, `topbar-right`, `sidebar`, `sidebar-label`, `sidebar-link`, `sidebar-link-active`, `main`, `breadcrumb`, `page-title`, `page-sub`, `row` |
-| Top bar | `topbar-logo` (NSU logo), `brand` (UniFix wordmark), `topbar-search`, `bell`, `bell-count`, `user-menu`, `avatar` |
+| Top bar | `brand` (centre group: NSU logo + UniFix wordmark), `topbar-logo` (NSU logo inside `brand`), `topbar-search`, `bell`, `bell-count`, `user-menu`, `avatar` |
 | Cards | `card`, `card-stat`, `stat-label`, `stat-value`, `stat-note` |
 | Buttons | `btn`, `btn-primary`, `btn-danger`, `btn-sm` (disabled buttons use the `disabled` attribute) |
 | Forms | `form-field`, `form-help`, `form-error` |

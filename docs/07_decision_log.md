@@ -24,6 +24,7 @@
 | Oct 2026 | Login page has Student and Staff tabs; a wrong tab is refused (VR-15) | Clearer login for each group; staff are told their accounts come from the Super Admin (CR-10) |
 | Oct 2026 | Login tabs are radio buttons styled with CSS, no JavaScript | Keyboard-accessible by default; the chosen tab is submitted with the form |
 | Oct 2026 | Top bar: NSU logo left, UniFix wordmark centre, tools right | University identity visible on every page (CR-11) |
+| Oct 2026 | CR-11 amended: NSU logo centred beside the wordmark (clarified by team) | One centred identity unit; the left zone stays free for a future mobile menu button |
 | Oct 2026 | Friendly 403 and 404 pages using `base.html` | Users always have a way back home (I-34) |
 | Oct 2026 | Tests use the MD5 password hasher (tests only) | Faster test runs; real passwords still use Django's default hasher (I-33) |
 

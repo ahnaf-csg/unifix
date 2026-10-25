@@ -8,12 +8,12 @@
 
 | Zone | Contents |
 |---|---|
-| Left (`topbar-left`) | NSU logo (`static/img/nsu_logo.png`, about 36 px high, alt text "North South University") |
-| Centre (`topbar-center`) | UniFix wordmark: navy "U" square + "UniFix", subtitle "NSU Campus Services" (students, signed-out pages) or "Admin Console" (admins) |
+| Left (`topbar-left`) | Empty on desktop; kept for layout balance and for a future mobile menu button |
+| Centre (`topbar-center`) | One centred unit: NSU logo (`static/img/nsu_logo.png`, 36 px high, alt text "North South University") beside the UniFix wordmark ("UniFix", subtitle "NSU Campus Services" for students and signed-out pages, "Admin Console" for admins), vertically aligned |
 | Right (`topbar-right`, signed-in pages only) | Search, notification bell with unread count, user menu (avatar, name, role, Log out) |
 
 - Login (P-01) and Register (P-02) use the same bar without the right zone.
-- Phone width: the wordmark may shrink and search collapses to an icon; no sideways scroll.
+- Phone width: the centre group stays visible; the logo shrinks first, then the wordmark; search collapses to an icon; no sideways scroll.
 - Until notifications are built (Sprint 3, C-11) the bell is shown without a count.
 
 **Error pages** (`403.html`, `404.html`, both extend `base.html`): a short message and a "Back to your home" link to `/`, which sends signed-in users to their role home and everyone else to login.
