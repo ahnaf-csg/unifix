@@ -21,7 +21,8 @@ Source of truth for names. Code, templates and diagrams must match exactly.
 ```
 unifix/                 Django project settings and root urls
 accounts/               User model, login, register, profile, user records
-accounts/permissions.py Role mixins and decorators (the one place for permission checks)
+accounts/permissions.py Role mixins and decorators, and complaint access helpers `get_complaint_for_user()`
+                        and `has_full_view()` (the one place for permission checks)
 complaints/             Models: Department, Category, Complaint, Attachment, ComplaintUpdate, Support, Rating;
                         student-facing views (URL namespace `student`)
 complaints/management/commands/seed_demo.py
@@ -103,7 +104,7 @@ Methods: `is_student()`, `is_dept_admin()`, `is_super_admin()`, `can_view_compla
 Methods (each validates the transition, writes `ComplaintUpdate`, sends notifications):
 `start_review(actor)`, `verify(actor, priority, due_date)`, `reject(actor, reason)`, `start_work(actor, note="")`, `resolve(actor, note, proof_file=None)`, `confirm(student)`, `reopen(student, reason)`, `withdraw(student)`, `reassign(actor, department, reason)`, `add_note(actor, note, is_internal)`, `support(student)`, `rate(student, stars, comment="")`.
 Class methods: `submit(reporter, category, building, room, title, description, files)` creates the complaint, its `Attachment` rows, `ComplaintUpdate(action=submitted)` and the Dept Admin notifications in one transaction (C-02, C-04; checks VR-08); `find_duplicates(category, building, room)` returns open matches (`03` §6).
-Properties: `is_overdue`, `can_reopen`, `support_count`, `affected_count`, `allowed_actions(user)`, `location` (building label + room, e.g. "NAC 512"), `status_badge_class` (e.g. `badge-under-review`, used by `partials/status_badge.html`).
+Properties: `is_overdue`, `can_reopen`, `support_count`, `affected_count`, `allowed_actions(user)`, `is_open` (status in the open list, `03` §1), `location` (building label + room, e.g. "NAC 512"), `status_badge_class` (e.g. `badge-under-review`, used by `partials/status_badge.html`).
 
 **Action mapping** (one row per button; names must match across layers):
 
@@ -135,6 +136,8 @@ Properties: `is_overdue`, `can_reopen`, `support_count`, `affected_count`, `allo
 | `size_bytes` | PositiveInteger | ≤ 15 MB; at most 5 evidence files per complaint (VR-07) |
 | `uploaded_by` | FK → User | |
 | `uploaded_at` | DateTime | Auto |
+
+Property: `is_image` (shown as a thumbnail; other files as a link). The VR-07 check is the module function `check_attachment_file(file)` in `complaints/models.py`, used by the form and by `submit()`; limits `MAX_FILE_SIZE` (15 MB) and `MAX_FILES` (5).
 
 ### complaints.ComplaintUpdate (history)
 
