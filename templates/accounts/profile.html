@@ -1,0 +1,54 @@
+{% extends "base.html" %}
+{% block title %}Profile{% endblock %}
+{% block content %}
+{# S-06 / A-07 Profile (shared by all roles) #}
+<h1 class="page-title">Profile</h1>
+<p class="page-sub">Your account details. Contact the Super Admin to change your email or role.</p>
+<div class="row">
+  <div class="card">
+    <h2>Your details</h2>
+    <div class="form-field">
+      <label for="profile-email">Email</label>
+      <input id="profile-email" type="email" value="{{ user.email }}" readonly>
+    </div>
+    {% if user.is_student %}
+      <div class="form-field">
+        <label for="profile-student-id">Student ID</label>
+        <input id="profile-student-id" type="text" value="{{ user.student_id|default:'' }}" readonly>
+      </div>
+    {% else %}
+      <div class="form-field">
+        <label for="profile-role">Role</label>
+        <input id="profile-role" type="text" readonly
+               value="{{ user.get_role_display }}{% if user.department %} · {{ user.department.name }}{% endif %}">
+      </div>
+    {% endif %}
+    <form method="post" action="{% url 'accounts:profile' %}">
+      {% csrf_token %}
+      {% for field in form %}
+        <div class="form-field">
+          <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+          {{ field }}
+          {% for error in field.errors %}<div class="form-error">{{ error }}</div>{% endfor %}
+        </div>
+      {% endfor %}
+      <button class="btn btn-primary" type="submit">Save changes</button>
+    </form>
+  </div>
+  <div class="card">
+    <h2>Change password</h2>
+    <form method="post" action="{% url 'accounts:password_change' %}">
+      {% csrf_token %}
+      {% for field in password_form %}
+        <div class="form-field">
+          <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+          {{ field }}
+          {% if field.help_text %}<div class="form-help">{{ field.help_text|safe }}</div>{% endif %}
+          {% for error in field.errors %}<div class="form-error">{{ error }}</div>{% endfor %}
+        </div>
+      {% endfor %}
+      <button class="btn" type="submit">Change password</button>
+    </form>
+  </div>
+</div>
+{% endblock %}

@@ -17,6 +17,6 @@
     {% endif %}
   {% endif %}
   <span class="sidebar-link" aria-disabled="true" title="Coming in Sprint 3">Notifications</span>
-  <span class="sidebar-link" aria-disabled="true">Profile</span>
+  <a class="sidebar-link{% if page == 'accounts:profile' %} sidebar-link-active{% endif %}" href="{% url 'accounts:profile' %}">Profile</a>
 </nav>
 {% endwith %}

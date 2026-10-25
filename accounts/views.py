@@ -1,12 +1,14 @@
-"""Login, logout and registration views (P-01, P-02)."""
+"""Login, logout, registration and profile views (P-01, P-02, S-06, A-07)."""
 
 from django.contrib import messages
-from django.contrib.auth import login
+from django.contrib.auth import login, update_session_auth_hash
+from django.contrib.auth.forms import PasswordChangeForm
 from django.contrib.auth.views import LoginView
 from django.shortcuts import redirect, render
 from django.urls import reverse
 
-from .forms import LoginForm, RegisterForm
+from .forms import LoginForm, ProfileForm, RegisterForm
+from .permissions import signed_in_required
 
 
 def role_home_url(user):
@@ -41,3 +43,39 @@ def register(request):
     else:
         form = RegisterForm()
     return render(request, "accounts/register.html", {"form": form})
+
+
+@signed_in_required
+def profile(request):
+    """S-06 / A-07 Profile: edit name and phone (C-15). Shared by all roles."""
+    if request.method == "POST":
+        form = ProfileForm(request.POST, instance=request.user)
+        if form.is_valid():
+            form.save()
+            messages.success(request, "Profile saved.")
+            return redirect("accounts:profile")
+    else:
+        form = ProfileForm(instance=request.user)
+    return render(
+        request,
+        "accounts/profile.html",
+        {"form": form, "password_form": PasswordChangeForm(request.user)},
+    )
+
+
+@signed_in_required
+def password_change(request):
+    """Change password (C-15). Posted from the profile page; errors show there."""
+    if request.method != "POST":
+        return redirect("accounts:profile")
+    password_form = PasswordChangeForm(request.user, request.POST)
+    if password_form.is_valid():
+        user = password_form.save()
+        update_session_auth_hash(request, user)  # stay signed in with the new password
+        messages.success(request, "Password changed.")
+        return redirect("accounts:profile")
+    return render(
+        request,
+        "accounts/profile.html",
+        {"form": ProfileForm(instance=request.user), "password_form": password_form},
+    )
