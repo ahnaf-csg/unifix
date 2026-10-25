@@ -28,10 +28,11 @@ complaints/management/commands/seed_demo.py
                         Demo data command (`python manage.py seed_demo`)
 notifications/          Notification model and list view
 console/                Admin-side views (dashboard, queue, actions, students, users, reports)
-templates/              base.html, partials/, accounts/, student/, console/, notifications/
+templates/              base.html, 403.html, 404.html, partials/, accounts/, student/, console/, notifications/
 templates/partials/     topbar.html, sidebar.html, messages.html, status_badge.html
 static/css/unifix.css   Single stylesheet (design tokens at the top)
 static/js/unifix.js     Small helpers only (form toggles, file previews, charts)
+static/img/nsu_logo.png NSU logo shown in the top bar
 media/                  Uploaded files (not committed to Git)
 docs/                   These documents
 ```
@@ -58,6 +59,8 @@ Authentication uses Django's `AllowAllUsersModelBackend`; the login form's `conf
 | `date_joined` | DateTime (built-in) | Auto |
 
 Methods: `is_student()`, `is_dept_admin()`, `is_super_admin()`, `can_view_complaint(complaint)`, `suspend()`, `reactivate()`, `soft_delete()`.
+
+**Login form field** (P-01, VR-15): `login_type`, choices `student` (Student, default) and `staff` (Staff). Not stored; checked against `role` at login (`student` → `student`; `staff` → `dept_admin` or `super_admin`).
 
 ### complaints.Department
 
@@ -224,11 +227,12 @@ Priority text: `pri-high` (red), `pri-medium` (amber), `pri-low` (muted grey).
 
 | Component | Classes |
 |---|---|
-| Layout | `topbar`, `sidebar`, `sidebar-label`, `sidebar-link`, `sidebar-link-active`, `main`, `breadcrumb`, `page-title`, `page-sub`, `row` |
-| Top bar | `brand`, `topbar-search`, `bell`, `bell-count`, `user-menu`, `avatar` |
+| Layout | `topbar`, `topbar-left`, `topbar-center`, `topbar-right`, `sidebar`, `sidebar-label`, `sidebar-link`, `sidebar-link-active`, `main`, `breadcrumb`, `page-title`, `page-sub`, `row` |
+| Top bar | `topbar-logo` (NSU logo), `brand` (UniFix wordmark), `topbar-search`, `bell`, `bell-count`, `user-menu`, `avatar` |
 | Cards | `card`, `card-stat`, `stat-label`, `stat-value`, `stat-note` |
 | Buttons | `btn`, `btn-primary`, `btn-danger`, `btn-sm` (disabled buttons use the `disabled` attribute) |
 | Forms | `form-field`, `form-help`, `form-error` |
+| Tabs | `tab-list` (group), `tab` (one tab; the active tab is the checked radio button), `tab-panel` (content shown for a tab) |
 | Messages | `alert-info`, `alert-success`, `alert-warning`, `alert-error` (Django message levels) |
 | Text | `text-muted`, `text-mono` |
 

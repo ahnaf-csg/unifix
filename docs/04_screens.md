@@ -2,7 +2,21 @@
 
 18 screens. Each lists what it shows, its buttons, and which data it reads (R) or writes (W). URL and template names follow `05_data_dictionary.md`.
 
-**Layout:** every signed-in page uses `base.html` (with `partials/topbar.html`, `partials/sidebar.html`, `partials/messages.html`): a top bar (logo, search, notification bell with unread count, user menu) and a role-specific left sidebar. Until notifications are built (Sprint 3, C-11) the bell is shown without a count.
+**Layout:** every signed-in page uses `base.html` (with `partials/topbar.html`, `partials/sidebar.html`, `partials/messages.html`): a white top bar and a role-specific navy left sidebar.
+
+**Top bar** (CR-11), three zones, vertically aligned:
+
+| Zone | Contents |
+|---|---|
+| Left (`topbar-left`) | NSU logo (`static/img/nsu_logo.png`, about 36 px high, alt text "North South University") |
+| Centre (`topbar-center`) | UniFix wordmark: navy "U" square + "UniFix", subtitle "NSU Campus Services" (students, signed-out pages) or "Admin Console" (admins) |
+| Right (`topbar-right`, signed-in pages only) | Search, notification bell with unread count, user menu (avatar, name, role, Log out) |
+
+- Login (P-01) and Register (P-02) use the same bar without the right zone.
+- Phone width: the wordmark may shrink and search collapses to an icon; no sideways scroll.
+- Until notifications are built (Sprint 3, C-11) the bell is shown without a count.
+
+**Error pages** (`403.html`, `404.html`, both extend `base.html`): a short message and a "Back to your home" link to `/`, which sends signed-in users to their role home and everyone else to login.
 
 | Sidebar | Links |
 |---|---|
@@ -30,9 +44,12 @@ Search reuses the existing list pages with a `?q=` parameter instead of adding n
 ### P-01 Login
 `accounts:login` · `accounts/login.html`
 
-- Shows: email, password fields; link to Register.
+- Shows: login type tabs (CR-10) **Student** (default) and **Staff**, submitted with the form as `login_type`; email and password fields.
+  - Student tab: hint "Use your @northsouth.edu student email"; link "Create an account" (P-02).
+  - Staff tab: hint "For department coordinators and administrators"; note "Staff accounts are created by the Super Admin." (no register link).
+  - The tabs are radio buttons styled as tabs: Tab reaches the group, arrow keys switch tabs, and the active tab is clearly highlighted. No JavaScript.
 - Buttons: **Log in** → redirects by role (student → S-01, admin → A-01).
-- R: User. Suspended or deleted accounts see "Account inactive" (VR-11).
+- R: User. Checks, in order: email and password; suspended or deleted accounts see "Account inactive" (VR-11); a tab that does not match the role is refused with "This is a staff account. Please use the Staff tab." or "This is a student account. Please use the Student tab." (VR-15). The form keeps the chosen tab after an error.
 
 ### P-02 Register (students)
 `accounts:register` · `accounts/register.html`

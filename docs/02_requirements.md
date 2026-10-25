@@ -93,6 +93,7 @@ Charts are static (no animation): Chart.js with animation disabled, or plain CSS
 | VR-12 | Only the Super Admin can edit, suspend or delete users, and reassign complaints. |
 | VR-13 | Registration requires an `@northsouth.edu` email address that is not already registered. |
 | VR-14 | Search results only include records the user is allowed to see (VR-01, VR-02). |
+| VR-15 | Login is refused when the chosen login type does not match the account role (Student tab: `student`; Staff tab: `dept_admin`, `super_admin`). Inactive accounts see "Account inactive" first (VR-11). |
 
 ## 7. Non-Functional Requirements
 

@@ -54,12 +54,17 @@ Purpose: confirm that requirements, workflow, screens, data dictionary, diagrams
 | I-28 | VR-11 asks for an "Account inactive" message, but Django's default backend shows a generic login error | Low | `AllowAllUsersModelBackend` with the check in `confirm_login_allowed()` | 05 |
 | I-29 | The notification bell's unread count depends on notifications, which are built in Sprint 3 | Low | Bell shown without a count until Sprint 3 | 04 |
 | I-30 | Tag scheme in `08` (`v0.1-iter1`) differed from the real tag (`v0.1.3-planning`); tracking ID generation unspecified | Low | Tag scheme defined (planning `v0.1.x`, sprints `v0.2-sprint1` … , final `v1.0`); tracking ID = `UF-` + zero-padded pk | 05, 07, 08 |
+| I-31 | After a failed profile save, the top bar showed the unsaved name | Low | Profile form edits a fresh copy of the user, not `request.user` | `accounts/views.py` |
+| I-32 | `.claude/` (local tool config and worktrees) was not ignored by Git | Low | Added to `.gitignore` | `.gitignore` |
+| I-33 | Test suite took about 50 s because of password hashing | Low | MD5 hasher when running tests only | `unifix/settings.py` |
+| I-34 | 403 and 404 showed Django's plain pages with no way back | Low | `403.html` and `404.html` extend `base.html` with a link home | 04, 05, templates |
+| I-35 | `/` routing by role was untested | Low | Verified correct (via the login page); test added | `accounts/tests.py` |
 
 ## 3. Traceability Matrix
 
 | Feature | Screens | Rules | Use cases | Model elements |
 |---|---|---|---|---|
-| C-01 Accounts and roles | P-01, P-02 | VR-11, VR-13 | UC-01, UC-02 | `User.role`, `account_state` |
+| C-01 Accounts and roles | P-01, P-02 | VR-11, VR-13, VR-15 | UC-01, UC-02 | `User.role`, `account_state`, `login_type` |
 | C-02 Submission | S-02 | VR-07, VR-08 | UC-03 | `Complaint`, `Attachment` |
 | C-03 Duplicates and Me too | S-02, S-03 | VR-01, VR-09 | UC-04, UC-05 | `find_duplicates()`, `support()`, `Support` |
 | C-04 Routing | S-02, A-02 | VR-02 | UC-03 | `Complaint.department`, `Category.department` |
@@ -90,4 +95,4 @@ Purpose: confirm that requirements, workflow, screens, data dictionary, diagrams
 
 1. Run the automated checks (V-01 to V-05) with the verification script kept alongside these docs.
 2. Walk through the manual checks V-06 to V-13 for any section that changed.
-3. Log new issues here as I-31, I-32, … and link fixes to a CR in `08_iteration_log.md`.
+3. Log new issues here as I-36, I-37, … and link fixes to a CR in `08_iteration_log.md`.

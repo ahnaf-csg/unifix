@@ -39,6 +39,8 @@ Tracks feedback and the changes it causes, iteration by iteration, so each phase
 | FB-07 | Oct 2026 | Team | Verify all documents are aligned before building | CR-07 |
 | FB-08 | Oct 2026 | Team | Plan the database visually before creating demo data | CR-08 |
 | FB-09 | Oct 2026 | Claude Code review | Pre-build review found gaps: sprint coverage, User model details, missing file names, CSS not reusable, sidebar, search fields, room format, ER footnote, tag scheme | CR-09 |
+| FB-10 | Oct 2026 | Team (Sprint 1 review) | Students and staff should choose how they log in; staff should not see the register link | CR-10 |
+| FB-11 | Oct 2026 | Team (Sprint 1 review) | Top bar should show the NSU logo, with the UniFix wordmark centred and tools on the right | CR-11 |
 
 ## 4. Change Requests
 
@@ -53,6 +55,8 @@ Tracks feedback and the changes it causes, iteration by iteration, so each phase
 | CR-07 | FB-07 | Consistency fixes from the verification pass | 01–06, mockups; see `09_verification_report.md` | Done (planning) |
 | CR-08 | FB-08 | ER diagram with keys and cardinalities, matching `05` §3 | `06` §3, `diagrams/er_diagram.*` | Done (planning) |
 | CR-09 | FB-09 | Sprint 1 pre-build doc fixes (`09` I-17 to I-30) | C-10, C-15, C-16, C-18, VR-11, S-03, `User`, `Complaint.room`, `Complaint.tracking_id`, `05` §2, §5–7, `06` §3, `diagrams/er_diagram.*` | Done (planning) |
+| CR-10 | FB-10 | Student/Staff tabs on P-01; wrong tab refused | P-01, VR-15, `login_type` (`05` §3), tab classes (`05` §5), TC-30 to TC-34 | Done (Sprint 1) |
+| CR-11 | FB-11 | Three-zone top bar with NSU logo | `04` Layout, `static/img/nsu_logo.png`, top bar classes (`05` §5) | Done (Sprint 1) |
 
 ## 5. Iteration Template
 
@@ -73,8 +77,8 @@ Retrospective: keep … / change …
 
 ### Iteration 1 (v0.2-sprint1): Oct 2026
 Goal: users can log in by role.
-Feedback received: FB-09 (pre-build review)
-Change requests: CR-09 (accepted, done before coding)
+Feedback received: FB-09 (pre-build review), FB-10, FB-11 (Sprint 1 review)
+Change requests: CR-09 (done before coding), CR-10, CR-11 (done in the review round)
 Foundation touched (03/05)? yes, 05 in CR-09 → ER diagram footnote updated
 Built / changed: project setup; `accounts.User`; `Department`, `Category`; login, logout, register; role redirect; profile and password change; base layout and stylesheet; `seed_demo`; 25 tests (`10_test_plan.md`)
 Carried over to next iteration: `User.can_view_complaint()` (needs `Complaint`, Sprint 2); complaints in `seed_demo` (Sprints 2–3)
