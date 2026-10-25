@@ -1,12 +1,90 @@
 {% extends "base.html" %}
 {% block title %}Home{% endblock %}
 {% block content %}
-{# S-01 Student home: placeholder until Sprint 2 (cards, tables and notifications follow) #}
-<h1 class="page-title">Welcome, {{ user.full_name }}</h1>
-<p class="page-sub">Here's where your campus reports will stand.</p>
-<div class="card">
-  <h2>Your complaints</h2>
-  <p class="text-muted">Reporting an issue, tracking it and "Me too" arrive in Sprint 2. Your complaints will be listed here.</p>
-  <p><button class="btn btn-primary" type="button" disabled title="Coming in Sprint 2">+ New complaint</button></p>
+{# S-01 Student home. Notifications arrive in Sprint 3, Confirm/Reopen and Rate in Sprint 4. #}
+<div class="page-head">
+  <div>
+    <h1 class="page-title">Welcome, {{ user.full_name }}</h1>
+    <p class="page-sub">Here's where your campus reports stand today.</p>
+  </div>
+  <a class="btn btn-primary" href="{% url 'student:complaint_new' %}">+ New complaint</a>
+</div>
+
+<div class="row">
+  <div class="card card-stat">
+    <div class="stat-label">Open complaints</div>
+    <div class="stat-value">{{ open_count }}</div>
+    <div class="stat-note">Being handled by departments</div>
+  </div>
+  <div class="card card-stat">
+    <div class="stat-label">Awaiting your confirmation</div>
+    <div class="stat-value">{{ awaiting_count }}</div>
+    <div class="stat-note">Resolved, needs your check</div>
+  </div>
+  <div class="card card-stat">
+    <div class="stat-label">Closed</div>
+    <div class="stat-value">{{ closed_count }}</div>
+    <div class="stat-note">Fix confirmed</div>
+  </div>
+  <div class="card card-stat">
+    <div class="stat-label">Issues you supported</div>
+    <div class="stat-value">{{ supported_count }}</div>
+    <div class="stat-note">"Me too" on others' reports</div>
+  </div>
+</div>
+
+<div class="row section">
+  <div class="card card-wide">
+    <div class="card-head">
+      <h2>Recent complaints</h2>
+      <a href="{% url 'student:complaint_list' %}">View all</a>
+    </div>
+    {% if recent %}
+      <div class="table-scroll">
+        <table>
+          <thead><tr><th>Tracking ID</th><th>Title</th><th>Location</th><th>Status</th><th>Due</th><th>Updated</th></tr></thead>
+          <tbody>
+            {% for c in recent %}
+              <tr>
+                <td><a class="text-mono" href="{% url 'student:complaint_detail' c.tracking_id %}">{{ c.tracking_id }}</a></td>
+                <td>
+                  <a href="{% url 'student:complaint_detail' c.tracking_id %}">{{ c.title }}</a>
+                  <div class="text-muted">{{ c.category.name }} · {{ c.department.name }}{% if c.reporter_id != user.pk %} · Supported{% endif %}</div>
+                </td>
+                <td>{{ c.location }}</td>
+                <td>{% include "partials/status_badge.html" with complaint=c %}</td>
+                <td>{{ c.due_date|date:"j M"|default:"–" }}</td>
+                <td>{{ c.updated_at|date:"j M, H:i" }}</td>
+              </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    {% else %}
+      <p class="text-muted">You haven't reported anything yet. Use <strong>New complaint</strong> when something on campus needs fixing.</p>
+    {% endif %}
+  </div>
+
+  <div>
+    <div class="card">
+      <h2>Needs your action</h2>
+      {% for c in needs_action %}
+        <div class="list-item">
+          <a href="{% url 'student:complaint_detail' c.tracking_id %}">{{ c.title }}</a> <span class="text-mono">{{ c.tracking_id }}</span>
+          <div class="text-muted">
+            {{ c.department.name }} marked this resolved on {{ c.resolved_at|date:"j M" }}.
+            {% if c.can_reopen %}Check the fix within 7 days.{% else %}The 7-day reopen window has passed.{% endif %}
+          </div>
+        </div>
+      {% empty %}
+        <p class="text-muted">Nothing needs your action.</p>
+      {% endfor %}
+      <p class="form-help">Confirm fix, Reopen and Rate buttons arrive in Sprint 4.</p>
+    </div>
+    <div class="card">
+      <h2>Latest notifications</h2>
+      <p class="text-muted">Notifications arrive in Sprint 3.</p>
+    </div>
+  </div>
 </div>
 {% endblock %}

@@ -241,6 +241,8 @@ Priority text: `pri-high` (red), `pri-medium` (amber), `pri-low` (muted grey).
 | Tabs | `tab-list` (group), `tab` (one tab; the active tab is the checked radio button), `tab-panel` (content shown for a tab) |
 | Messages | `alert-info`, `alert-success`, `alert-warning`, `alert-error` (Django message levels) |
 | Text | `text-muted`, `text-mono` |
+| Page structure (Sprint 2) | `page-head` (title + main button), `section` (top spacing), `card-wide`, `card-head`, `table-scroll` (tables scroll inside the card), `list-item` |
+| Complaint pages (Sprint 2) | `steps` (S-02 progress), `match` (duplicate summary), `readonly-value`, `file-list` (chosen files), `next-steps`, `filters` (S-03), `details` (S-04 facts), `description`, `file-grid` (S-04 files), `timeline`, `timeline-note` |
 
 ## 6. Design Tokens (top of `unifix.css`)
 

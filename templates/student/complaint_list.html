@@ -1,0 +1,61 @@
+{% extends "base.html" %}
+{% block title %}My complaints{% endblock %}
+{% block content %}
+{# S-03 My complaints: own and supported complaints, status filter and search (?q=, reused by C-18). #}
+<div class="page-head">
+  <div>
+    <h1 class="page-title">My complaints</h1>
+    <p class="page-sub">Complaints you reported and ones you supported with "Me too".</p>
+  </div>
+  <a class="btn btn-primary" href="{% url 'student:complaint_new' %}">+ New complaint</a>
+</div>
+
+<form class="filters" method="get" action="{% url 'student:complaint_list' %}">
+  <div class="form-field">
+    <label for="filter-q">Search</label>
+    <input id="filter-q" type="search" name="q" value="{{ query }}" placeholder="Tracking ID, title or room">
+  </div>
+  <div class="form-field">
+    <label for="filter-status">Status</label>
+    <select id="filter-status" name="status">
+      <option value="">All statuses</option>
+      {% for value, label in status_choices %}
+        <option value="{{ value }}"{% if value == status %} selected{% endif %}>{{ label }}</option>
+      {% endfor %}
+    </select>
+  </div>
+  <div class="form-field filters-buttons">
+    <button class="btn" type="submit">Apply</button>
+    {% if query or status %}<a href="{% url 'student:complaint_list' %}">Clear</a>{% endif %}
+  </div>
+</form>
+
+<div class="card">
+  {% if complaints %}
+    <div class="table-scroll">
+      <table>
+        <thead><tr><th>Tracking ID</th><th>Title</th><th>Location</th><th>Status</th><th>Due</th><th>Updated</th></tr></thead>
+        <tbody>
+          {% for c in complaints %}
+            <tr>
+              <td><a class="text-mono" href="{% url 'student:complaint_detail' c.tracking_id %}">{{ c.tracking_id }}</a></td>
+              <td>
+                <a href="{% url 'student:complaint_detail' c.tracking_id %}">{{ c.title }}</a>
+                <div class="text-muted">{{ c.category.name }} · {{ c.department.name }}{% if c.reporter_id != user.pk %} · Supported{% endif %}</div>
+              </td>
+              <td>{{ c.location }}</td>
+              <td>{% include "partials/status_badge.html" with complaint=c %}</td>
+              <td>{{ c.due_date|date:"j M"|default:"–" }}</td>
+              <td>{{ c.updated_at|date:"j M, H:i" }}</td>
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  {% elif query or status %}
+    <p class="text-muted">No complaints match your search.</p>
+  {% else %}
+    <p class="text-muted">You haven't reported or supported any complaints yet.</p>
+  {% endif %}
+</div>
+{% endblock %}

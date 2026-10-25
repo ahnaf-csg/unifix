@@ -1,0 +1,2 @@
+{# Status badge (docs/05 §5), plus the overdue flag. Usage: {% include "partials/status_badge.html" with complaint=c %} #}
+<span class="{{ complaint.status_badge_class }}">{{ complaint.get_status_display }}</span>{% if complaint.is_overdue %} <span class="flag-overdue">Overdue</span>{% endif %}

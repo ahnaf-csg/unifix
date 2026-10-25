@@ -93,7 +93,7 @@ Two steps on one URL, so files are uploaded only once (`03_workflow.md` §6). St
 
 - Shows: tracking ID, status badge, category, department, location, description, evidence, public timeline, proof-of-fix photo, students affected, due date (once verified).
 - Timeline entries name the actor by role or department ("Reporter", "You", "Facilities Management", "A student supported this"), never by a person's name (VR-01).
-- Evidence and proof files open through `student:attachment` (permission-checked, NFR-03).
+- Evidence and proof files open through `student:attachment` (permission-checked, NFR-03); the file list is the include `student/attachment_list.html` (images as thumbnails, other files as links).
 - For a supported (not reported) complaint: limited view only (VR-01), with no action buttons.
 - A complaint the student may not see shows the 404 page.
 - Buttons (by status): **Withdraw** (submitted) · **Confirm fix** and **Reopen** (resolved, within 7 days) · **Rate** (closed, not yet rated). Read-only in Sprint 2; Withdraw arrives in Sprint 3, the others in Sprint 4.

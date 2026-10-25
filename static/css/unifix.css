@@ -290,6 +290,58 @@ form:has(input[name="login_type"][value="staff"]:checked) .tab-panel[data-tab="s
 .alert-warning { background: #fff8e6; border-color: #f1dca6; color: #7a5200; }
 .alert-error { background: #fce6e4; border-color: #f0c4bf; color: #b42318; }
 
+/* ---------- 11b. Student complaint pages (S-01 to S-04, Sprint 2) ---------- */
+.page-head { display: flex; justify-content: space-between; align-items: flex-start; gap: 16px; flex-wrap: wrap; }
+.page-head .page-sub { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+.section { margin-top: 16px; }
+.row > .card-wide { flex: 2 1 0; }
+.card-head { display: flex; justify-content: space-between; align-items: baseline; gap: 12px; }
+.table-scroll { overflow-x: auto; }  /* wide tables scroll inside the card, never the page */
+.table-scroll td .text-muted { font-size: 12px; }
+.list-item { padding: 8px 0; border-bottom: 1px solid #eef0f3; }
+.list-item:last-of-type { border-bottom: none; }
+
+/* S-02 steps, duplicate matches, chosen files, side panel */
+.steps { display: flex; gap: 8px; list-style: none; margin-bottom: 4px; font-size: 12px; color: var(--muted); }
+.steps li { padding: 4px 10px; border-radius: 12px; background: #e6ebf3; }
+.steps li[aria-current="step"] { background: var(--primary-soft); color: var(--primary); font-weight: bold; }
+.match {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+  padding: 12px;
+  margin-top: 10px;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+}
+.match .text-muted { font-size: 12px; margin: 2px 0 4px; }
+.readonly-value { padding: 9px 11px; border-radius: 6px; background: #f6f8fb; border: 1px solid var(--border); }
+.readonly-value a { margin-left: 8px; }
+.file-list { list-style: none; margin-top: 8px; font-size: 12px; }
+.file-list li { padding: 4px 0; }
+.file-list .form-error { display: inline; margin-left: 6px; }
+.next-steps { padding-left: 18px; color: var(--muted); }
+.next-steps li + li { margin-top: 6px; }
+
+/* S-03 filters */
+.filters { display: flex; gap: 12px; flex-wrap: wrap; align-items: flex-end; margin-bottom: 16px; }
+.filters .form-field { flex: 1 1 200px; margin-bottom: 0; }
+.filters .filters-buttons { flex: 0 0 auto; display: flex; gap: 10px; align-items: center; }
+
+/* S-04 details, files, timeline */
+.details { display: grid; grid-template-columns: max-content 1fr; gap: 6px 16px; }
+.details dt { font-size: 12px; font-weight: bold; color: var(--muted); }
+.description { white-space: normal; overflow-wrap: anywhere; }
+.file-grid { list-style: none; display: flex; flex-wrap: wrap; gap: 12px; }
+.file-grid li { width: 150px; font-size: 12px; overflow-wrap: anywhere; }
+.file-grid img { display: block; width: 150px; height: 110px; object-fit: cover; border-radius: 6px; border: 1px solid var(--border); margin-bottom: 4px; }
+.timeline { list-style: none; border-left: 2px solid var(--border); padding-left: 14px; }
+.timeline li { position: relative; padding-bottom: 14px; }
+.timeline li::before { content: ""; position: absolute; left: -20px; top: 5px; width: 10px; height: 10px; border-radius: 50%; background: var(--primary); }
+.timeline-note { margin-top: 4px; padding: 6px 8px; background: #f6f8fb; border-radius: 6px; overflow-wrap: anywhere; }
+
 /* ---------- 12. Text helpers ---------- */
 .text-muted { color: var(--muted); }
 .text-mono { font-family: ui-monospace, Consolas, monospace; font-size: 12px; color: var(--muted); }
