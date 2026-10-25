@@ -1,0 +1,155 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1500" height="1010" viewBox="0 0 1500 1010" font-family="DejaVu Sans, Arial"><rect width="1500" height="1010" fill="#fff"/>
+<text x="40" y="26" font-size="18" font-weight="bold" fill="#14294a">UniFix: entity–relationship diagram</text>
+<path d="M610 98.0 L705.0 98.0 L705.0 107.5 L800 107.5" fill="none" stroke="#7a8597" stroke-width="1.6"/>
+<text x="618" y="92.0" font-size="12" font-weight="bold" fill="#b0490c" text-anchor="start">1</text>
+<text x="792" y="101.5" font-size="12" font-weight="bold" fill="#b0490c" text-anchor="end">N</text>
+<text x="709.0" y="97.75" font-size="11" font-style="italic" fill="#475467">owns</text>
+<path d="M470.0 156 L470.0 203.0 L636.0 203.0 L636.0 250" fill="none" stroke="#7a8597" stroke-width="1.6"/>
+<text x="476.0" y="170" font-size="12" font-weight="bold" fill="#b0490c" text-anchor="start">1</text>
+<text x="642.0" y="244" font-size="12" font-weight="bold" fill="#b0490c" text-anchor="start">N</text>
+<text x="557.0" y="198.0" font-size="11" font-style="italic" fill="#475467">handles</text>
+<path d="M945.0 175 L945.0 212.5 L864.0 212.5 L864.0 250" fill="none" stroke="#7a8597" stroke-width="1.6"/>
+<text x="951.0" y="189" font-size="12" font-weight="bold" fill="#b0490c" text-anchor="start">1</text>
+<text x="870.0" y="244" font-size="12" font-weight="bold" fill="#b0490c" text-anchor="start">N</text>
+<text x="908.5" y="207.5" font-size="11" font-style="italic" fill="#475467">classifies</text>
+<path d="M560 336.0 L450.0 336.0 L450.0 334.4 L340 334.4" fill="none" stroke="#7a8597" stroke-width="1.6"/>
+<text x="552" y="330.0" font-size="12" font-weight="bold" fill="#b0490c" text-anchor="end">1</text>
+<text x="348" y="328.4" font-size="12" font-weight="bold" fill="#b0490c" text-anchor="start">N</text>
+<text x="454.0" y="330.2" font-size="11" font-style="italic" fill="#475467">has</text>
+<path d="M560 542.4 L250.0 542.4 L250.0 560" fill="none" stroke="#7a8597" stroke-width="1.6"/>
+<text x="552" y="536.4" font-size="12" font-weight="bold" fill="#b0490c" text-anchor="end">1</text>
+<text x="256.0" y="554" font-size="12" font-weight="bold" fill="#b0490c" text-anchor="start">N</text>
+<text x="409.0" y="537.4" font-size="11" font-style="italic" fill="#475467">logs</text>
+<path d="M340 718.25 L450.0 718.25 L450.0 794.7 L560 794.7" fill="none" stroke="#7a8597" stroke-width="1.6"/>
+<text x="348" y="712.25" font-size="12" font-weight="bold" fill="#b0490c" text-anchor="start">N</text>
+<text x="552" y="788.7" font-size="12" font-weight="bold" fill="#b0490c" text-anchor="end">1</text>
+<text x="454.0" y="751.475" font-size="11" font-style="italic" fill="#475467">performed by</text>
+<path d="M940 291.28 L1050.0 291.28 L1050.0 290.5 L1160 290.5" fill="none" stroke="#7a8597" stroke-width="1.6"/>
+<text x="948" y="285.28" font-size="12" font-weight="bold" fill="#b0490c" text-anchor="start">1</text>
+<text x="1152" y="284.5" font-size="12" font-weight="bold" fill="#b0490c" text-anchor="end">N</text>
+<text x="1054.0" y="285.89" font-size="11" font-style="italic" fill="#475467">receives</text>
+<path d="M940 422.0 L1050.0 422.0 L1050.0 496.2 L1160 496.2" fill="none" stroke="#7a8597" stroke-width="1.6"/>
+<text x="948" y="416.0" font-size="12" font-weight="bold" fill="#b0490c" text-anchor="start">1</text>
+<text x="1152" y="490.2" font-size="12" font-weight="bold" fill="#b0490c" text-anchor="end">0..1</text>
+<text x="1054.0" y="454.1" font-size="11" font-style="italic" fill="#475467">rated by</text>
+<path d="M1160 358.0 L1010.0 358.0 L1010.0 744.9 L940 744.9" fill="none" stroke="#7a8597" stroke-width="1.6"/>
+<text x="1152" y="352.0" font-size="12" font-weight="bold" fill="#b0490c" text-anchor="end">N</text>
+<text x="948" y="738.9" font-size="12" font-weight="bold" fill="#b0490c" text-anchor="start">1</text>
+<text x="1014.0" y="546.45" font-size="11" font-style="italic" fill="#475467">gives</text>
+<path d="M1160 573.2 L1078.0 573.2 L1078.0 769.8 L940 769.8" fill="none" stroke="#7a8597" stroke-width="1.6"/>
+<text x="1152" y="567.2" font-size="12" font-weight="bold" fill="#b0490c" text-anchor="end">N</text>
+<text x="948" y="763.8" font-size="12" font-weight="bold" fill="#b0490c" text-anchor="start">1</text>
+<text x="1082.0" y="666.5" font-size="11" font-style="italic" fill="#475467">gives</text>
+<path d="M1160 776.5 L1100.0 776.5 L1100.0 832.05 L940 832.05" fill="none" stroke="#7a8597" stroke-width="1.6"/>
+<text x="1152" y="770.5" font-size="12" font-weight="bold" fill="#b0490c" text-anchor="end">N</text>
+<text x="948" y="826.05" font-size="12" font-weight="bold" fill="#b0490c" text-anchor="start">1</text>
+<text x="1104.0" y="799.275" font-size="11" font-style="italic" fill="#475467">receives</text>
+<path d="M750.0 720 L750.0 594" fill="none" stroke="#7a8597" stroke-width="1.6"/>
+<text x="756.0" y="714" font-size="12" font-weight="bold" fill="#b0490c" text-anchor="start">1</text>
+<text x="756.0" y="608" font-size="12" font-weight="bold" fill="#b0490c" text-anchor="start">N</text>
+<text x="754.0" y="652.0" font-size="11" font-style="italic" fill="#475467">reports</text>
+<path d="M330 121.19999999999999 L18 121.19999999999999 L18 906.75 L560 906.75" fill="none" stroke="#7a8597" stroke-width="1.6"/>
+<text x="322" y="115.19999999999999" font-size="12" font-weight="bold" fill="#b0490c" text-anchor="end">0..1</text>
+<text x="552" y="900.75" font-size="12" font-weight="bold" fill="#b0490c" text-anchor="end">N</text>
+<text x="22.0" y="508.975" font-size="11" font-style="italic" fill="#475467">employs (dept_admin)</text>
+<rect x="330" y="40" width="280" height="116" rx="6" fill="#fff" stroke="#1d5bbf" stroke-width="1.4"/>
+<rect x="330" y="40" width="280" height="32" rx="6" fill="#1d5bbf"/><rect x="330" y="66" width="280" height="6" fill="#1d5bbf"/>
+<text x="342" y="61" font-size="14" font-weight="bold" fill="#fff">Department</text>
+<text x="342" y="90" font-size="12" fill="#1c2433"><tspan font-weight="bold" fill="#b0490c">PK</tspan> id</text>
+<text x="342" y="109" font-size="12" fill="#1c2433">name</text>
+<text x="342" y="128" font-size="12" fill="#1c2433">code</text>
+<text x="342" y="147" font-size="12" fill="#1c2433">is_active</text>
+<rect x="800" y="40" width="290" height="135" rx="6" fill="#fff" stroke="#1d5bbf" stroke-width="1.4"/>
+<rect x="800" y="40" width="290" height="32" rx="6" fill="#1d5bbf"/><rect x="800" y="66" width="290" height="6" fill="#1d5bbf"/>
+<text x="812" y="61" font-size="14" font-weight="bold" fill="#fff">Category</text>
+<text x="812" y="90" font-size="12" fill="#1c2433"><tspan font-weight="bold" fill="#b0490c">PK</tspan> id</text>
+<text x="812" y="109" font-size="12" fill="#1c2433">name</text>
+<text x="812" y="128" font-size="12" fill="#1c2433"><tspan font-weight="bold" fill="#1d5bbf">FK</tspan> department_id</text>
+<text x="812" y="147" font-size="12" fill="#1c2433">requires_attachment</text>
+<text x="812" y="166" font-size="12" fill="#1c2433">is_active</text>
+<rect x="560" y="250" width="380" height="344" rx="6" fill="#fff" stroke="#14294a" stroke-width="2"/>
+<rect x="560" y="250" width="380" height="32" rx="6" fill="#14294a"/><rect x="560" y="276" width="380" height="6" fill="#14294a"/>
+<text x="572" y="271" font-size="14" font-weight="bold" fill="#fff">Complaint</text>
+<text x="572" y="300" font-size="12" fill="#1c2433"><tspan font-weight="bold" fill="#b0490c">PK</tspan> id</text>
+<text x="572" y="319" font-size="12" fill="#1c2433">tracking_id (unique)</text>
+<text x="572" y="338" font-size="12" fill="#1c2433"><tspan font-weight="bold" fill="#1d5bbf">FK</tspan> reporter_id → User</text>
+<text x="572" y="357" font-size="12" fill="#1c2433"><tspan font-weight="bold" fill="#1d5bbf">FK</tspan> category_id</text>
+<text x="572" y="376" font-size="12" fill="#1c2433"><tspan font-weight="bold" fill="#1d5bbf">FK</tspan> department_id</text>
+<text x="572" y="395" font-size="12" fill="#1c2433">title</text>
+<text x="572" y="414" font-size="12" fill="#1c2433">description</text>
+<text x="572" y="433" font-size="12" fill="#1c2433">building</text>
+<text x="572" y="452" font-size="12" fill="#1c2433">room</text>
+<text x="572" y="471" font-size="12" fill="#1c2433">status</text>
+<text x="572" y="490" font-size="12" fill="#1c2433">priority (null)</text>
+<text x="572" y="509" font-size="12" fill="#1c2433">due_date (null)</text>
+<text x="572" y="528" font-size="12" fill="#1c2433">is_anonymous</text>
+<text x="572" y="547" font-size="12" fill="#1c2433">reopen_count</text>
+<text x="572" y="566" font-size="12" fill="#1c2433">created_at / updated_at</text>
+<text x="572" y="585" font-size="12" fill="#1c2433">verified_at / resolved_at / closed_at</text>
+<rect x="40" y="250" width="300" height="211" rx="6" fill="#fff" stroke="#1d5bbf" stroke-width="1.4"/>
+<rect x="40" y="250" width="300" height="32" rx="6" fill="#1d5bbf"/><rect x="40" y="276" width="300" height="6" fill="#1d5bbf"/>
+<text x="52" y="271" font-size="14" font-weight="bold" fill="#fff">Attachment</text>
+<text x="52" y="300" font-size="12" fill="#1c2433"><tspan font-weight="bold" fill="#b0490c">PK</tspan> id</text>
+<text x="52" y="319" font-size="12" fill="#1c2433"><tspan font-weight="bold" fill="#1d5bbf">FK</tspan> complaint_id</text>
+<text x="52" y="338" font-size="12" fill="#1c2433">file</text>
+<text x="52" y="357" font-size="12" fill="#1c2433">kind (evidence / proof_of_fix)</text>
+<text x="52" y="376" font-size="12" fill="#1c2433">original_name</text>
+<text x="52" y="395" font-size="12" fill="#1c2433">mime_type</text>
+<text x="52" y="414" font-size="12" fill="#1c2433">size_bytes</text>
+<text x="52" y="433" font-size="12" fill="#1c2433"><tspan font-weight="bold" fill="#1d5bbf">FK</tspan> uploaded_by → User</text>
+<text x="52" y="452" font-size="12" fill="#1c2433">uploaded_at</text>
+<rect x="40" y="560" width="300" height="211" rx="6" fill="#fff" stroke="#1d5bbf" stroke-width="1.4"/>
+<rect x="40" y="560" width="300" height="32" rx="6" fill="#1d5bbf"/><rect x="40" y="586" width="300" height="6" fill="#1d5bbf"/>
+<text x="52" y="581" font-size="14" font-weight="bold" fill="#fff">ComplaintUpdate</text>
+<text x="52" y="610" font-size="12" fill="#1c2433"><tspan font-weight="bold" fill="#b0490c">PK</tspan> id</text>
+<text x="52" y="629" font-size="12" fill="#1c2433"><tspan font-weight="bold" fill="#1d5bbf">FK</tspan> complaint_id</text>
+<text x="52" y="648" font-size="12" fill="#1c2433"><tspan font-weight="bold" fill="#1d5bbf">FK</tspan> actor_id → User</text>
+<text x="52" y="667" font-size="12" fill="#1c2433">action</text>
+<text x="52" y="686" font-size="12" fill="#1c2433">from_status / to_status</text>
+<text x="52" y="705" font-size="12" fill="#1c2433"><tspan font-weight="bold" fill="#1d5bbf">FK</tspan> from_ / to_department</text>
+<text x="52" y="724" font-size="12" fill="#1c2433">note</text>
+<text x="52" y="743" font-size="12" fill="#1c2433">is_internal</text>
+<text x="52" y="762" font-size="12" fill="#1c2433">created_at</text>
+<rect x="1160" y="250" width="300" height="135" rx="6" fill="#fff" stroke="#1d5bbf" stroke-width="1.4"/>
+<rect x="1160" y="250" width="300" height="32" rx="6" fill="#1d5bbf"/><rect x="1160" y="276" width="300" height="6" fill="#1d5bbf"/>
+<text x="1172" y="271" font-size="14" font-weight="bold" fill="#fff">Support</text>
+<text x="1172" y="300" font-size="12" fill="#1c2433"><tspan font-weight="bold" fill="#b0490c">PK</tspan> id</text>
+<text x="1172" y="319" font-size="12" fill="#1c2433"><tspan font-weight="bold" fill="#1d5bbf">FK</tspan> complaint_id</text>
+<text x="1172" y="338" font-size="12" fill="#1c2433"><tspan font-weight="bold" fill="#1d5bbf">FK</tspan> student_id → User</text>
+<text x="1172" y="357" font-size="12" fill="#1c2433">created_at</text>
+<text x="1172" y="376" font-size="12" fill="#1c2433"><tspan fill="#667085">UNIQUE (complaint, student)</tspan></text>
+<rect x="1160" y="450" width="300" height="154" rx="6" fill="#fff" stroke="#1d5bbf" stroke-width="1.4"/>
+<rect x="1160" y="450" width="300" height="32" rx="6" fill="#1d5bbf"/><rect x="1160" y="476" width="300" height="6" fill="#1d5bbf"/>
+<text x="1172" y="471" font-size="14" font-weight="bold" fill="#fff">Rating</text>
+<text x="1172" y="500" font-size="12" fill="#1c2433"><tspan font-weight="bold" fill="#b0490c">PK</tspan> id</text>
+<text x="1172" y="519" font-size="12" fill="#1c2433"><tspan font-weight="bold" fill="#1d5bbf">FK</tspan> complaint_id (unique)</text>
+<text x="1172" y="538" font-size="12" fill="#1c2433"><tspan font-weight="bold" fill="#1d5bbf">FK</tspan> student_id → User</text>
+<text x="1172" y="557" font-size="12" fill="#1c2433">stars (1–5)</text>
+<text x="1172" y="576" font-size="12" fill="#1c2433">comment</text>
+<text x="1172" y="595" font-size="12" fill="#1c2433">created_at</text>
+<rect x="1160" y="690" width="300" height="173" rx="6" fill="#fff" stroke="#1d5bbf" stroke-width="1.4"/>
+<rect x="1160" y="690" width="300" height="32" rx="6" fill="#1d5bbf"/><rect x="1160" y="716" width="300" height="6" fill="#1d5bbf"/>
+<text x="1172" y="711" font-size="14" font-weight="bold" fill="#fff">Notification</text>
+<text x="1172" y="740" font-size="12" fill="#1c2433"><tspan font-weight="bold" fill="#b0490c">PK</tspan> id</text>
+<text x="1172" y="759" font-size="12" fill="#1c2433"><tspan font-weight="bold" fill="#1d5bbf">FK</tspan> recipient_id → User</text>
+<text x="1172" y="778" font-size="12" fill="#1c2433"><tspan font-weight="bold" fill="#1d5bbf">FK</tspan> complaint_id (null)</text>
+<text x="1172" y="797" font-size="12" fill="#1c2433">event</text>
+<text x="1172" y="816" font-size="12" fill="#1c2433">message</text>
+<text x="1172" y="835" font-size="12" fill="#1c2433">is_read</text>
+<text x="1172" y="854" font-size="12" fill="#1c2433">created_at</text>
+<rect x="560" y="720" width="380" height="249" rx="6" fill="#fff" stroke="#14294a" stroke-width="2"/>
+<rect x="560" y="720" width="380" height="32" rx="6" fill="#14294a"/><rect x="560" y="746" width="380" height="6" fill="#14294a"/>
+<text x="572" y="741" font-size="14" font-weight="bold" fill="#fff">User</text>
+<text x="572" y="770" font-size="12" fill="#1c2433"><tspan font-weight="bold" fill="#b0490c">PK</tspan> id</text>
+<text x="572" y="789" font-size="12" fill="#1c2433">email (unique, login)</text>
+<text x="572" y="808" font-size="12" fill="#1c2433">password (hashed)</text>
+<text x="572" y="827" font-size="12" fill="#1c2433">full_name</text>
+<text x="572" y="846" font-size="12" fill="#1c2433">student_id (null, unique)</text>
+<text x="572" y="865" font-size="12" fill="#1c2433">phone</text>
+<text x="572" y="884" font-size="12" fill="#1c2433">role</text>
+<text x="572" y="903" font-size="12" fill="#1c2433"><tspan font-weight="bold" fill="#1d5bbf">FK</tspan> department_id (null)</text>
+<text x="572" y="922" font-size="12" fill="#1c2433">account_state</text>
+<text x="572" y="941" font-size="12" fill="#1c2433">is_active</text>
+<text x="572" y="960" font-size="12" fill="#1c2433">date_joined</text>
+<text x="40" y="996" font-size="11" fill="#667085">PK primary key · FK foreign key · 1 / N / 0..1 cardinality at each end · dark boxes are the two hub entities · not drawn for clarity: Attachment.uploaded_by → User, Notification.complaint_id → Complaint (optional)</text>
+</svg>

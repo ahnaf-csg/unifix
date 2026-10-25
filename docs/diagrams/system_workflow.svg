@@ -1,0 +1,129 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="1060" viewBox="0 0 1200 1060" font-family="DejaVu Sans, Arial">
+<defs><marker id="a" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M2 1L8 5L2 9" fill="none" stroke="#6b7280" stroke-width="1.6"/></marker></defs>
+<rect width="1200" height="1060" fill="#fff"/>
+<text x="20" y="30" font-size="18" font-weight="bold" fill="#14294a">UniFix: system workflow (all actors)</text>
+<rect x="20" y="42" width="290" height="1008" fill="#eef0fe" opacity="0.55" stroke="#d6dbe3"/>
+<rect x="20" y="42" width="290" height="34" fill="#534AB7"/>
+<text x="165.0" y="64" text-anchor="middle" font-size="14" font-weight="bold" fill="#fff">Student</text>
+<rect x="310" y="42" width="290" height="1008" fill="#f1efe8" opacity="0.55" stroke="#d6dbe3"/>
+<rect x="310" y="42" width="290" height="34" fill="#5F5E5A"/>
+<text x="455.0" y="64" text-anchor="middle" font-size="14" font-weight="bold" fill="#fff">System</text>
+<rect x="600" y="42" width="290" height="1008" fill="#e3f4ee" opacity="0.55" stroke="#d6dbe3"/>
+<rect x="600" y="42" width="290" height="34" fill="#0F6E56"/>
+<text x="745.0" y="64" text-anchor="middle" font-size="14" font-weight="bold" fill="#fff">Department Admin</text>
+<rect x="890" y="42" width="290" height="1008" fill="#fdeee6" opacity="0.55" stroke="#d6dbe3"/>
+<rect x="890" y="42" width="290" height="34" fill="#b0490c"/>
+<text x="1035.0" y="64" text-anchor="middle" font-size="14" font-weight="bold" fill="#fff">Super Admin</text>
+<circle cx="34.0" cy="110" r="6" fill="#1c2433"/><line x1="40.0" y1="110" x2="49.0" y2="110" stroke="#6b7280" stroke-width="1.5"/>
+<path d="M280.0 110 L340.0 110" fill="none" stroke="#6b7280" stroke-width="1.5" marker-end="url(#a)"/>
+<path d="M455.0 137.0 L455.0 156.0 L165.0 156.0 L165.0 163.0" fill="none" stroke="#6b7280" stroke-width="1.5" marker-end="url(#a)"/>
+<text x="463.0" y="151.0" font-size="11" fill="#475467" text-anchor="start">student</text>
+<path d="M920.0 110 L570.0 110" fill="none" stroke="#6b7280" stroke-width="1.5" stroke-dasharray="5 4" marker-end="url(#a)"/>
+<text x="745.0" y="104.0" font-size="11" fill="#475467" text-anchor="middle">account state</text>
+<path d="M280.0 190 L340.0 190" fill="none" stroke="#6b7280" stroke-width="1.5" marker-end="url(#a)"/>
+<path d="M455.0 217.0 L455.0 240" fill="none" stroke="#6b7280" stroke-width="1.5" marker-end="url(#a)"/>
+<path d="M409.0 270 L280.0 270" fill="none" stroke="#6b7280" stroke-width="1.5" marker-end="url(#a)"/>
+<text x="344.5" y="264.0" font-size="11" fill="#475467" text-anchor="middle">yes</text>
+<path d="M455.0 300 L455.0 323.0" fill="none" stroke="#6b7280" stroke-width="1.5" marker-end="url(#a)"/>
+<text x="463.0" y="315.5" font-size="11" fill="#475467" text-anchor="start">no</text>
+<path d="M340.0 350 L280.0 350" fill="none" stroke="#6b7280" stroke-width="1.5" stroke-dasharray="5 4" marker-end="url(#a)"/>
+<path d="M1035.0 377.0 L1035.0 390.0 L495.0 390.0 L495.0 379.0" fill="none" stroke="#6b7280" stroke-width="1.5" stroke-dasharray="5 4" marker-end="url(#a)"/>
+<text x="1035.0" y="405.0" font-size="11" fill="#475467" text-anchor="middle">re-route</text>
+<path d="M570.0 350 L630.0 350" fill="none" stroke="#6b7280" stroke-width="1.5" marker-end="url(#a)"/>
+<path d="M745.0 377.0 L745.0 403.0" fill="none" stroke="#6b7280" stroke-width="1.5" marker-end="url(#a)"/>
+<path d="M745.0 457.0 L745.0 480" fill="none" stroke="#6b7280" stroke-width="1.5" marker-end="url(#a)"/>
+<path d="M699.0 510 L570.0 510" fill="none" stroke="#6b7280" stroke-width="1.5" marker-end="url(#a)"/>
+<text x="634.5" y="504.0" font-size="11" fill="#475467" text-anchor="middle">no</text>
+<path d="M745.0 540 L745.0 563.0" fill="none" stroke="#6b7280" stroke-width="1.5" marker-end="url(#a)"/>
+<text x="753.0" y="555.5" font-size="11" fill="#475467" text-anchor="start">yes</text>
+<path d="M630.0 590 L570.0 590" fill="none" stroke="#6b7280" stroke-width="1.5" marker-end="url(#a)"/>
+<path d="M745.0 617.0 L745.0 643.0" fill="none" stroke="#6b7280" stroke-width="1.5" marker-end="url(#a)"/>
+<path d="M745.0 697.0 L745.0 723.0" fill="none" stroke="#6b7280" stroke-width="1.5" marker-end="url(#a)"/>
+<path d="M630.0 750 L570.0 750" fill="none" stroke="#6b7280" stroke-width="1.5" marker-end="url(#a)"/>
+<path d="M340.0 750 L165.0 750 L165.0 800" fill="none" stroke="#6b7280" stroke-width="1.5" marker-end="url(#a)"/>
+<path d="M211.0 830 L340.0 830" fill="none" stroke="#6b7280" stroke-width="1.5" marker-end="url(#a)"/>
+<text x="275.5" y="824.0" font-size="11" fill="#475467" text-anchor="middle">not fixed</text>
+<path d="M570.0 830 L888.0 830 L888.0 670 L864.0 670" fill="none" stroke="#6b7280" stroke-width="1.5" marker-end="url(#a)"/>
+<path d="M165.0 860 L165.0 883.0" fill="none" stroke="#6b7280" stroke-width="1.5" marker-end="url(#a)"/>
+<text x="173.0" y="875.5" font-size="11" fill="#475467" text-anchor="start">fixed</text>
+<path d="M165.0 937.0 L165.0 963.0" fill="none" stroke="#6b7280" stroke-width="1.5" marker-end="url(#a)"/>
+<path d="M280.0 990 L340.0 990" fill="none" stroke="#6b7280" stroke-width="1.5" marker-end="url(#a)"/>
+<path d="M570.0 990 L630.0 990" fill="none" stroke="#6b7280" stroke-width="1.5" marker-end="url(#a)"/>
+<path d="M860.0 990 L920.0 990" fill="none" stroke="#6b7280" stroke-width="1.5" marker-end="url(#a)"/>
+<rect x="50.0" y="83.0" width="230" height="54" rx="8" fill="#fff" stroke="#534AB7" stroke-width="1.5"/>
+<text x="165.0" y="106" text-anchor="middle" font-size="12.5" font-weight="bold" fill="#1c2433">Log in / register</text>
+<text x="165.0" y="124" text-anchor="middle" font-size="11" fill="#5d6b80">NSU email</text>
+<rect x="340.0" y="83.0" width="230" height="54" rx="8" fill="#fff" stroke="#5F5E5A" stroke-width="1.5"/>
+<text x="455.0" y="106" text-anchor="middle" font-size="12.5" font-weight="bold" fill="#1c2433">Check account state</text>
+<text x="455.0" y="124" text-anchor="middle" font-size="11" fill="#5d6b80">Route to role home</text>
+<rect x="920.0" y="83.0" width="230" height="54" rx="8" fill="#fff" stroke="#b0490c" stroke-width="1.5"/>
+<text x="1035.0" y="106" text-anchor="middle" font-size="12.5" font-weight="bold" fill="#1c2433">Manage users</text>
+<text x="1035.0" y="124" text-anchor="middle" font-size="11" fill="#5d6b80">Edit, suspend, soft-delete</text>
+<rect x="50.0" y="163.0" width="230" height="54" rx="8" fill="#fff" stroke="#534AB7" stroke-width="1.5"/>
+<text x="165.0" y="186" text-anchor="middle" font-size="12.5" font-weight="bold" fill="#1c2433">Fill complaint form</text>
+<text x="165.0" y="204" text-anchor="middle" font-size="11" fill="#5d6b80">Category, location, files</text>
+<rect x="340.0" y="163.0" width="230" height="54" rx="8" fill="#fff" stroke="#5F5E5A" stroke-width="1.5"/>
+<text x="455.0" y="186" text-anchor="middle" font-size="12.5" font-weight="bold" fill="#1c2433">Validate input</text>
+<text x="455.0" y="204" text-anchor="middle" font-size="11" fill="#5d6b80">Fields, file type & size</text>
+<polygon points="455.0,240 501.0,270 455.0,300 409.0,270" fill="#fff" stroke="#5F5E5A" stroke-width="1.5"/><text x="455.0" y="274" text-anchor="middle" font-size="11.5" font-weight="bold" fill="#1c2433">Duplicate?</text>
+<rect x="50.0" y="243.0" width="230" height="54" rx="8" fill="#fff" stroke="#534AB7" stroke-width="1.5"/>
+<text x="165.0" y="266" text-anchor="middle" font-size="12.5" font-weight="bold" fill="#1c2433">Support existing</text>
+<text x="165.0" y="284" text-anchor="middle" font-size="11" fill="#5d6b80">"Me too" saved</text>
+<rect x="340.0" y="323.0" width="230" height="54" rx="8" fill="#fff" stroke="#5F5E5A" stroke-width="1.5"/>
+<text x="455.0" y="346" text-anchor="middle" font-size="12.5" font-weight="bold" fill="#1c2433">Create complaint UF-xxxx</text>
+<text x="455.0" y="364" text-anchor="middle" font-size="11" fill="#5d6b80">Route by category, notify</text>
+<rect x="50.0" y="323.0" width="230" height="54" rx="8" fill="#fff" stroke="#534AB7" stroke-width="1.5"/>
+<text x="165.0" y="346" text-anchor="middle" font-size="12.5" font-weight="bold" fill="#1c2433">Withdraw (optional)</text>
+<text x="165.0" y="364" text-anchor="middle" font-size="11" fill="#5d6b80">Only while Submitted</text>
+<rect x="920.0" y="323.0" width="230" height="54" rx="8" fill="#fff" stroke="#b0490c" stroke-width="1.5"/>
+<text x="1035.0" y="346" text-anchor="middle" font-size="12.5" font-weight="bold" fill="#1c2433">Reassign department</text>
+<text x="1035.0" y="364" text-anchor="middle" font-size="11" fill="#5d6b80">Submitted / Under review</text>
+<rect x="630.0" y="323.0" width="230" height="54" rx="8" fill="#fff" stroke="#0F6E56" stroke-width="1.5"/>
+<text x="745.0" y="346" text-anchor="middle" font-size="12.5" font-weight="bold" fill="#1c2433">Appears in dept queue</text>
+<text x="745.0" y="364" text-anchor="middle" font-size="11" fill="#5d6b80">Filters, search, overdue</text>
+<rect x="630.0" y="403.0" width="230" height="54" rx="8" fill="#fff" stroke="#0F6E56" stroke-width="1.5"/>
+<text x="745.0" y="426" text-anchor="middle" font-size="12.5" font-weight="bold" fill="#1c2433">Start review</text>
+<text x="745.0" y="444" text-anchor="middle" font-size="11" fill="#5d6b80">Check evidence</text>
+<polygon points="745.0,480 791.0,510 745.0,540 699.0,510" fill="#fff" stroke="#0F6E56" stroke-width="1.5"/><text x="745.0" y="514" text-anchor="middle" font-size="11.5" font-weight="bold" fill="#1c2433">Valid?</text>
+<rect x="340.0" y="483.0" width="230" height="54" rx="8" fill="#fff" stroke="#5F5E5A" stroke-width="1.5"/>
+<text x="455.0" y="506" text-anchor="middle" font-size="12.5" font-weight="bold" fill="#1c2433">Rejected + reason</text>
+<text x="455.0" y="524" text-anchor="middle" font-size="11" fill="#5d6b80">Student notified</text>
+<rect x="630.0" y="563.0" width="230" height="54" rx="8" fill="#fff" stroke="#0F6E56" stroke-width="1.5"/>
+<text x="745.0" y="586" text-anchor="middle" font-size="12.5" font-weight="bold" fill="#1c2433">Verify</text>
+<text x="745.0" y="604" text-anchor="middle" font-size="11" fill="#5d6b80">Priority + due date</text>
+<rect x="340.0" y="563.0" width="230" height="54" rx="8" fill="#fff" stroke="#5F5E5A" stroke-width="1.5"/>
+<text x="455.0" y="586" text-anchor="middle" font-size="12.5" font-weight="bold" fill="#1c2433">Notify student</text>
+<text x="455.0" y="604" text-anchor="middle" font-size="11" fill="#5d6b80">Track due date (overdue)</text>
+<rect x="630.0" y="643.0" width="230" height="54" rx="8" fill="#fff" stroke="#0F6E56" stroke-width="1.5"/>
+<text x="745.0" y="666" text-anchor="middle" font-size="12.5" font-weight="bold" fill="#1c2433">Start work</text>
+<text x="745.0" y="684" text-anchor="middle" font-size="11" fill="#5d6b80">Optional public note</text>
+<rect x="630.0" y="723.0" width="230" height="54" rx="8" fill="#fff" stroke="#0F6E56" stroke-width="1.5"/>
+<text x="745.0" y="746" text-anchor="middle" font-size="12.5" font-weight="bold" fill="#1c2433">Mark resolved</text>
+<text x="745.0" y="764" text-anchor="middle" font-size="11" fill="#5d6b80">Note + optional photo</text>
+<rect x="340.0" y="723.0" width="230" height="54" rx="8" fill="#fff" stroke="#5F5E5A" stroke-width="1.5"/>
+<text x="455.0" y="746" text-anchor="middle" font-size="12.5" font-weight="bold" fill="#1c2433">Notify student</text>
+<text x="455.0" y="764" text-anchor="middle" font-size="11" fill="#5d6b80">Reopen window: 7 days</text>
+<polygon points="165.0,800 211.0,830 165.0,860 119.0,830" fill="#fff" stroke="#534AB7" stroke-width="1.5"/><text x="165.0" y="834" text-anchor="middle" font-size="11.5" font-weight="bold" fill="#1c2433">Fixed?</text>
+<rect x="340.0" y="803.0" width="230" height="54" rx="8" fill="#fff" stroke="#5F5E5A" stroke-width="1.5"/>
+<text x="455.0" y="826" text-anchor="middle" font-size="12.5" font-weight="bold" fill="#1c2433">Reopened + reason</text>
+<text x="455.0" y="844" text-anchor="middle" font-size="11" fill="#5d6b80">Admins notified</text>
+<rect x="50.0" y="883.0" width="230" height="54" rx="8" fill="#fff" stroke="#534AB7" stroke-width="1.5"/>
+<text x="165.0" y="906" text-anchor="middle" font-size="12.5" font-weight="bold" fill="#1c2433">Confirm fix</text>
+<text x="165.0" y="924" text-anchor="middle" font-size="11" fill="#5d6b80">Status: Closed</text>
+<rect x="50.0" y="963.0" width="230" height="54" rx="8" fill="#fff" stroke="#534AB7" stroke-width="1.5"/>
+<text x="165.0" y="986" text-anchor="middle" font-size="12.5" font-weight="bold" fill="#1c2433">Rate resolution</text>
+<text x="165.0" y="1004" text-anchor="middle" font-size="11" fill="#5d6b80">1–5 stars</text>
+<rect x="340.0" y="963.0" width="230" height="54" rx="8" fill="#fff" stroke="#5F5E5A" stroke-width="1.5"/>
+<text x="455.0" y="986" text-anchor="middle" font-size="12.5" font-weight="bold" fill="#1c2433">Update dashboards</text>
+<text x="455.0" y="1004" text-anchor="middle" font-size="11" fill="#5d6b80">Scorecards, ratings</text>
+<rect x="920.0" y="963.0" width="230" height="54" rx="8" fill="#fff" stroke="#b0490c" stroke-width="1.5"/>
+<text x="1035.0" y="986" text-anchor="middle" font-size="12.5" font-weight="bold" fill="#1c2433">Reports dashboard</text>
+<text x="1035.0" y="1004" text-anchor="middle" font-size="11" fill="#5d6b80">All departments</text>
+<rect x="630.0" y="963.0" width="230" height="54" rx="8" fill="#fff" stroke="#0F6E56" stroke-width="1.5"/>
+<text x="745.0" y="986" text-anchor="middle" font-size="12.5" font-weight="bold" fill="#1c2433">Dept dashboard</text>
+<text x="745.0" y="1004" text-anchor="middle" font-size="11" fill="#5d6b80">Own department</text>
+<circle cx="37.0" cy="270" r="7" fill="#fff" stroke="#1c2433" stroke-width="1.5"/><circle cx="37.0" cy="270" r="4" fill="#1c2433"/><line x1="44.0" y1="270" x2="50.0" y2="270" stroke="#6b7280" stroke-width="1.5"/>
+<circle cx="327.0" cy="510" r="7" fill="#fff" stroke="#1c2433" stroke-width="1.5"/><circle cx="327.0" cy="510" r="4" fill="#1c2433"/><line x1="334.0" y1="510" x2="340.0" y2="510" stroke="#6b7280" stroke-width="1.5"/>
+<line x1="165.0" y1="377.0" x2="165.0" y2="391.0" stroke="#6b7280" stroke-width="1.5" marker-end="url(#a)"/><circle cx="165.0" cy="399.0" r="7" fill="#fff" stroke="#1c2433" stroke-width="1.5"/><circle cx="165.0" cy="399.0" r="4" fill="#1c2433"/>
+<line x1="165.0" y1="1017.0" x2="165.0" y2="1031.0" stroke="#6b7280" stroke-width="1.5" marker-end="url(#a)"/><circle cx="165.0" cy="1039.0" r="7" fill="#fff" stroke="#1c2433" stroke-width="1.5"/><circle cx="165.0" cy="1039.0" r="4" fill="#1c2433"/>
+</svg>
