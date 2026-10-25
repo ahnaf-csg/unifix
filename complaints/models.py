@@ -247,8 +247,24 @@ class Complaint(models.Model):
             raise ValidationError("This category needs at least one photo, video or PDF.")  # VR-08
         if len(files) > MAX_FILES:
             raise ValidationError(f"You can attach at most {MAX_FILES} files.")  # VR-07
-        checked_files = [(f, check_attachment_file(f)) for f in files]  # VR-07
+        # Every file is checked before anything is written (VR-07).
+        checked_files = [(f, check_attachment_file(f)) for f in files]
 
+        # A database rollback does not delete files already written to disk,
+        # so on any error the stored files are removed before re-raising.
+        stored_files = []
+        try:
+            return cls._create_submitted(
+                reporter, category, building, room, title, description, checked_files, stored_files
+            )
+        except Exception:
+            for stored in stored_files:
+                stored.storage.delete(stored.name)
+            raise
+
+    @classmethod
+    def _create_submitted(cls, reporter, category, building, room, title, description, checked_files, stored_files):
+        """The database part of submit(); `stored_files` collects every file written."""
         with transaction.atomic():
             complaint = cls.objects.create(
                 reporter=reporter,
@@ -260,15 +276,17 @@ class Complaint(models.Model):
                 description=description,
             )
             for uploaded_file, mime_type in checked_files:
-                Attachment.objects.create(
+                attachment = Attachment(
                     complaint=complaint,
-                    file=uploaded_file,
                     kind=Attachment.Kind.EVIDENCE,
                     original_name=os.path.basename(uploaded_file.name)[:255],
                     mime_type=mime_type,
                     size_bytes=uploaded_file.size,
                     uploaded_by=reporter,
                 )
+                attachment.file.save(uploaded_file.name, uploaded_file, save=False)  # writes to disk
+                stored_files.append(attachment.file)
+                attachment.save()
             complaint.updates.create(
                 actor=reporter,
                 action=ComplaintUpdate.Action.SUBMITTED,

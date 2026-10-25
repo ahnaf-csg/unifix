@@ -137,7 +137,7 @@ Properties: `is_overdue`, `can_reopen`, `support_count`, `affected_count`, `allo
 | `uploaded_by` | FK → User | |
 | `uploaded_at` | DateTime | Auto |
 
-Property: `is_image` (shown as a thumbnail; other files as a link). The VR-07 check is the module function `check_attachment_file(file)` in `complaints/models.py`, used by the form and by `submit()`; limits `MAX_FILE_SIZE` (15 MB) and `MAX_FILES` (5).
+Property: `is_image` (shown as a thumbnail; other files as a link). The VR-07 check is the module function `check_attachment_file(file)` in `complaints/models.py`, used by the form and by `submit()`; limits `MAX_FILE_SIZE` (15 MB) and `MAX_FILES` (5). The 5-file limit counts evidence files at submission only; the proof-of-fix photo added by `resolve()` (Sprint 3) is separate and does not count. `submit()` checks every file before writing any, and deletes files already written if the transaction fails (a rollback does not remove files from disk).
 
 ### complaints.ComplaintUpdate (history)
 

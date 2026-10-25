@@ -4,10 +4,12 @@ Sprint 1: seed data (TC-23 to TC-25). Sprint 2: complaint models and access
 rules (TC-36 onwards).
 """
 
+import os
 import shutil
 import tempfile
 from datetime import timedelta
 from io import StringIO
+from unittest import mock
 
 from django.core.exceptions import ValidationError
 from django.core.files.uploadedfile import SimpleUploadedFile
@@ -178,6 +180,25 @@ class SubmitTests(ComplaintFixtures):
             self.submit(files=[upload("ok.png"), upload("bad.png", kind="pdf")])
         self.assertFalse(Complaint.objects.exists())
         self.assertFalse(Attachment.objects.exists())
+
+    def stored_file_count(self):
+        return sum(len(files) for _, _, files in os.walk(self.media_root))
+
+    def test_tc47_checked_file_is_stored_unchanged(self):
+        photo = upload("photo.jpg")
+        check_attachment_file(photo)
+        check_attachment_file(photo)  # reading the header twice must not move the start
+        complaint = self.submit(files=[photo])
+        with complaint.attachments.get().file.open("rb") as stored:
+            self.assertEqual(stored.read(), FILE_BYTES["jpg"])
+
+    def test_tc48_failed_submit_leaves_no_files_on_disk(self):
+        before = self.stored_file_count()
+        with mock.patch.object(Notification.objects, "bulk_create", side_effect=RuntimeError("boom")):
+            with self.assertRaises(RuntimeError):
+                self.submit(files=[upload("a.jpg"), upload("b.pdf")])  # fails after the files are written
+        self.assertFalse(Complaint.objects.exists())  # database rolled back
+        self.assertEqual(self.stored_file_count(), before)  # and the files removed
 
     def test_tc39_vr08_category_requiring_attachment_needs_a_file(self):
         with self.assertRaisesMessage(ValidationError, "at least one"):

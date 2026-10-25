@@ -91,6 +91,8 @@ Rules:
 | TC-44 | `complaints/tests.py` | `location`, `status_badge_class`, `is_overdue` per status, `can_reopen` at 7 and 8 days (`03` §5) | "NAC 512"; `badge-under-review`; overdue only for verified, in progress, reopened; reopen allowed up to 7 days |
 | TC-45 | `complaints/tests.py` | `can_view_complaint()` for reporter, supporter, stranger, own-department admin, other admin, Super Admin (VR-01, VR-02) | True, True, False, True, False, True |
 | TC-46 | `complaints/tests.py` | `get_complaint_for_user()` and `has_full_view()` | 404 for a stranger, another department and an unknown ID; full view for the reporter and own-department admin, not for a supporter |
+| TC-47 | `complaints/tests.py` | Run the VR-07 check twice on a file, then submit it | Stored bytes equal the uploaded bytes (the check rewinds the file) |
+| TC-48 | `complaints/tests.py` | Submit with two files and force an error after they are written | No complaint in the database and no new files on disk |
 
 ## 4. Manual Checklist (each sprint)
 
