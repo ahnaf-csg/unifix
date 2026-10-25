@@ -14,12 +14,14 @@ Format: [Keep a Changelog](https://keepachangelog.com). Versions match Git tags.
 
 - Sprint 1 review (FB-10, FB-11): Student and Staff login tabs, and a login on the wrong tab is refused (CR-10, VR-15); three-zone top bar with the NSU logo, centred UniFix wordmark and tools on the right (CR-11).
 - Friendly `403.html` and `404.html` pages with a link home (I-34).
-- 9 more tests (TC-26 to TC-34); 34 in total.
+- 10 more tests (TC-26 to TC-35); 35 in total.
 
 ### Changed
 - `docs/verify_docs.py` also checks `10_test_plan.md`.
 - Tests use a fast password hasher; the suite runs in under a second instead of about 50 s (I-33).
 - `.claude/` is ignored by Git (I-32).
+- CR-11 amended: the NSU logo sits beside the UniFix wordmark in the centre (replacing the "U" square); the left zone is empty.
+- The login email field renders as `type="email"`.
 
 ### Fixed
 - After a failed profile save, the top bar no longer shows the unsaved name (I-31).

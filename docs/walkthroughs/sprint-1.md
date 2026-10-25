@@ -96,6 +96,7 @@ Django's `UserAdmin` assumes a `username`, so we adjust it:
 ### `accounts/forms.py`
 - `LoginForm(AuthenticationForm)`: Django's login form. Its field is still called `username`, but it holds the email because `USERNAME_FIELD = "email"`.
   - *(review)* `login_type = forms.ChoiceField(choices=[("student", "Student"), ("staff", "Staff")], initial="student", widget=forms.RadioSelect)`: the Student/Staff tabs (CR-10). `RadioSelect` renders radio buttons, which the template styles as tabs. `field_order` puts it first.
+  - *(review)* `__init__` sets `self.fields["username"].widget.input_type = "email"`, so the field renders as `type="email"` (phones show the email keyboard; TC-35). Each form gets its own copy of its fields, so this does not affect other forms.
   - `clean_username()` lower-cases the email so the lookup matches.
   - `confirm_login_allowed()`: Django calls it only after the email and password are correct. Raising `ValidationError` stops the login. The order of the checks matters:
     1. inactive account: "Account inactive" (VR-11), so a suspended user never learns anything more;
@@ -142,10 +143,12 @@ The page skeleton every page extends.
 - `{% include "partials/topbar.html" %}` always; the sidebar only `{% if user.is_authenticated %}`.
 - `{% block title %}` and `{% block content %}` are what child templates fill in.
 
-### `templates/partials/topbar.html` *(review: rewritten for CR-11)*
+### `templates/partials/topbar.html` *(review: rewritten for CR-11, then amended)*
 Three zones (`04` Layout):
-- `topbar-left`: `<img class="topbar-logo" src="{% static 'img/nsu_logo.png' %}" alt="North South University" width="36" height="36">`. `{% load static %}` is needed in this file because `{% load %}` is not inherited from `base.html`. `width`/`height` reserve the space before the image loads.
-- `topbar-center`: the UniFix wordmark `<a class="brand" href="/">` with `<i aria-hidden="true">U</i>` (the navy square; hidden from screen readers because the text "UniFix" follows) and the subtitle in `<small>`.
+- `topbar-left`: an empty `<div>`. It keeps the grid balanced so the centre group stays centred, and is reserved for a future mobile menu button.
+- `topbar-center`: one link `<a class="brand" href="/">` holding the NSU logo and the wordmark side by side:
+  - `<img class="topbar-logo" src="{% static 'img/nsu_logo.png' %}" alt="North South University" width="36" height="36">`. `{% load static %}` is needed in this file because `{% load %}` is not inherited from `base.html`. `width`/`height` reserve the space before the image loads.
+  - `<span>UniFix<small>...</small></span>`: the name and the subtitle ("NSU Campus Services" or "Admin Console").
 - `topbar-right`, only `{% if user.is_authenticated %}`: search, bell, user menu. Login and register therefore show the bar without tools.
 - Search is `disabled` until C-18 (Sprint 4); the bell has no count until notifications exist (Sprint 3).
 - The avatar has `title="{{ user.full_name }}"` because the name is hidden on narrower screens.
@@ -186,12 +189,12 @@ Placeholder home pages. The dashboard loops `department.categories.all()` to sho
 The single stylesheet, ported from `docs/mockups/unifix.css`.
 - Section 1 holds the design tokens from `05` §6 (`--navy`, `--primary`, …); everything else uses `var(--token)`.
 - Layout: `body:has(> .sidebar) { display: grid; grid-template-columns: 232px 1fr; }`. Pages with a sidebar become a two-column grid, and the top bar spans both columns (`grid-column: 1 / -1`). Login and register have no sidebar and show a centred card instead.
-- *(review)* Top bar (§4): `.topbar { display: grid; grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr); align-items: center; }`. The two outer columns are always equal, so the middle one (the wordmark) is exactly centred, with or without the right zone. `align-items: center` and a 36 px logo next to a 36 px "U" square put both on the same centre line.
+- *(review)* Top bar (§4): `.topbar { display: grid; grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr); align-items: center; }`. The two outer columns are always equal, so the middle one (logo + wordmark) is exactly centred, with or without the right zone. Inside it, `.brand { display: flex; align-items: center; }` puts the 36 px logo and the text block on the same centre line.
 - *(review)* `.topbar-right > :not(.topbar-search) { flex-shrink: 0; white-space: nowrap; }`: when space runs out only the search box shrinks; the bell and user menu never wrap.
 - *(review)* The search box's magnifier is a small SVG written into the CSS (`url("data:image/svg+xml,...")`), so there is no extra image file.
 - *(review)* Tabs (§10b): the radio button is made invisible (`opacity: 0`, 1 px) but **not** `display: none`, which would make it unreachable by keyboard. `.tab:has(input:checked)` styles the active tab (blue text, tinted background, blue underline); `.tab:has(input:focus-visible)` draws the keyboard focus outline. `form:has(input[value="staff"]:checked) .tab-panel[data-tab="staff"] { display: block; }` swaps the panels.
 - Class names are exactly those in `05` §5 (badges, `pri-*`, `btn-*`, `form-*`, `alert-*`, `topbar-*`, `tab-*`, ...).
-- Breakpoints (§13): below 1300 px the user's name hides (the avatar stays); below 1000 px the tools move to a second row under the logo and wordmark; below 800 px the sidebar becomes a sideways-scrolling row, the wordmark shrinks and search collapses to its icon.
+- Breakpoints (§13): below 1300 px the user's name hides (the avatar stays); below 1000 px the tools move to a second row under the centre group; below 800 px the sidebar becomes a sideways-scrolling row, the NSU logo shrinks to 30 px and search collapses to its icon; only below 360 px does the wordmark text shrink too.
 
 ### `static/img/nsu_logo.png` *(review, CR-11)*
 The university's logo, added unchanged (600 x 600 PNG). The browser scales it down to 36 px high; `05` §2 records its name.
@@ -211,7 +214,7 @@ A custom `manage.py` command: Django finds any `management/commands/<name>.py` w
 - `@transaction.atomic`: either everything is seeded or nothing is.
 
 ### `accounts/tests.py`, `complaints/tests.py`
-34 tests, `TC-01` to `TC-34` (see `10_test_plan.md`).
+35 tests, `TC-01` to `TC-35` (see `10_test_plan.md`).
 - *(review)* `login_data(user_or_email, login_type=None)` builds the login POST and picks the matching tab unless a test asks for a wrong one; the VR-15 tests (`LoginTypeTests`) pass it on purpose.
 - *(review)* `ErrorPageTests` uses `assertTemplateUsed(response, "403.html")` to prove the friendly page (not Django's default) was rendered.
 - Each test runs in a fresh, empty test database.
@@ -227,4 +230,4 @@ A custom `manage.py` command: Django finds any `management/commands/<name>.py` w
 - `docs/00_README.md`: index rows for `10` and `walkthroughs/`.
 - `docs/verify_docs.py`: also checks `10_test_plan.md`.
 - `docs/08_iteration_log.md`: Iteration 1 entry. `README.md`: running locally, demo accounts. `CHANGELOG.md`: Unreleased entry.
-- *(review)* `02` §6 VR-15; `04` Layout (top bar, error pages) and P-01 (tabs); `05` §2 (`403.html`, `404.html`, `nsu_logo.png`), §3 (`login_type`), §5 (top bar and tab classes); `07` decisions; `08` FB-10, FB-11, CR-10, CR-11; `09` I-31 to I-35; `10` TC-26 to TC-34.
+- *(review)* `02` §6 VR-15; `04` Layout (top bar, error pages) and P-01 (tabs); `05` §2 (`403.html`, `404.html`, `nsu_logo.png`), §3 (`login_type`), §5 (top bar and tab classes); `07` decisions; `08` FB-10, FB-11, CR-10, CR-11; `09` I-31 to I-35; `10` TC-26 to TC-35. CR-11 amendment: `04` Layout, `05` §5, `07`, `08`; `03` §0 step 1 mentions the login tabs; Sprint 1 retrospective in `08`.
