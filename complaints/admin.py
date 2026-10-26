@@ -37,6 +37,11 @@ class ReadOnlyInline(admin.TabularInline):
     def has_change_permission(self, request, obj=None):
         return False
 
+    def get_readonly_fields(self, request, obj=None):
+        # Every listed field is display-only; auto-set fields such as `uploaded_at`
+        # cannot appear in an inline's form at all, so they must be read-only.
+        return self.fields
+
 
 class AttachmentInline(ReadOnlyInline):
     model = Attachment

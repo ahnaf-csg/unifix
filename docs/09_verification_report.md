@@ -76,6 +76,7 @@ Purpose: confirm that requirements, workflow, screens, data dictionary, diagrams
 | I-50 | `01` §3 said retrospectives go in `07`; they are recorded in `08` iteration entries | Low | Corrected | 01 |
 | I-51 | Nothing said whether inactive categories or departments can receive complaints | Low | S-02 lists active categories only; Submit re-checks | 03, 04 |
 | I-52 | S-02 mockup shows a Remove link per file, which a plain file input cannot do | Low | One "Clear files" link | 04, 07 |
+| I-53 | Opening a complaint in the Django admin crashed (`FieldError`): the read-only inlines listed auto-set fields such as `uploaded_at`. Found while taking screenshots | Medium | Inline fields are all read-only; TC-61 | `complaints/admin.py` |
 
 ## 3. Traceability Matrix
 
@@ -113,4 +114,4 @@ Purpose: confirm that requirements, workflow, screens, data dictionary, diagrams
 
 1. Run the automated checks (V-01 to V-05) with the verification script kept alongside these docs.
 2. Walk through the manual checks V-06 to V-13 for any section that changed.
-3. Log new issues here as I-53, I-54, … and link fixes to a CR in `08_iteration_log.md`.
+3. Log new issues here as I-54, I-55, … and link fixes to a CR in `08_iteration_log.md`.

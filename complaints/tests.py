@@ -540,3 +540,17 @@ class StudentListPageTests(ComplaintFixtures):
         self.assertContains(response, open_one.tracking_id)
         self.assertContains(response, f'href="{reverse("student:complaint_new")}"')
         self.assertContains(response, f'href="{reverse("student:complaint_list")}"')
+
+
+class DjangoAdminTests(ComplaintFixtures):
+    """C-16: complaints are shown read-only in the Django admin."""
+
+    def test_tc61_super_admin_opens_complaint_read_only(self):
+        complaint = self.submit(files=[upload("photo.jpg")])
+        complaint.support(self.other)
+        self.client.force_login(self.boss)
+        response = self.client.get(reverse("admin:complaints_complaint_change", args=[complaint.pk]))
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, "photo.jpg")  # attachment inline, shown as text
+        self.assertNotContains(response, 'type="submit" value="Save"')  # view only
+        self.assertEqual(self.client.get(reverse("admin:complaints_complaint_changelist")).status_code, 200)

@@ -94,7 +94,7 @@ Names and paths from `05` §4. `complaints/new/` is listed **before** `complaint
 - `attachment`: the only way to download a file (NFR-03). Same permission check, plus `has_full_view()` (supporters see no files), then `FileResponse` with the stored type and original name, `Cache-Control: private`.
 
 ### `complaints/admin.py`, `notifications/admin.py`
-Complaints and notifications are visible in `/django-admin/` for checking data, but read-only (`has_add_permission`/`has_change_permission` return `False`): workflow changes must go through the model methods. The attachment inline shows names and types, not file links, because files have no public URL.
+Complaints and notifications are visible in `/django-admin/` for checking data, but read-only (`has_add_permission`/`has_change_permission` return `False`): workflow changes must go through the model methods. The attachment inline shows names and types, not file links, because files have no public URL. `ReadOnlyInline.get_readonly_fields()` returns every listed field: auto-set fields such as `uploaded_at` cannot be part of an inline form, and listing them without this crashed the page (I-53, TC-61).
 
 ---
 
@@ -140,7 +140,7 @@ Two small helpers; every page works without them.
 - Re-running skips complaints that already exist (same reporter and title): no duplicates (TC-49).
 
 ### `complaints/tests.py`
-25 new tests, TC-36 to TC-60 (see `10_test_plan.md`).
+26 new tests, TC-36 to TC-61 (see `10_test_plan.md`).
 - `TempMediaMixin` points `MEDIA_ROOT` at a temporary folder for the test class and deletes it afterwards, so tests never write into `media/`.
 - `FILE_BYTES` and `upload()` make fake uploads whose first bytes are a real signature; `upload("photo.jpg", kind="pdf")` is a PDF pretending to be a JPEG.
 - `mock.patch.object(Notification.objects, "bulk_create", side_effect=RuntimeError)` forces a failure after the files are written, to prove they are cleaned up (TC-48).
@@ -151,4 +151,4 @@ Two small helpers; every page works without them.
 ## 8. Docs changed this sprint
 
 - CR-12 before coding: `01` §3; `02` C-03, C-06, VR-01, VR-07, VR-09, NFR-03; `03` §0, §4, §6; `04` S-01 to S-04; `05` §2–4, §7; `06` §4; `07` decisions; `08` FB-12, CR-12; `09` I-36 to I-52.
-- During the sprint: `05` records `is_open`, `Attachment.is_image`, `check_attachment_file()` and the limits, the access helpers, the evidence-only 5-file rule and the file clean-up, and the Sprint 2 CSS classes; `04` S-04 names `student/attachment_list.html`; `10` TC-36 to TC-60, the coverage table and the manual checklist; `08` Iteration 2; `CHANGELOG.md`; this walkthrough.
+- During the sprint: `05` records `is_open`, `Attachment.is_image`, `check_attachment_file()` and the limits, the access helpers, the evidence-only 5-file rule and the file clean-up, and the Sprint 2 CSS classes; `04` S-04 names `student/attachment_list.html`; `10` TC-36 to TC-61, the coverage table and the manual checklist; `08` Iteration 2; `CHANGELOG.md`; this walkthrough.

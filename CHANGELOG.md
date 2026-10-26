@@ -13,11 +13,14 @@ Format: [Keep a Changelog](https://keepachangelog.com). Versions match Git tags.
 - Private files (NFR-03): served only by `student:attachment` after a permission check; no `/media/` route; random file names on disk.
 - Read-only complaints and notifications in the Django admin.
 - `seed_demo`: 14 complaints in every status with history, supporters, notes, notifications and generated sample files, dated relative to today.
-- 25 tests (TC-36 to TC-60); 60 in total. `docs/walkthroughs/sprint-2.md` and screenshots.
+- 26 tests (TC-36 to TC-61); 61 in total. `docs/walkthroughs/sprint-2.md` and screenshots.
 
 ### Changed
 - Docs (CR-12): Sprint 2 pre-build fixes I-36 to I-52. S-02 becomes a two-step form (category and location → duplicate check → details and files); VR-01 lists the limited-view fields and student pages name actors by role or department; VR-07 allows at most 5 files; VR-09 allows supporting open complaints only; files are served only through `student:attachment` (NFR-03); `Complaint.submit()`, `location` and `status_badge_class` added to `05`; Sprint 2 seed plan; decisions in `07`.
 - Docs: retrospectives are recorded in `08` iteration entries; `08` Iteration 1 test count and `v0.2-sprint1` date corrected; README status.
+
+### Fixed
+- Opening a complaint in the Django admin no longer crashes: all inline fields are read-only (I-53, TC-61).
 
 ## [0.2-sprint1] - 2026-10
 ### Added
