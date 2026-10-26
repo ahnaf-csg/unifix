@@ -2,7 +2,7 @@
 
 Sprint goal: **end-to-end student submission** (`01_project_plan.md`). Features: C-02 submission, C-03 duplicate check and "Me too", C-04 routing, plus the `Notification` model for C-11. Rules: VR-01, VR-07, VR-08, VR-09, NFR-03. Screens: S-01 to S-04. Planning changes: CR-12 (`09` I-36 to I-52).
 
-Each section lists what a file does and the key lines both team members should be able to explain. Read the files in this order; later files build on earlier ones. Screenshots with seed data are in `sprint-2-screens/`.
+Each section lists what a file does and the key lines both team members should be able to explain. Read the files in this order; later files build on earlier ones. Screenshots with seed data are in `docs/screenshots/` (index in its `README.md`).
 
 ---
 
