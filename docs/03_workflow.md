@@ -10,7 +10,7 @@
 
 1. **Access.** A user logs in on the Student or Staff tab; the system checks `account_state` (suspended or deleted accounts are blocked), refuses a tab that does not match the role (VR-15), and opens the home page for the user's role.
 2. **Report.** The student first chooses the category and location (form step 1). The system searches for open complaints with the same category and location (§6) before any details or files are entered.
-3. **Duplicate branch.** If one exists, the student can support it ("Me too") instead of submitting. Otherwise the student enters the title, description and files (step 2); the system validates them and creates a complaint `UF-xxxx`, routed to the category's department, and that department's admins are notified. *(The figure shows validation before the duplicate check; it is redrawn with the next diagram update.)*
+3. **Duplicate branch.** If one exists, the student can support it ("Me too") instead of submitting. Otherwise the student enters the title, description and files (step 2); the system validates them and creates a complaint `UF-xxxx`, routed to the category's department, and that department's admins are notified.
 4. **Review.** The complaint appears in the department queue. An admin starts review and decides whether it is valid: invalid complaints are rejected with a reason; valid ones are verified with a priority and due date.
 5. **Work.** The admin starts work and marks the complaint resolved with a note and optional proof photo. The student is notified at each step; overdue complaints are flagged on dashboards.
 6. **Confirmation.** The student confirms the fix (Closed) or reopens it within 7 days, which returns it to the admin for more work.

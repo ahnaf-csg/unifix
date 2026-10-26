@@ -38,6 +38,7 @@
 | Oct 2026 | Own and already-supported complaints are shown among duplicate matches, labelled, without Me too | The student learns they already reported or support the issue (VR-09, CR-12) |
 | Oct 2026 | Submission logic in `Complaint.submit()` | Same pattern as every other action: one model method, one transaction (CR-12) |
 | Oct 2026 | One "Clear files" link instead of a Remove link per file | A file input cannot drop single files without extra JavaScript (CR-12) |
+| Oct 2026 | Me too is allowed on any open complaint a student can reach by URL; only the limited view (VR-01) is shown | The limited view holds the same fields as a duplicate summary on S-02, so nothing private is exposed; restricting Me too to S-02 matches would add complexity for no privacy gain (CR-12) |
 
 ## Keep in View
 

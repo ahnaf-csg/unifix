@@ -90,9 +90,9 @@ Retrospective: Keep: plan checkpoint before building. Change: confirm UI placeme
 Goal: end-to-end student submission.
 Feedback received: FB-12 (Sprint 2 pre-build review; team chose the two-step S-02 and asked for file-safety checks at the halfway checkpoint)
 Change requests: CR-12 (doc fixes done before coding)
-Foundation touched (03/05)? yes, 03 §0, §4, §6 and 05 §2–5, §7 → system workflow figure and ER diagram (`tracking_id` nullable) to be updated (`09` §4)
+Foundation touched (03/05)? yes, 03 §0, §4, §6 and 05 §2–5, §7 → system workflow figure (two-step submission, login tabs) and ER diagram (`tracking_id` set after insert, `is_staff`/`is_superuser`, full footnote) updated
 Built / changed: `Complaint`, `Attachment`, `ComplaintUpdate`, `Support`, `Notification`; `submit()` with routing, history, notifications and file clean-up; VR-07 content-based file checks; `find_duplicates()`, `support()`; `can_view_complaint()` and the access helpers; two-step S-02, S-01, S-03, S-04, private file view; read-only admin; seed complaints in every status; 25 tests (TC-36 to TC-60, 60 in total)
-Carried over to next iteration: admin console and action methods (Sprint 3); `allowed_actions(user)`; console twin of `student:attachment`; notifications list and bell count; seed to call the real action methods; redraw the system workflow figure and refresh the S-02 mockup
+Carried over to next iteration: admin console and action methods (Sprint 3); `allowed_actions(user)`; console twin of `student:attachment`; notifications list and bell count; seed to call the real action methods; refresh the S-02 mockup
 Retrospective: (team to fill in)
 
 ## 7. Suggested GitHub Practice

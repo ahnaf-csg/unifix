@@ -107,7 +107,7 @@ Purpose: confirm that requirements, workflow, screens, data dictionary, diagrams
 - Sprint dates depend on semester deadlines.
 - The submitted proposal (v2 PDF) predates these decisions and is superseded by this documentation set.
 - Course diagrams (use case, class, ER, sequence, activity) still to be drawn from `06`.
-- CR-12 follow-ups for the next diagram and mockup update: the system workflow figure shows validation before the duplicate check (now step 1 → check → step 2); the S-02 mockup shows one combined form, a Room value with the building, a long building label and per-file Remove links; the ER diagram should mark `tracking_id` as nullable.
+- CR-12 follow-up for the next mockup update: the S-02 mockup shows one combined form, a Room value with the building, a long building label and per-file Remove links.
 
 ## 5. How to Re-run
 
