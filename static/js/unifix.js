@@ -16,7 +16,10 @@ document.addEventListener("DOMContentLoaded", function () {
       list.innerHTML = "";
       Array.prototype.forEach.call(input.files, function (file) {
         var item = document.createElement("li");
-        item.textContent = file.name + " · " + (file.size / 1024 / 1024).toFixed(1) + " MB";
+        var size = file.size < 1024 * 1024
+          ? Math.max(1, Math.round(file.size / 1024)) + " KB"
+          : (file.size / 1024 / 1024).toFixed(1) + " MB";
+        item.textContent = file.name + " · " + size;
         if (file.size > MAX_SIZE) {
           var warning = document.createElement("span");
           warning.className = "form-error";

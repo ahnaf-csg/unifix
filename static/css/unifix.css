@@ -293,11 +293,13 @@ form:has(input[name="login_type"][value="staff"]:checked) .tab-panel[data-tab="s
 /* ---------- 11b. Student complaint pages (S-01 to S-04, Sprint 2) ---------- */
 .page-head { display: flex; justify-content: space-between; align-items: flex-start; gap: 16px; flex-wrap: wrap; }
 .page-head .page-sub { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+.page-head > .btn { margin-bottom: 20px; }
 .section { margin-top: 16px; }
 .row > .card-wide { flex: 2 1 0; }
 .card-head { display: flex; justify-content: space-between; align-items: baseline; gap: 12px; }
 .table-scroll { overflow-x: auto; }  /* wide tables scroll inside the card, never the page */
 .table-scroll td .text-muted { font-size: 12px; }
+.table-scroll td:first-child, .text-mono { white-space: nowrap; }  /* never split "UF-0001" */
 .list-item { padding: 8px 0; border-bottom: 1px solid #eef0f3; }
 .list-item:last-of-type { border-bottom: none; }
 
