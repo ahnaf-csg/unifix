@@ -86,14 +86,14 @@ Built / changed: project setup; `accounts.User`; `Department`, `Category`; login
 Carried over to next iteration: `User.can_view_complaint()` (needs `Complaint`, Sprint 2); complaints in `seed_demo` (Sprints 2–3)
 Retrospective: Keep: plan checkpoint before building. Change: confirm UI placement details with a sketch before implementing.
 
-### Iteration 2 (v0.3-sprint2): Oct 2026 (in progress)
+### Iteration 2 (v0.3-sprint2): Oct 2026
 Goal: end-to-end student submission.
-Feedback received: FB-12 (Sprint 2 pre-build review)
+Feedback received: FB-12 (Sprint 2 pre-build review; team chose the two-step S-02 and asked for file-safety checks at the halfway checkpoint)
 Change requests: CR-12 (doc fixes done before coding)
-Foundation touched (03/05)? yes, 03 §0, §4, §6 and 05 §3, §4, §7 → system workflow figure to be redrawn (`09` §4)
-Built / changed: (filled in at the end of the sprint)
-Carried over to next iteration: (filled in at the end of the sprint)
-Retrospective: (filled in at the sprint review)
+Foundation touched (03/05)? yes, 03 §0, §4, §6 and 05 §2–5, §7 → system workflow figure and ER diagram (`tracking_id` nullable) to be updated (`09` §4)
+Built / changed: `Complaint`, `Attachment`, `ComplaintUpdate`, `Support`, `Notification`; `submit()` with routing, history, notifications and file clean-up; VR-07 content-based file checks; `find_duplicates()`, `support()`; `can_view_complaint()` and the access helpers; two-step S-02, S-01, S-03, S-04, private file view; read-only admin; seed complaints in every status; 25 tests (TC-36 to TC-60, 60 in total)
+Carried over to next iteration: admin console and action methods (Sprint 3); `allowed_actions(user)`; console twin of `student:attachment`; notifications list and bell count; seed to call the real action methods; redraw the system workflow figure and refresh the S-02 mockup
+Retrospective: (team to fill in)
 
 ## 7. Suggested GitHub Practice
 

@@ -127,7 +127,16 @@ Run `python manage.py seed_demo` and `python manage.py runserver`, then for each
 5. Top bar: NSU logo and UniFix wordmark centred together as one unit on one centre line, left zone empty, tools right. Check at 1440, 1280, 1024 and 900 px: the tools never overlap the centre group.
 6. Repeat at phone width (375 px): no horizontal page scroll, search shows as an icon, sidebar scrolls sideways.
 7. Error pages: open another role's page (403) and a missing URL (404). The 404 page only shows with `DEBUG=False`; run `python manage.py runserver --insecure` so the CSS still loads, then set `DEBUG=True` again.
-8. Super Admin only: `/django-admin/` opens and lists users, departments and categories.
+8. Super Admin only: `/django-admin/` opens and lists users, departments and categories (and, from Sprint 2, read-only complaints and notifications).
+
+From Sprint 2, as a student (`rafiq.hasan@northsouth.edu`):
+
+9. S-01 cards and recent complaints match the seed; New complaint and My complaints are enabled in the sidebar.
+10. S-02: Projector & AV, NAC, 512 → a match with Me too; Air conditioning, SAC, 304 → "You reported this". Continue → step 2 shows the location read-only with Change. A PDF renamed `.jpg` is refused with the text kept; a valid file submits and opens S-04.
+11. Me too on a match → the limited view (no description, files or names; "Reporter" and department labels).
+12. S-03: status filter and search by tracking ID, title or room.
+13. Open another student's complaint by URL (e.g. `UF-0008`) → 404. Open a file's `/media/...` path → 404.
+14. Repeat 9–12 at 375 px: no sideways page scroll; tables scroll inside their cards.
 
 ## 5. Planned for Later Sprints
 

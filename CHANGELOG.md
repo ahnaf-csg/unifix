@@ -3,6 +3,18 @@
 Format: [Keep a Changelog](https://keepachangelog.com). Versions match Git tags. Reasons for changes are in `docs/08_iteration_log.md`.
 
 ## [Unreleased]
+### Added
+- Sprint 2: `Complaint`, `Attachment`, `ComplaintUpdate`, `Support` (migration `complaints/0002`) and `notifications.Notification` (`notifications/0001`).
+- Complaint submission with up to 5 evidence files (C-02): `Complaint.submit()` routes to the category's department (C-04), writes history and notifies that department's admins, checks every file before writing any, and removes written files if it fails. Tracking IDs `UF-0001`.
+- File checks (VR-07): type detected from the file's content with `filetype`, matched to the extension; 15 MB per file; 5 files. Categories that require a file (VR-08).
+- Two-step New complaint page (S-02): category and location → duplicate check (`find_duplicates()`) → details and files; "Me too" (`support()`, VR-09); own and supported matches labelled.
+- Student pages S-01 Home (cards, needs your action, recent complaints), S-03 My complaints (status filter and search), S-04 Complaint detail (full view for the reporter, limited view for supporters, public timeline naming roles and departments, VR-01); `partials/status_badge.html`.
+- `User.can_view_complaint()`, `get_complaint_for_user()` (404 for complaints a user may not see) and `has_full_view()`.
+- Private files (NFR-03): served only by `student:attachment` after a permission check; no `/media/` route; random file names on disk.
+- Read-only complaints and notifications in the Django admin.
+- `seed_demo`: 14 complaints in every status with history, supporters, notes, notifications and generated sample files, dated relative to today.
+- 25 tests (TC-36 to TC-60); 60 in total. `docs/walkthroughs/sprint-2.md` and screenshots.
+
 ### Changed
 - Docs (CR-12): Sprint 2 pre-build fixes I-36 to I-52. S-02 becomes a two-step form (category and location → duplicate check → details and files); VR-01 lists the limited-view fields and student pages name actors by role or department; VR-07 allows at most 5 files; VR-09 allows supporting open complaints only; files are served only through `student:attachment` (NFR-03); `Complaint.submit()`, `location` and `status_badge_class` added to `05`; Sprint 2 seed plan; decisions in `07`.
 - Docs: retrospectives are recorded in `08` iteration entries; `08` Iteration 1 test count and `v0.2-sprint1` date corrected; README status.
