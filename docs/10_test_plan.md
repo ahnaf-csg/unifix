@@ -114,7 +114,7 @@ Rules:
 | TC-58 | `complaints/tests.py` | Open a file as reporter, supporter, stranger, signed out; open its `/media/` path | 200 with the right type and bytes; 404; 404; login redirect; 404 (NFR-03) |
 | TC-59 | `complaints/tests.py` | S-03 with own, supported and someone else's complaints; status filter; search by room and tracking ID | Own and supported (labelled) only; filter and `?q=` work; another student's ID finds nothing (VR-14) |
 | TC-60 | `complaints/tests.py` | S-01 with one open, one resolved and one supported complaint | Cards 1, 1, 0, 1; recent complaints; New complaint and My complaints links enabled |
-| TC-61 | `complaints/tests.py` | Super Admin opens a complaint and the complaint list in `/django-admin/` (C-16, I-53) | 200; attachment shown as text; no Save button |
+| TC-61 | `complaints/tests.py` | Super Admin opens a complaint and the complaint list in `/django-admin/` (C-16, I-53) | 200; attachment shown as text; no Save or Delete button; a delete POST is refused (403) |
 
 ## 4. Manual Checklist (each sprint)
 

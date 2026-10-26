@@ -553,4 +553,8 @@ class DjangoAdminTests(ComplaintFixtures):
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, "photo.jpg")  # attachment inline, shown as text
         self.assertNotContains(response, 'type="submit" value="Save"')  # view only
+        self.assertNotContains(response, "/delete/")  # no Delete button
+        delete_url = reverse("admin:complaints_complaint_delete", args=[complaint.pk])
+        self.assertEqual(self.client.post(delete_url, {"post": "yes"}).status_code, 403)
+        self.assertTrue(Complaint.objects.filter(pk=complaint.pk).exists())
         self.assertEqual(self.client.get(reverse("admin:complaints_complaint_changelist")).status_code, 200)

@@ -94,7 +94,7 @@ Names and paths from `05` §4. `complaints/new/` is listed **before** `complaint
 - `attachment`: the only way to download a file (NFR-03). Same permission check, plus `has_full_view()` (supporters see no files), then `FileResponse` with the stored type and original name, `Cache-Control: private`.
 
 ### `complaints/admin.py`, `notifications/admin.py`
-Complaints and notifications are visible in `/django-admin/` for checking data, but read-only (`has_add_permission`/`has_change_permission` return `False`): workflow changes must go through the model methods. The attachment inline shows names and types, not file links, because files have no public URL. `ReadOnlyInline.get_readonly_fields()` returns every listed field: auto-set fields such as `uploaded_at` cannot be part of an inline form, and listing them without this crashed the page (I-53, TC-61).
+Complaints and notifications are visible in `/django-admin/` for checking data, but read-only (`has_add_permission`, `has_change_permission` and, for complaints, `has_delete_permission` return `False`): workflow changes must go through the model methods. The attachment inline shows names and types, not file links, because files have no public URL. `ReadOnlyInline.get_readonly_fields()` returns every listed field: auto-set fields such as `uploaded_at` cannot be part of an inline form, and listing them without this crashed the page (I-53, TC-61).
 
 ---
 

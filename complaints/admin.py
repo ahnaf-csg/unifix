@@ -71,3 +71,6 @@ class ComplaintAdmin(admin.ModelAdmin):
 
     def has_change_permission(self, request, obj=None):
         return False
+
+    def has_delete_permission(self, request, obj=None):
+        return False  # a delete would bypass the workflow and leave files on disk

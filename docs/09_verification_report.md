@@ -76,7 +76,7 @@ Purpose: confirm that requirements, workflow, screens, data dictionary, diagrams
 | I-50 | `01` §3 said retrospectives go in `07`; they are recorded in `08` iteration entries | Low | Corrected | 01 |
 | I-51 | Nothing said whether inactive categories or departments can receive complaints | Low | S-02 lists active categories only; Submit re-checks | 03, 04 |
 | I-52 | S-02 mockup shows a Remove link per file, which a plain file input cannot do | Low | One "Clear files" link | 04, 07 |
-| I-53 | Opening a complaint in the Django admin crashed (`FieldError`): the read-only inlines listed auto-set fields such as `uploaded_at`. Found while taking screenshots | Medium | Inline fields are all read-only; TC-61 | `complaints/admin.py` |
+| I-53 | Opening a complaint in the Django admin crashed (`FieldError`): the read-only inlines listed auto-set fields such as `uploaded_at`. Found while taking screenshots | Medium | Inline fields are all read-only; complaints cannot be deleted in the admin either; TC-61 | `complaints/admin.py` |
 
 ## 3. Traceability Matrix
 

@@ -20,7 +20,7 @@ Format: [Keep a Changelog](https://keepachangelog.com). Versions match Git tags.
 - Docs: retrospectives are recorded in `08` iteration entries; `08` Iteration 1 test count and `v0.2-sprint1` date corrected; README status.
 
 ### Fixed
-- Opening a complaint in the Django admin no longer crashes: all inline fields are read-only (I-53, TC-61).
+- Opening a complaint in the Django admin no longer crashes: all inline fields are read-only, and complaints cannot be deleted there (I-53, TC-61).
 
 ## [0.2-sprint1] - 2026-10
 ### Added
