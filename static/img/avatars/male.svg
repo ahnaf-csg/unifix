@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="64" height="64">
+  <!-- Male avatar (CR-13): short hair -->
+  <circle cx="32" cy="32" r="32" fill="#dfe7f3"/>
+  <path d="M12 56c2-11 10-17 20-17s18 6 20 17a32 32 0 0 1-40 0z" fill="#2f5d9e"/>
+  <circle cx="32" cy="26" r="11" fill="#f1c9a5"/>
+  <path d="M21 25c0-8 5-12 11-12s11 4 11 12c-2-4-6-6-11-6s-9 2-11 6z" fill="#3b2a20"/>
+</svg>

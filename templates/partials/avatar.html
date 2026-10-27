@@ -1,0 +1,4 @@
+{% load static %}
+{# Avatar (CR-13, VR-16). Pass kind=user.avatar_kind only for the signed-in user's own avatar; #}
+{# everyone else is shown with kind="neutral". #}
+<img class="avatar" src="{% static 'img/avatars/'|add:kind|add:'.svg' %}" alt="" width="32" height="32">

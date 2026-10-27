@@ -1,5 +1,5 @@
 {% load static %}
-{# Top bar on every page (docs/04 Layout, CR-11 amended): empty left zone, NSU logo + #}
+{# Top bar on every page (docs/04 Layout, CR-11 amended, NSU Navy CR-14): empty left zone, NSU logo + #}
 {# UniFix wordmark centred together, tools right. Signed-out pages have no right zone. #}
 <header class="topbar">
   {# Empty on desktop: keeps the centre group centred; reserved for a future mobile menu button. #}
@@ -22,7 +22,8 @@
       {# Notifications (C-11) are built in Sprint 3; until then the bell has no count. #}
       <span class="bell" title="Notifications arrive in Sprint 3">Notifications</span>
       <div class="user-menu">
-        <span class="avatar" title="{{ user.full_name }}">{{ user.full_name|slice:":1"|upper }}</span>
+        {# The signed-in user's own avatar may follow their gender (VR-16). #}
+        {% include "partials/avatar.html" with kind=user.avatar_kind %}
         <span>
           {{ user.full_name }}
           <small>

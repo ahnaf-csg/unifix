@@ -43,6 +43,12 @@ class User(AbstractUser):
         SUSPENDED = "suspended", "Suspended"
         DELETED = "deleted", "Deleted"
 
+    class Gender(models.TextChoices):  # optional, CR-13
+        MALE = "male", "Male"
+        FEMALE = "female", "Female"
+        OTHER = "other", "Other"
+        PREFER_NOT_TO_SAY = "prefer_not_to_say", "Prefer not to say"
+
     # Remove the inherited name fields; full_name replaces them (docs/05 §3).
     username = None
     first_name = None
@@ -63,6 +69,10 @@ class User(AbstractUser):
     )
     account_state = models.CharField(
         max_length=20, choices=AccountState.choices, default=AccountState.ACTIVE
+    )
+    # VR-16: only the user themselves ever sees this (own profile, own avatar).
+    gender = models.CharField(
+        max_length=20, choices=Gender.choices, default=Gender.PREFER_NOT_TO_SAY
     )
 
     USERNAME_FIELD = "email"
@@ -98,6 +108,17 @@ class User(AbstractUser):
         if self.is_dept_admin():
             return complaint.department_id == self.department_id
         return complaint.reporter_id == self.pk or complaint.supports.filter(student=self).exists()
+
+    @property
+    def avatar_kind(self):
+        """Avatar file for this user's own pages: male, female or neutral (CR-13).
+
+        Templates use it only for the signed-in user; everyone else is shown
+        with the neutral avatar (VR-16).
+        """
+        if self.gender in (self.Gender.MALE, self.Gender.FEMALE):
+            return self.gender
+        return "neutral"
 
     # --- Validation and saving -------------------------------------------
 
