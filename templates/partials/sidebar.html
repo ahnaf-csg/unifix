@@ -9,7 +9,7 @@
   {% else %}
     <div class="sidebar-label">{% if user.is_super_admin %}Super admin{% else %}{{ user.department.name }}{% endif %}</div>
     <a class="sidebar-link{% if page == 'console:dashboard' %} sidebar-link-active{% endif %}" href="{% url 'console:dashboard' %}">Dashboard</a>
-    <a class="sidebar-link{% if page == 'console:queue' or page == 'console:complaint_detail' %} sidebar-link-active{% endif %}" href="{% url 'console:queue' %}">Complaint queue{% if user.is_super_admin %} (all){% endif %}</a>
+    <a class="sidebar-link{% if page == 'console:queue' or page == 'console:complaint_detail' or page == 'console:complaint_action' %} sidebar-link-active{% endif %}" href="{% url 'console:queue' %}">Complaint queue{% if user.is_super_admin %} (all){% endif %}</a>
     <span class="sidebar-link" aria-disabled="true" title="Coming in Sprint 4">Students</span>
     {% if user.is_super_admin %}
       <span class="sidebar-link" aria-disabled="true" title="Coming in Sprint 4">Reports</span>
