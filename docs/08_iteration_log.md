@@ -46,6 +46,8 @@ Tracks feedback and the changes it causes, iteration by iteration, so each phase
 | FB-14 | Oct 2026 | Team (Sprint 2 review) | Optional gender at registration (male, female, other, prefer not to say) with generic default avatars (neutral for other / prefer not to say) | CR-13 |
 | FB-15 | Oct 2026 | Team (Sprint 3 planning) | Use NSU colours: top bar and sidebar in NSU Navy with white text; NSU Gold only as a small accent | CR-14 |
 | FB-16 | Oct 2026 | Team (Sprint 3 planning) | Protect the login page against repeated guessing (reCAPTCHA checkbox first; fallback: lock login for a few minutes after 5 failed attempts) | – (keep in view in `07`; no code this sprint) |
+| FB-17 | Oct 2026 | Team (Sprint 3 build) | Sprint 4 idea: Reject reason as a dropdown (Duplicate, Invalid, Out of scope, Other) with optional details, so notifications read cleanly and reports can count reasons | – (Sprint 4 idea; decided at Sprint 4 planning) |
+| FB-18 | Oct 2026 | Team (Sprint 3 build) | Students may miss in-app notifications; send email copies of key ones (Resolved, Rejected) | – (logged as optional feature OP-11) |
 
 ## 4. Change Requests
 
@@ -103,7 +105,7 @@ Retrospective: To be written after the first full draft.
 
 ### Iteration 3 (v0.4-sprint3): Oct 2026
 Goal: full complaint lifecycle up to Resolved, run from the admin console.
-Feedback received: FB-15 (NSU colours), FB-16 (login protection, kept in view)
+Feedback received: FB-15 (NSU colours), FB-16 (login protection, kept in view); FB-17 (Reject reason dropdown, Sprint 4 idea), FB-18 (email copies, OP-11) during the build. Notification messages for Reject and Mark resolved reworded (`03` §4)
 Change requests: CR-13, CR-14 (doc-first commit before coding)
 Foundation touched (03/05)? yes, 03 §2, §4 and 05 §1–7 → ER diagram (`User.gender`) and class blueprint enumerations updated
 Built / changed: (in progress)

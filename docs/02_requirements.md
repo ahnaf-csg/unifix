@@ -74,6 +74,7 @@ Charts are static (no animation): Chart.js with animation disabled, or plain CSS
 | OP-08 | Quick-fix guides: admin-written self-help steps per category, shown before submitting |
 | OP-09 | Campus issue board: public list of open issues by building |
 | OP-10 | Auto-close Resolved complaints not confirmed within 7 days |
+| OP-11 | Email copies of key notifications (Resolved, Rejected) |
 
 ## 6. Validation Rules
 

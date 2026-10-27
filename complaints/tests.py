@@ -611,11 +611,12 @@ class WorkflowTests(WorkflowFixtures):
             Notification.objects.filter(recipient=self.reporter).order_by("pk").values_list("event", "message")
         )
         tid = complaint.tracking_id
+        reopen_by = timezone.localdate(complaint.resolved_at) + timedelta(days=7)
         self.assertEqual(messages, [
             ("status_changed", f"{tid} is now Under review"),
             ("status_changed", f"{tid} is now Verified"),
             ("status_changed", f"{tid} is now In progress"),
-            ("status_changed", f"{tid} is now Resolved"),
+            ("status_changed", f"{tid} was resolved. Please confirm or reopen by {reopen_by.day} {reopen_by:%b %Y}"),
         ])
         # The acting admin is never notified about their own action.
         self.assertFalse(Notification.objects.filter(recipient=self.it_admin).exclude(event="new_complaint").exists())
@@ -667,9 +668,18 @@ class WorkflowTests(WorkflowFixtures):
         complaint.reject(self.it_admin, "  Duplicate of UF-0001  ")
         update = complaint.updates.last()
         self.assertEqual((complaint.status, update.action, update.note), ("rejected", "reject", "Duplicate of UF-0001"))
-        self.assertTrue(
-            Notification.objects.filter(recipient=self.reporter, message__endswith="is now Rejected").exists()
+        self.assertEqual(
+            Notification.objects.get(recipient=self.reporter).message,
+            f"{complaint.tracking_id} was rejected: Duplicate of UF-0001",
         )
+        # A long reason is shortened with "…" so the message fits 255 characters (docs/03 §4).
+        long_one = self.at_status("under_review")
+        long_one.reject(self.it_admin, "Out of scope. " * 40)
+        message = Notification.objects.get(complaint=long_one, recipient=self.reporter).message
+        self.assertEqual(len(message), 255)
+        self.assertTrue(message.startswith(f"{long_one.tracking_id} was rejected: Out of scope."))
+        self.assertTrue(message.endswith("…"))
+        self.assertEqual(long_one.updates.last().note, ("Out of scope. " * 40).strip())  # history keeps it all
         working = self.at_status("in_progress")
         with self.assertRaises(ValidationError):
             working.resolve(self.it_admin, " ")

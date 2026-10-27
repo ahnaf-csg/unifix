@@ -130,11 +130,11 @@ Rules:
 |---|---|---|---|
 | TC-62 | `accounts/tests.py` | Register without and with gender; change it on the profile (CR-13) | Default `prefer_not_to_say`; `female` stored and own avatar shown in top bar and profile; `other` → neutral avatar |
 | TC-63 | `accounts/tests.py` | Super Admin opens the user list and a user in `/django-admin/` (VR-16) | 200; no gender anywhere |
-| TC-64 | `complaints/tests.py` | Start review → Verify → Start work → Resolve (C-05 to C-08) | Status, priority, due date, `verified_at`, `resolved_at` set; one history row each with from/to status and note; reporter gets "UF-… is now <status>" each time; the acting admin gets nothing |
+| TC-64 | `complaints/tests.py` | Start review → Verify → Start work → Resolve (C-05 to C-08) | Status, priority, due date, `verified_at`, `resolved_at` set; one history row each with from/to status and note; reporter gets "UF-… is now <status>", and on resolve "UF-… was resolved. Please confirm or reopen by <date>" (`03` §4); the acting admin gets nothing |
 | TC-65 | `complaints/tests.py` | Every action from every status (VR-03) | Only the `03` §2 transitions succeed; others raise an error and write nothing |
 | TC-66 | `complaints/tests.py` | Other department's admin, reporter and stranger act; Super Admin acts (VR-02, C-13) | Refused (actions and notes); Super Admin allowed on any department |
 | TC-67 | `complaints/tests.py` | Verify with a bad priority, no due date, today, yesterday; then tomorrow (VR-05) | Refused; accepted |
-| TC-68 | `complaints/tests.py` | Reject with a blank reason, then with one; resolve with a blank note (VR-04) | Refused; rejected with the trimmed reason and reporter notified; refused |
+| TC-68 | `complaints/tests.py` | Reject with a blank reason, then with one; resolve with a blank note (VR-04) | Refused; rejected with the trimmed reason; reporter gets "UF-… was rejected: <reason>", a long reason shortened with "…" to 255 characters while history keeps it in full; refused |
 | TC-69 | `complaints/tests.py` | Resolve with a PDF, a PDF renamed `.jpg`, an MP4, then a JPG, on a complaint with 5 evidence files (C-07) | Refused; the JPG is stored as `proof_of_fix` by the admin under `complaints/<tracking_id>/` |
 | TC-70 | `complaints/tests.py` | Resolve with a photo while notifications fail | Status, `resolved_at` and history unchanged; no attachment row; no new file on disk |
 | TC-71 | `complaints/tests.py` | Start work on a reopened complaint past its due date (`03` §7) | In progress; due date kept; still overdue |

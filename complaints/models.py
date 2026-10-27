@@ -110,6 +110,14 @@ def attachment_upload_to(attachment, filename):
     return f"complaints/{attachment.complaint.tracking_id}/{uuid.uuid4().hex}{extension}"
 
 
+def fit_message(start, text, limit=255):
+    """start + text, with text shortened with "…" so the whole fits Notification.message."""
+    text = " ".join(text.split())  # one line
+    if len(start) + len(text) > limit:
+        text = text[: limit - len(start) - 1].rstrip() + "…"
+    return start + text
+
+
 def normalise_room(room):
     """'L 3' and 'l3' are the same room for the duplicate rule (docs/03 §6)."""
     return "".join((room or "").split()).lower()
@@ -482,6 +490,13 @@ class Complaint(models.Model):
         elif action == ComplaintUpdate.Action.WITHDRAW:
             self._notify(self.department_admins(), Notification.Event.STATUS_CHANGED,
                          f"{tracking_id} was withdrawn by the student")
+        elif action == ComplaintUpdate.Action.REJECT:
+            self._notify([self.reporter], Notification.Event.STATUS_CHANGED,
+                         fit_message(f"{tracking_id} was rejected: ", note))
+        elif action == ComplaintUpdate.Action.RESOLVE:
+            reopen_by = timezone.localdate(self.resolved_at) + timedelta(days=7)  # same window as can_reopen
+            self._notify([self.reporter], Notification.Event.STATUS_CHANGED,
+                         f"{tracking_id} was resolved. Please confirm or reopen by {reopen_by.day} {reopen_by:%b %Y}")
         else:
             self._notify([self.reporter], Notification.Event.STATUS_CHANGED,
                          f"{tracking_id} is now {self.get_status_display()}")

@@ -78,6 +78,17 @@ Every action runs one model method (see `05_data_dictionary.md`), which writes t
 
 "Dept Admins" means the active admins of the complaint's department. The person who performed the action is never notified about it. When the Super Admin acts on a department's complaint, that department's admins get no extra notification *(keep in view, `07`)*. Notes cannot be added to Closed, Rejected or Withdrawn complaints.
 
+**Notification messages** (`Notification.message`, at most 255 characters):
+
+| Action | Message |
+|---|---|
+| Submit | "New complaint UF-xxxx: <title>" |
+| Start review, Verify, Start work | "UF-xxxx is now <status>" |
+| Reject | "UF-xxxx was rejected: <reason>" (the reason is shortened with "…" to fit) |
+| Mark resolved | "UF-xxxx was resolved. Please confirm or reopen by <date>" (date = Dhaka date of `resolved_at` + 7 days, e.g. "3 Nov 2026") |
+| Withdraw | "UF-xxxx was withdrawn by the student" |
+| Add note (public) | "New note on UF-xxxx" |
+
 | Button | `Complaint` changes | Other records created | Notified |
 |---|---|---|---|
 | Submit | New row: `status=submitted`, `department` from category, `tracking_id` | `Attachment` rows; `ComplaintUpdate(action=submitted)` | Dept Admins of the department |
