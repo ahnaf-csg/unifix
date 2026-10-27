@@ -2,7 +2,7 @@
 {% block title %}{{ complaint.tracking_id }}{% endblock %}
 {% block content %}
 {# S-04 Complaint detail. Full view for the reporter; limited view for a supporter (VR-01): #}
-{# no description, reporter or files. Action buttons arrive in Sprints 3 and 4. #}
+{# no description, reporter or files. Withdraw since Sprint 3; Confirm, Reopen and Rate in Sprint 4. #}
 <div class="breadcrumb"><a href="{% url 'student:complaint_list' %}">My complaints</a> / {{ complaint.tracking_id }}</div>
 <div class="page-head">
   <div>
@@ -13,6 +13,17 @@
       {% if not full_view %} · You support this complaint{% endif %}
     </p>
   </div>
+  {% if full_view and complaint.status == "submitted" %}
+    {# C-10 Withdraw: a <details> confirmation, like the A-03 action forms (no JavaScript). #}
+    <details class="action-form">
+      <summary class="btn btn-danger">Withdraw</summary>
+      <form method="post" action="{% url 'student:complaint_action' complaint.tracking_id 'withdraw' %}">
+        {% csrf_token %}
+        <p>Withdraw this complaint? This cannot be undone.</p>
+        <button class="btn btn-danger" type="submit">Withdraw complaint</button>
+      </form>
+    </details>
+  {% endif %}
 </div>
 
 <div class="row">

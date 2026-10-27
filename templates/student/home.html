@@ -1,7 +1,7 @@
 {% extends "base.html" %}
 {% block title %}Home{% endblock %}
 {% block content %}
-{# S-01 Student home. Notifications arrive in Sprint 3, Confirm/Reopen and Rate in Sprint 4. #}
+{# S-01 Student home. Latest notifications since Sprint 3; Confirm/Reopen and Rate in Sprint 4. #}
 <div class="page-head">
   <div>
     <h1 class="page-title">Welcome, {{ user.full_name }}</h1>
@@ -82,8 +82,18 @@
       <p class="form-help">Confirm fix, Reopen and Rate buttons arrive in Sprint 4.</p>
     </div>
     <div class="card">
-      <h2>Latest notifications</h2>
-      <p class="text-muted">Notifications arrive in Sprint 3.</p>
+      <div class="card-head">
+        <h2>Latest notifications</h2>
+        <a href="{% url 'notifications:list' %}">View all</a>
+      </div>
+      {% for n in latest_notifications %}
+        <div class="list-item{% if not n.is_read %} notification-unread{% endif %}">
+          <a href="{{ n.link }}">{{ n.message }}</a>
+          <div class="text-muted">{{ n.created_at|date:"j M, H:i" }}</div>
+        </div>
+      {% empty %}
+        <p class="text-muted">No notifications yet.</p>
+      {% endfor %}
     </div>
   </div>
 </div>

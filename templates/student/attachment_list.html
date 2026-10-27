@@ -1,10 +1,11 @@
-{# Evidence or proof files on S-04. Every link goes through student:attachment (NFR-03). #}
+{# Evidence or proof files on S-04 and A-03. Every link goes through a permission-checked view (NFR-03): #}
+{# student:attachment by default, console:attachment when included with url_name="console:attachment". #}
 {% if files %}
   <ul class="file-grid">
     {% for file in files %}
       <li>
-        <a href="{% url 'student:attachment' complaint.tracking_id file.pk %}" target="_blank" rel="noopener">
-          {% if file.is_image %}<img src="{% url 'student:attachment' complaint.tracking_id file.pk %}" alt="{{ file.original_name }}" loading="lazy">{% endif %}
+        <a href="{% url url_name|default:'student:attachment' complaint.tracking_id file.pk %}" target="_blank" rel="noopener">
+          {% if file.is_image %}<img src="{% url url_name|default:'student:attachment' complaint.tracking_id file.pk %}" alt="{{ file.original_name }}" loading="lazy">{% endif %}
           <span>{{ file.original_name }}</span>
         </a>
         <span class="text-muted">{{ file.size_bytes|filesizeformat }}</span>

@@ -1,7 +1,8 @@
 """In-app notifications (docs/05 §3 notifications.Notification, C-11).
 
 Sprint 2 builds the model so that Complaint.submit() can notify department
-admins. The list page and the bell's unread count come in Sprint 3.
+admins. Sprint 3 adds the list page (views.py) and the bell's unread count
+(context_processors.py). Rows are written only by the Complaint methods.
 """
 
 from django.conf import settings
@@ -29,7 +30,7 @@ class Notification(models.Model):
         related_name="notifications",
     )
     event = models.CharField(max_length=20, choices=Event.choices)
-    message = models.CharField(max_length=255)  # e.g. "UF-1042 was marked Resolved"
+    message = models.CharField(max_length=255)  # messages listed in docs/03 §4
     is_read = models.BooleanField(default=False)
     created_at = models.DateTimeField(auto_now_add=True)
 

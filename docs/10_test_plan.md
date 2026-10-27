@@ -52,6 +52,10 @@ Rules:
 | VR-05 priority and future due date | TC-67 |
 | C-07 proof photo, file clean-up | TC-69, TC-70 |
 | `allowed_actions(user)` and hints, `can_add_note()` | TC-74 |
+| C-11 notifications list, mark all read, bell count; S-01 latest notifications | TC-75, TC-76 |
+| C-10 Withdraw on S-04 | TC-77 |
+| A-02 queue: VR-02 scope, filters, search, sort, overdue flag | TC-78 |
+| A-03: VR-02 access, VR-16 neutral avatar, history; action bar; actions by POST; console files (NFR-03) | TC-79 to TC-82 |
 
 ## 3. Test Cases
 
@@ -141,6 +145,14 @@ Rules:
 | TC-72 | `complaints/tests.py` | Withdraw by another student, admin, Super Admin, then the reporter; withdraw while Under review (C-10) | Refused; withdrawn, history row, only the active department admin notified; refused |
 | TC-73 | `complaints/tests.py` | Public and internal note on a Resolved complaint; blank note; note on Closed, Rejected, Withdrawn | Both stored with `is_internal`; only the public note notifies the reporter; refused |
 | TC-74 | `complaints/tests.py` | `allowed_actions()` on each status, for own admin, Super Admin, other admin, student; `can_add_note()` | Enabled buttons match `03` §2; hints "Available after …", "Done", "Not available: complaint is …"; empty for others |
+| TC-75 | `complaints/tests.py` | Reporter and IT admin open S-05/A-06; mark all read by GET, then POST | Own notifications only, newest first, links to S-04 (student) or A-03 (admin), unread highlighted; bell "2 unread"; opening reads nothing; GET 405; POST marks only own as read |
+| TC-76 | `complaints/tests.py` | S-01 with six notifications | The 5 newest, with a link to S-05 |
+| TC-77 | `complaints/tests.py` | Withdraw on S-04 as supporter, stranger, reporter (GET and POST); a complaint under review | No button and refused; 404; 405 then withdrawn with a message and no button; no button |
+| TC-78 | `complaints/tests.py` | A-02 as IT admin, FAC admin, Super Admin with each filter, search and sort; as a student | Open complaints of the own department by default, soonest due first, no due date last; filters, `?q=` (name, email) and `department` (Super Admin only) work; overdue row flagged; another department's ID finds nothing; student 403 |
+| TC-79 | `complaints/tests.py` | A-03 for own admin, other admin, student, Super Admin; reporter with gender female | 200, 404, 403, 200; reporter card with counts, neutral avatar, no gender, disabled A-05 link; history with names, Me too grouped, internal note marked |
+| TC-80 | `complaints/tests.py` | Action bar on Submitted, Under review, Closed | Start review as a plain button; forms only for enabled actions; hints; all five "Not available" and no Add note on Closed |
+| TC-81 | `complaints/tests.py` | POST each action as own admin; other admin; `reassign`; GET; verify while Submitted; bad due date; blank reason; PDF proof; valid resolve with photo; internal note | Redirect to A-03 with a message; 404; 404; 405; 400 with the error shown; 400 with the form open; 400; 400; resolved with a `console:attachment` link; internal note stored |
+| TC-82 | `complaints/tests.py` | Open an evidence file through `console:attachment` as own admin, Super Admin, other admin, student | 200 with the bytes and `Cache-Control: private`; 200; 404; 403 |
 
 ## 4. Manual Checklist (each sprint)
 

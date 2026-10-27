@@ -10,6 +10,7 @@ urlpatterns = [
     path("", include("accounts.urls")),
     path("student/", include("complaints.urls")),
     path("console/", include("console.urls")),
+    path("notifications/", include("notifications.urls")),
     # Django admin stays at /django-admin/ to avoid confusion with the console.
     path("django-admin/", admin.site.urls),
 ]

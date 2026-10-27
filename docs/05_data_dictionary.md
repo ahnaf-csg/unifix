@@ -33,6 +33,9 @@ console/                Admin-side views (dashboard, queue, actions, students, u
                         `console/forms.py` (action forms: verify, reject, start work, resolve, note)
 templates/              base.html, 403.html, 404.html, partials/, accounts/, student/, console/, notifications/
 templates/partials/     topbar.html, sidebar.html, messages.html, status_badge.html, avatar.html
+templates/console/      dashboard.html, queue.html, complaint_detail.html, action_fields.html (fields and
+                        errors of one A-03 inline form); A-03 reuses student/attachment_list.html
+                        with `url_name="console:attachment"`
 static/css/unifix.css   Single stylesheet (design tokens at the top)
 static/js/unifix.js     Small helpers only (form toggles, file previews, charts)
 static/img/nsu_logo.png NSU logo shown in the top bar
@@ -256,7 +259,7 @@ Priority text: `pri-high` (red), `pri-medium` (amber), `pri-low` (muted grey).
 | Text | `text-muted`, `text-mono` |
 | Page structure (Sprint 2) | `page-head` (title + main button), `section` (top spacing), `card-wide`, `card-head`, `table-scroll` (tables scroll inside the card), `list-item` |
 | Complaint pages (Sprint 2) | `steps` (S-02 progress), `match` (duplicate summary), `readonly-value`, `file-list` (chosen files), `next-steps`, `filters` (S-03), `details` (S-04 facts), `description`, `file-grid` (S-04 files), `timeline`, `timeline-note` |
-| Console and notifications (Sprint 3) | `action-bar` (A-03 buttons), `action-form` (one `<details>` inline form), `action-hint` (why a button is disabled), `reporter-card`, `row-overdue` (A-02 row), `timeline-internal` (internal note), `notification-unread`, `bell-dot` (gold unread dot), `avatar` (now an `<img>` of the SVG avatar) |
+| Console and notifications (Sprint 3) | `action-bar` (A-03 buttons), `action` (one button with its hint), `action-form` (one `<details>` inline form; also S-04 Withdraw), `action-hint` (why a button is disabled), `reporter-card`, `reporter-card-person` (avatar + name), `link-disabled` (a link to a page from a later sprint), `row-overdue` (A-02 row), `filter-check` (checkbox in `filters`), `timeline-internal` (internal note), `notification-unread`, `bell-dot` (gold unread dot), `avatar` (now an `<img>` of the SVG avatar) |
 
 ## 6. Design Tokens (top of `unifix.css`)
 

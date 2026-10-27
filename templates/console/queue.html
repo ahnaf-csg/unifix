@@ -1,0 +1,106 @@
+{% extends "base.html" %}
+{% block title %}Complaint queue{% endblock %}
+{% block content %}
+{# A-02 Complaint queue: own department (all for the Super Admin, VR-02). Filters are GET parameters. #}
+<div class="page-head">
+  <div>
+    <h1 class="page-title">Complaint queue</h1>
+    <p class="page-sub">{% if user.is_super_admin %}All departments{% else %}{{ user.department.name }}{% endif %} · {{ complaints|length }} complaint{{ complaints|length|pluralize }}</p>
+  </div>
+</div>
+
+<form class="filters" method="get">
+  <div class="form-field">
+    <label for="filter-q">Search</label>
+    <input id="filter-q" type="search" name="q" value="{{ query }}" placeholder="Tracking ID, title, room, student name, ID or email">
+  </div>
+  <div class="form-field">
+    <label for="filter-status">Status</label>
+    <select id="filter-status" name="status">
+      <option value="open"{% if status == "open" %} selected{% endif %}>Open (default)</option>
+      <option value="all"{% if status == "all" %} selected{% endif %}>All</option>
+      {% for value, label in status_choices %}
+        <option value="{{ value }}"{% if status == value %} selected{% endif %}>{{ label }}</option>
+      {% endfor %}
+    </select>
+  </div>
+  {% if user.is_super_admin %}
+    <div class="form-field">
+      <label for="filter-department">Department</label>
+      <select id="filter-department" name="department">
+        <option value="">All departments</option>
+        {% for d in departments %}
+          <option value="{{ d.pk }}"{% if department == d.pk|stringformat:"s" %} selected{% endif %}>{{ d.name }}</option>
+        {% endfor %}
+      </select>
+    </div>
+  {% endif %}
+  <div class="form-field">
+    <label for="filter-category">Category</label>
+    <select id="filter-category" name="category">
+      <option value="">All categories</option>
+      {% regroup categories by department.name as groups %}
+      {% for group in groups %}
+        <optgroup label="{{ group.grouper }}">
+          {% for c in group.list %}
+            <option value="{{ c.pk }}"{% if category == c.pk|stringformat:"s" %} selected{% endif %}>{{ c.name }}</option>
+          {% endfor %}
+        </optgroup>
+      {% endfor %}
+    </select>
+  </div>
+  <div class="form-field">
+    <label for="filter-priority">Priority</label>
+    <select id="filter-priority" name="priority">
+      <option value="">Any priority</option>
+      {% for value, label in priority_choices %}
+        <option value="{{ value }}"{% if priority == value %} selected{% endif %}>{{ label }}</option>
+      {% endfor %}
+    </select>
+  </div>
+  <div class="form-field">
+    <label for="filter-sort">Sort by</label>
+    <select id="filter-sort" name="sort">
+      <option value="due"{% if sort == "due" %} selected{% endif %}>Due date</option>
+      <option value="updated"{% if sort == "updated" %} selected{% endif %}>Last updated</option>
+    </select>
+  </div>
+  <div class="filters-buttons">
+    <label class="filter-check"><input type="checkbox" name="overdue" value="1"{% if overdue %} checked{% endif %}> Overdue only</label>
+    <button class="btn btn-primary" type="submit">Apply</button>
+    <a href="{% url 'console:queue' %}">Reset</a>
+  </div>
+</form>
+
+<div class="card">
+  {% if complaints %}
+    <div class="table-scroll">
+      <table>
+        <thead>
+          <tr><th>Tracking ID</th><th>Title</th><th>Category</th><th>Location</th><th>Status</th><th>Priority</th><th>Due</th><th>Affected</th><th>Updated</th></tr>
+        </thead>
+        <tbody>
+          {% for c in complaints %}
+            <tr{% if c.is_overdue %} class="row-overdue"{% endif %}>
+              <td><a class="text-mono" href="{% url 'console:complaint_detail' c.tracking_id %}">{{ c.tracking_id }}</a></td>
+              <td>
+                <a href="{% url 'console:complaint_detail' c.tracking_id %}">{{ c.title }}</a>
+                <div class="text-muted">{{ c.reporter.full_name }}{% if user.is_super_admin %} · {{ c.department.name }}{% endif %}</div>
+              </td>
+              <td>{{ c.category.name }}</td>
+              <td>{{ c.location }}</td>
+              <td>{% include "partials/status_badge.html" with complaint=c %}</td>
+              <td>{% if c.priority %}<span class="pri-{{ c.priority }}">{{ c.get_priority_display }}</span>{% else %}–{% endif %}</td>
+              <td>{{ c.due_date|date:"j M"|default:"–" }}</td>
+              <td>{{ c.supporters|add:1 }}</td>
+              <td>{{ c.updated_at|date:"j M, H:i" }}</td>
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  {% else %}
+    <p class="text-muted">No complaints match these filters.</p>
+  {% endif %}
+</div>
+{% endblock %}
