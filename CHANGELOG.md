@@ -3,6 +3,10 @@
 Format: [Keep a Changelog](https://keepachangelog.com). Versions match Git tags. Reasons for changes are in `docs/08_iteration_log.md`.
 
 ## [Unreleased]
+### Changed
+- Docs, Sprint 3 doc-first (CR-13, CR-14, FB-15, FB-16): optional gender and avatars with VR-16; NSU Navy chrome and new design tokens; Sprint 3 decisions in `07`; withdraw notifies department admins; notes allowed on Resolved; `console:attachment`; `allowed_actions(user)` as a method; login protection kept in view; fixes I-54 to I-64; ER diagram shows `gender`.
+
+## [0.3-sprint2] - 2026-10
 ### Added
 - Sprint 2: `Complaint`, `Attachment`, `ComplaintUpdate`, `Support` (migration `complaints/0002`) and `notifications.Notification` (`notifications/0001`).
 - Complaint submission with up to 5 evidence files (C-02): `Complaint.submit()` routes to the category's department (C-04), writes history and notifies that department's admins, checks every file before writing any, and removes written files if it fails. Tracking IDs `UF-0001`.

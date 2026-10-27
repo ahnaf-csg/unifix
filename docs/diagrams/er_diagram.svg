@@ -145,7 +145,7 @@
 <text x="572" y="808" font-size="12" fill="#1c2433">password (hashed)</text>
 <text x="572" y="827" font-size="12" fill="#1c2433">full_name</text>
 <text x="572" y="846" font-size="12" fill="#1c2433">student_id (null, unique)</text>
-<text x="572" y="865" font-size="12" fill="#1c2433">phone</text>
+<text x="572" y="865" font-size="12" fill="#1c2433">phone · gender (optional)</text>
 <text x="572" y="884" font-size="12" fill="#1c2433">role</text>
 <text x="572" y="903" font-size="12" fill="#1c2433"><tspan font-weight="bold" fill="#1d5bbf">FK</tspan> department_id (null)</text>
 <text x="572" y="922" font-size="12" fill="#1c2433">account_state</text>

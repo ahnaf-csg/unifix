@@ -21,7 +21,7 @@ Tracks feedback and the changes it causes, iteration by iteration, so each phase
 | v0.1.3 | Planning v1.3 | Oct 2026 | ER diagram drawn for database planning |
 | v0.1.4 | Planning v1.4 | Oct 2026 | Sprint 1 pre-build doc fixes (CR-09) |
 | v0.2-sprint1 | Sprint 1 | Oct 2026 | Setup, accounts, roles, login/register, profile, Django admin, seed |
-| v0.3-sprint2 | Sprint 2 | planned | Complaint submission and student pages |
+| v0.3-sprint2 | Sprint 2 | Oct 2026 | Complaint submission and student pages |
 | v0.4-sprint3 | Sprint 3 | planned | Admin console and full lifecycle |
 | v0.5-sprint4 | Sprint 4 | planned | Remaining core features |
 | v1.0 | Final release | planned | Tested, documented, demo-ready |
@@ -44,6 +44,8 @@ Tracks feedback and the changes it causes, iteration by iteration, so each phase
 | FB-12 | Oct 2026 | Claude Code review + team (Sprint 2 planning) | Pre-build review found gaps for Sprint 2 (submit method, limited view, private files, file limits, notifications timing, timeline privacy); team chose a two-step S-02 so files upload once | CR-12 |
 | FB-13 | Oct 2026 | Team (Sprint 2 review) | Pages with many buttons feel cluttered; logic gaps will surface in hands-on testing after the first full build | – (keep in view in `07`; polish iteration) |
 | FB-14 | Oct 2026 | Team (Sprint 2 review) | Optional gender at registration (male, female, other, prefer not to say) with generic default avatars (neutral for other / prefer not to say) | CR-13 |
+| FB-15 | Oct 2026 | Team (Sprint 3 planning) | Use NSU colours: top bar and sidebar in NSU Navy with white text; NSU Gold only as a small accent | CR-14 |
+| FB-16 | Oct 2026 | Team (Sprint 3 planning) | Protect the login page against repeated guessing (reCAPTCHA checkbox first; fallback: lock login for a few minutes after 5 failed attempts) | – (keep in view in `07`; no code this sprint) |
 
 ## 4. Change Requests
 
@@ -60,8 +62,9 @@ Tracks feedback and the changes it causes, iteration by iteration, so each phase
 | CR-09 | FB-09 | Sprint 1 pre-build doc fixes (`09` I-17 to I-30) | C-10, C-15, C-16, C-18, VR-11, S-03, `User`, `Complaint.room`, `Complaint.tracking_id`, `05` §2, §5–7, `06` §3, `diagrams/er_diagram.*` | Done (planning) |
 | CR-10 | FB-10 | Student/Staff tabs on P-01; wrong tab refused | P-01, VR-15, `login_type` (`05` §3), tab classes (`05` §5), TC-30 to TC-34 | Done (Sprint 1) |
 | CR-11 | FB-11 | Three-zone top bar with NSU logo. *Amended (clarified by team):* NSU logo moves to the centre beside the wordmark, replacing the "U" square; left zone left empty | `04` Layout, `static/img/nsu_logo.png`, top bar classes (`05` §5) | Done (Sprint 1, amended) |
-| CR-12 | FB-12 | Sprint 2 pre-build doc fixes (`09` I-36 to I-52) and decisions (`07`): two-step S-02, `submit()`, limited view fields and actor naming, 5-file limit, private files via `student:attachment`, `Notification` now, seed plan | C-02, C-03, C-06, VR-01, VR-07, VR-09, NFR-03, S-01 to S-04, `Complaint.submit()`, `tracking_id`, `location`, `status_badge_class`, `Attachment.file`, `03` §0, §4, §6, `05` §3, §4, §7, `06` §4 | Accepted (Sprint 2) |
-| CR-13 | FB-14 | Optional gender at registration (male, female, other, prefer not to say) and generic default avatars (neutral for other / prefer not to say). Names and choices are fixed in the Sprint 3 doc-first commit; no code before then | C-01, C-15, P-02, S-06, top bar avatar (`04` Layout), `User` (`05` §3) | Proposed (Sprint 3 doc-first commit) |
+| CR-12 | FB-12 | Sprint 2 pre-build doc fixes (`09` I-36 to I-52) and decisions (`07`): two-step S-02, `submit()`, limited view fields and actor naming, 5-file limit, private files via `student:attachment`, `Notification` now, seed plan | C-02, C-03, C-06, VR-01, VR-07, VR-09, NFR-03, S-01 to S-04, `Complaint.submit()`, `tracking_id`, `location`, `status_badge_class`, `Attachment.file`, `03` §0, §4, §6, `05` §3, §4, §7, `06` §4 | Done (Sprint 2) |
+| CR-13 | FB-14 | Optional gender at registration and on the profile: `User.gender` (`male`, `female`, `other`, `prefer_not_to_say` by default), `User.avatar_kind`, three SVG avatars (`static/img/avatars/`), `partials/avatar.html`. Gender-based avatars only for the user themselves; everyone else sees the neutral avatar (VR-16). Extends C-01 and C-15 | C-01, C-15, VR-16, P-02, S-06, A-03, top bar (`04` Layout), `User` (`05` §3), `06` §2–3, `diagrams/er_diagram.*` | Accepted (Sprint 3) |
+| CR-14 | FB-15 | NSU Navy `#002f6c` top bar and sidebar with white text, logo on a white tile, light blue-grey subtitle; NSU Gold `#FEC937` as an accent only; IEEE blue not used; badge colours unchanged. Replaces CR-11's white top bar | `04` Layout, P-01, `05` §6 tokens, `unifix.css` | Accepted (Sprint 3) |
 
 ## 5. Iteration Template
 
@@ -96,7 +99,16 @@ Change requests: CR-12 (doc fixes done before coding)
 Foundation touched (03/05)? yes, 03 §0, §4, §6 and 05 §2–5, §7 → system workflow figure (two-step submission, login tabs) and ER diagram (`tracking_id` set after insert, `is_staff`/`is_superuser`, full footnote) updated
 Built / changed: `Complaint`, `Attachment`, `ComplaintUpdate`, `Support`, `Notification`; `submit()` with routing, history, notifications and file clean-up; VR-07 content-based file checks; `find_duplicates()`, `support()`; `can_view_complaint()` and the access helpers; two-step S-02, S-01, S-03, S-04, private file view; read-only admin; seed complaints in every status; 26 tests (TC-36 to TC-61, 61 in total)
 Carried over to next iteration: admin console and action methods (Sprint 3); `allowed_actions(user)`; console twin of `student:attachment`; notifications list and bell count; seed to call the real action methods; refresh the S-02 mockup; CR-13 (optional gender, default avatars) in the Sprint 3 doc-first commit
-Retrospective: (team to fill in)
+Retrospective: To be written after the first full draft.
+
+### Iteration 3 (v0.4-sprint3): Oct 2026
+Goal: full complaint lifecycle up to Resolved, run from the admin console.
+Feedback received: FB-15 (NSU colours), FB-16 (login protection, kept in view)
+Change requests: CR-13, CR-14 (doc-first commit before coding)
+Foundation touched (03/05)? yes, 03 §2, §4 and 05 §1–7 → ER diagram (`User.gender`) and class blueprint enumerations updated
+Built / changed: (in progress)
+Carried over to next iteration: (in progress)
+Retrospective: To be written after the first full draft.
 
 ## 7. Suggested GitHub Practice
 

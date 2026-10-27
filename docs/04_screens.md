@@ -2,19 +2,22 @@
 
 18 screens. Each lists what it shows, its buttons, and which data it reads (R) or writes (W). URL and template names follow `05_data_dictionary.md`.
 
-**Layout:** every signed-in page uses `base.html` (with `partials/topbar.html`, `partials/sidebar.html`, `partials/messages.html`): a white top bar and a role-specific navy left sidebar.
+**Layout:** every signed-in page uses `base.html` (with `partials/topbar.html`, `partials/sidebar.html`, `partials/messages.html`): an NSU Navy top bar and a role-specific NSU Navy left sidebar (CR-14), with white text. Gold is a small accent only (unread dot, active login tab underline), used on navy or beside another state cue, never the only cue.
 
-**Top bar** (CR-11), three zones, vertically aligned:
+**Top bar** (CR-11, colours CR-14), three zones, vertically aligned:
 
 | Zone | Contents |
 |---|---|
 | Left (`topbar-left`) | Empty on desktop; kept for layout balance and for a future mobile menu button |
-| Centre (`topbar-center`) | One centred unit: NSU logo (`static/img/nsu_logo.png`, 36 px high, alt text "North South University") beside the UniFix wordmark ("UniFix", subtitle "NSU Campus Services" for students and signed-out pages, "Admin Console" for admins), vertically aligned |
-| Right (`topbar-right`, signed-in pages only) | Search, notification bell with unread count, user menu (avatar, name, role, Log out) |
+| Centre (`topbar-center`) | One centred unit: NSU logo (`static/img/nsu_logo.png`, 36 px high, alt text "North South University") on a small white rounded tile (`topbar-logo`), beside the white UniFix wordmark ("UniFix", subtitle in light blue-grey: "NSU Campus Services" for students and signed-out pages, "Admin Console" for admins), vertically aligned |
+| Right (`topbar-right`, signed-in pages only) | Search, notification bell with unread count, user menu (own avatar, name, role, Log out) |
 
 - Login (P-01) and Register (P-02) use the same bar without the right zone.
 - Phone width: the centre group stays visible; the logo shrinks first, then the wordmark; search collapses to an icon; no sideways scroll.
-- Until notifications are built (Sprint 3, C-11) the bell is shown without a count.
+- The bell links to the notifications page (S-05/A-06). With unread notifications it shows their number (`bell-count`) and a gold dot (`bell-dot`); with none, no number. The count reaches every page through the context processor `notifications.context_processors.unread_count`.
+- Search stays disabled until C-18 (Sprint 4).
+
+**Avatars** (CR-13, VR-16): three simple SVG drawings in `static/img/avatars/` (`male.svg`, `female.svg`, `neutral.svg`), shown by `partials/avatar.html`. A user sees the avatar for their own gender only in their own top bar and on their own profile; `other` and `prefer_not_to_say` use the neutral avatar. Every other place that shows a person (e.g. the A-03 reporter card) uses the neutral avatar.
 
 **Error pages** (`403.html`, `404.html`, both extend `base.html`): a short message and a "Back to your home" link to `/`, which sends signed-in users to their role home and everyone else to login.
 
@@ -47,16 +50,16 @@ Search reuses the existing list pages with a `?q=` parameter instead of adding n
 - Shows: login type tabs (CR-10) **Student** (default) and **Staff**, submitted with the form as `login_type`; email and password fields.
   - Student tab: hint "Use your @northsouth.edu student email"; link "Create an account" (P-02).
   - Staff tab: hint "For department coordinators and administrators"; note "Staff accounts are created by the Super Admin." (no register link).
-  - The tabs are radio buttons styled as tabs: Tab reaches the group, arrow keys switch tabs, and the active tab is clearly highlighted. No JavaScript.
+  - The tabs are radio buttons styled as tabs: Tab reaches the group, arrow keys switch tabs, and the active tab is clearly highlighted (text colour and background, plus a gold underline accent, CR-14). No JavaScript.
 - Buttons: **Log in** → redirects by role (student → S-01, admin → A-01).
 - R: User. Checks, in order: email and password; suspended or deleted accounts see "Account inactive" (VR-11); a tab that does not match the role is refused with "This is a staff account. Please use the Staff tab." or "This is a student account. Please use the Student tab." (VR-15). The form keeps the chosen tab after an error.
 
 ### P-02 Register (students)
 `accounts:register` · `accounts/register.html`
 
-- Shows: full name, student ID, NSU email, phone, password, confirm password.
+- Shows: full name, student ID, NSU email, phone, gender (optional; "Prefer not to say" preselected), password, confirm password.
 - Buttons: **Create account**.
-- W: User (`role=student`). VR-13.
+- W: User (`role=student`). VR-13, VR-16.
 
 ## Student
 
@@ -66,7 +69,7 @@ Search reuses the existing list pages with a `?q=` parameter instead of adding n
 - Shows: greeting; cards (Open, Awaiting your confirmation, Closed, Issues you supported); "Needs your action" list (Resolved → Confirm/Reopen, Closed and unrated → Rate); recent complaints table (tracking ID, title, location, status badge, due date, updated); latest notifications.
 - Buttons: **New complaint**; row → S-04.
 - R: Complaint, Support, Notification, Rating.
-- Built in stages: Sprint 2 shows the cards, recent complaints and the Confirm/Reopen items of "Needs your action" as links to S-04; latest notifications arrive in Sprint 3, and Rate items with ratings in Sprint 4.
+- Built in stages: Sprint 2 shows the cards, recent complaints and the Confirm/Reopen items of "Needs your action" as links to S-04; Sprint 3 adds the 5 latest notifications (with a link to S-05); Rate items with ratings arrive in Sprint 4.
 
 ### S-02 New complaint
 `student:complaint_new` · `student/complaint_form.html`
@@ -91,25 +94,26 @@ Two steps on one URL, so files are uploaded only once (`03_workflow.md` §6). St
 ### S-04 Complaint detail
 `student:complaint_detail` · `student/complaint_detail.html`
 
-- Shows: tracking ID, status badge, category, department, location, description, evidence, public timeline, proof-of-fix photo, students affected, due date (once verified).
+- Shows: tracking ID, status badge, category, department, location, description, evidence, public timeline, proof-of-fix photo (its own "Proof of fix" section, once resolved), students affected, due date (once verified).
 - Timeline entries name the actor by role or department ("Reporter", "You", "Facilities Management", "A student supported this"), never by a person's name (VR-01).
 - Evidence and proof files open through `student:attachment` (permission-checked, NFR-03); the file list is the include `student/attachment_list.html` (images as thumbnails, other files as links).
 - For a supported (not reported) complaint: limited view only (VR-01), with no action buttons.
 - A complaint the student may not see shows the 404 page.
 - Buttons (by status): **Withdraw** (submitted) · **Confirm fix** and **Reopen** (resolved, within 7 days) · **Rate** (closed, not yet rated). Read-only in Sprint 2; Withdraw arrives in Sprint 3, the others in Sprint 4.
+- **Withdraw** (C-10) is a `<details>` block like the A-03 action forms: it opens a short confirmation ("Withdraw this complaint? This cannot be undone.") with a **Withdraw complaint** button that posts to `student:complaint_action` with `withdraw`.
 - R: Complaint, Attachment, ComplaintUpdate (public only), Support, Rating. W: via workflow actions.
 
 ### S-05 Notifications
 `notifications:list` · `notifications/list.html` (shared by all roles)
 
-- Shows: newest first; unread highlighted; each links to its complaint.
-- Buttons: **Mark all as read** (`notifications:mark_all_read`).
-- R/W: Notification.
+- Shows: own notifications, newest first; unread highlighted (`notification-unread`); each links to its complaint: S-04 for students, A-03 for admins.
+- Buttons: **Mark all as read** (`notifications:mark_all_read`, shown only when something is unread). Opening the list does not mark anything read.
+- R/W: Notification (own only).
 
 ### S-06 Profile
 `accounts:profile` · `accounts/profile.html` (shared by all roles)
 
-- Shows: name, email (read-only), student ID, phone; change password form.
+- Shows: own avatar (VR-16), name, email (read-only), student ID, phone, gender (optional); change password form.
 - Buttons: **Save changes** · **Change password** (`accounts:password_change`).
 - W: User.
 
@@ -119,6 +123,7 @@ Two steps on one URL, so files are uploaded only once (`03_workflow.md` §6). St
 `console:dashboard` · `console/dashboard.html`
 
 - Dept Admin: own department. Super Admin: all departments (same page).
+- Built in Sprint 4. Until then the page is a placeholder with a link to the complaint queue (A-02).
 
 - Shows: cards (New, In progress, Overdue, Resolved this week, Average rating); Overdue table; Due in next 3 days; Most supported; charts (by status, by category, weekly trend).
 - Buttons: card or row → A-02 filtered, or A-03.
@@ -127,18 +132,19 @@ Two steps on one URL, so files are uploaded only once (`03_workflow.md` §6). St
 ### A-02 Complaint queue
 `console:queue` · `console/queue.html`
 
-- Shows: table (tracking ID, title, category, location, status, priority, due date, supporters, updated); overdue rows flagged.
-- Filters: status, category, priority, overdue only; search; sort by due date or updated.
+- Shows: table (tracking ID, title, category, location, status, priority, due date, students affected, updated); overdue rows flagged (`row-overdue` and the `flag-overdue` text).
+- Filters (GET parameters, combined): `status` (default: open statuses; "All" or one status), `category`, `priority`, `overdue` (overdue only), `q` (search: tracking ID, title, room, reporter name, student ID, email; built in Sprint 3 and reused by C-18), `sort` (`due`, the default: soonest due date first, no due date last; or `updated`: most recently updated first). The Super Admin also has a `department` filter.
 - Buttons: row → A-03.
 - R: Complaint (own department; all for Super Admin).
 
 ### A-03 Complaint detail and actions
 `console:complaint_detail` · `console/complaint_detail.html`
 
-- Shows: everything in S-04 plus reporter card (links to A-05; complaints filed, complaints rejected), internal notes, full history with actor names (consecutive "Me too" entries grouped), and students affected.
-- Action bar: **Start review · Verify · Reject · Start work · Mark resolved**. Only valid buttons are enabled; disabled ones show when they become available.
-- Each button opens an inline form: Verify (priority, due date) · Reject (reason) · Mark resolved (note, optional photo) · Start work (optional note).
-- **Add note** (public or internal). Super Admin also sees **Reassign** (department, reason).
+- Shows: everything in S-04 plus reporter card (`reporter-card`: neutral avatar, name, student ID, email; complaints filed, complaints rejected; link to A-05, shown disabled until Sprint 4), internal notes, full history with actor names (consecutive "Me too" entries grouped), and students affected. Evidence and proof files open through `console:attachment`.
+- Action bar (`action-bar`): **Start review · Verify · Reject · Start work · Mark resolved**, in that order, from `Complaint.allowed_actions(user)`. Only valid buttons are enabled. Each disabled button has a visible hint underneath (`action-hint`): "Done" for a step already passed, "Available after <step>" for a step still ahead, or "Not available: complaint is <status>" on a final status.
+- Start review posts straight away (no input). Every other enabled button is a `<details>`/`<summary>` block (`action-form`) that opens its inline form without JavaScript: Verify (priority, due date) · Reject (reason) · Start work (optional note) · Mark resolved (note, optional proof photo). After a failed submit the page is shown again with that form open and its errors.
+- **Add note** (public or internal; open statuses and Resolved, `03` §2). The Super Admin also sees **Reassign** (department, reason) from Sprint 4.
+- The Super Admin can use every action on every department's complaints (C-13).
 - R: Complaint, Attachment, ComplaintUpdate, User. W: per `03_workflow.md` section 4.
 
 ### A-04 Students

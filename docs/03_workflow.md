@@ -48,7 +48,7 @@ Open statuses: `submitted`, `under_review`, `verified`, `in_progress`, `reopened
 | Confirm fix | `resolved` | `closed` | Reporter | – |
 | Reopen | `resolved` (within 7 days) | `reopened` | Reporter | Reason |
 | Reassign | `submitted`, `under_review` | `submitted` (new department) | Super Admin | New department, reason |
-| Add note | any open status | (unchanged) | Admins | Note, public or internal |
+| Add note | any open status, or `resolved` | (unchanged) | Dept Admin, Super Admin | Note, public or internal |
 | Rate | `closed` | (unchanged) | Reporter, once | 1–5 stars, optional comment |
 
 ## 3. State Diagram Source (Mermaid)
@@ -76,11 +76,13 @@ stateDiagram-v2
 
 Every action runs one model method (see `05_data_dictionary.md`), which writes the records below in a single database transaction.
 
+"Dept Admins" means the active admins of the complaint's department. The person who performed the action is never notified about it. When the Super Admin acts on a department's complaint, that department's admins get no extra notification *(keep in view, `07`)*. Notes cannot be added to Closed, Rejected or Withdrawn complaints.
+
 | Button | `Complaint` changes | Other records created | Notified |
 |---|---|---|---|
 | Submit | New row: `status=submitted`, `department` from category, `tracking_id` | `Attachment` rows; `ComplaintUpdate(action=submitted)` | Dept Admins of the department |
 | Me too | `updated_at=now` (open statuses only; never the reporter, never twice: VR-09) | `Support` row; `ComplaintUpdate(action=support)` | – |
-| Withdraw | `status=withdrawn` | `ComplaintUpdate(action=withdraw)` | – |
+| Withdraw | `status=withdrawn` | `ComplaintUpdate(action=withdraw)` | Dept Admins |
 | Start review | `status=under_review` | `ComplaintUpdate(action=start_review)` | Reporter |
 | Verify | `status=verified`, `priority`, `due_date`, `verified_at=now` | `ComplaintUpdate(action=verify)` | Reporter |
 | Reject | `status=rejected` | `ComplaintUpdate(action=reject, note=reason)` | Reporter |

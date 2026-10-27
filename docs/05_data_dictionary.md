@@ -8,7 +8,7 @@ Source of truth for names. Code, templates and diagrams must match exactly.
 |---|---|---|
 | Django apps | lowercase plural noun | `complaints` |
 | Models | singular PascalCase | `ComplaintUpdate` |
-| Fields, functions, methods | snake_case | `resolved_at`, `mark_resolved()` |
+| Fields, functions, methods | snake_case | `resolved_at`, `resolve()` |
 | Choice values (stored) | lowercase snake_case | `under_review` |
 | Choice labels (displayed) | Sentence case | Under review |
 | URL names | `namespace:noun_verb` | `console:complaint_detail` |
@@ -27,13 +27,16 @@ complaints/             Models: Department, Category, Complaint, Attachment, Com
                         student-facing views (URL namespace `student`)
 complaints/management/commands/seed_demo.py
                         Demo data command (`python manage.py seed_demo`)
-notifications/          Notification model and list view
-console/                Admin-side views (dashboard, queue, actions, students, users, reports)
+notifications/          Notification model, list and mark-all-read views (`views.py`, `urls.py`),
+                        `context_processors.py` (`unread_count`: the bell count on every page)
+console/                Admin-side views (dashboard, queue, actions, students, users, reports);
+                        `console/forms.py` (action forms: verify, reject, start work, resolve, note)
 templates/              base.html, 403.html, 404.html, partials/, accounts/, student/, console/, notifications/
-templates/partials/     topbar.html, sidebar.html, messages.html, status_badge.html
+templates/partials/     topbar.html, sidebar.html, messages.html, status_badge.html, avatar.html
 static/css/unifix.css   Single stylesheet (design tokens at the top)
 static/js/unifix.js     Small helpers only (form toggles, file previews, charts)
 static/img/nsu_logo.png NSU logo shown in the top bar
+static/img/avatars/     male.svg, female.svg, neutral.svg (CR-13, VR-16)
 media/                  Uploaded files (not committed to Git)
 docs/                   These documents
 docs/screenshots/       Screenshots of built pages with seed data (public/, student/, admin/; index in README.md)
@@ -56,11 +59,14 @@ Authentication uses Django's `AllowAllUsersModelBackend`; the login form's `conf
 | `role` | CharField choices | `student`, `dept_admin`, `super_admin` |
 | `department` | FK → Department, null | Required for `dept_admin`; empty otherwise |
 | `account_state` | CharField choices | `active`, `suspended`, `deleted`; default `active` |
+| `gender` | CharField choices | Optional (CR-13): `male` (Male), `female` (Female), `other` (Other), `prefer_not_to_say` (Prefer not to say); default `prefer_not_to_say`. Visible only to its owner (VR-16); not shown, filtered or reported anywhere else, including the Django admin list and filters |
 | `is_active` | Boolean (built-in) | `False` when `account_state` is not `active` |
 | `is_staff`, `is_superuser` | Boolean (built-in) | `True` only for `super_admin` (Django admin access, C-16) |
 | `date_joined` | DateTime (built-in) | Auto |
 
-Methods: `is_student()`, `is_dept_admin()`, `is_super_admin()`, `can_view_complaint(complaint)`, `suspend()`, `reactivate()`, `soft_delete()`.
+Methods: `is_student()`, `is_dept_admin()`, `is_super_admin()`, `can_view_complaint(complaint)`, `can_act_on_complaint(complaint)`, `suspend()`, `reactivate()`, `soft_delete()`.
+Property: `avatar_kind`: `male`, `female` or `neutral` (for `other` and `prefer_not_to_say`). Templates show it only for the signed-in user's own avatar; everyone else is shown as `neutral` (VR-16).
+`can_act_on_complaint(complaint)` is `True` for a Dept Admin of the complaint's department and for the Super Admin (any department); otherwise `False` (VR-02, C-13).
 `can_view_complaint(complaint)` is `True` for the reporter, a supporter (limited view, VR-01), a Dept Admin of the complaint's department (VR-02) and the Super Admin; otherwise `False`. Which view a student gets (full or limited) is decided by whether they are the reporter.
 
 **Login form field** (P-01, VR-15): `login_type`, choices `student` (Student, default) and `staff` (Staff). Not stored; checked against `role` at login (`student` → `student`; `staff` → `dept_admin` or `super_admin`).
@@ -102,10 +108,13 @@ Methods: `is_student()`, `is_dept_admin()`, `is_super_admin()`, `can_view_compla
 | `created_at`, `updated_at` | DateTime | Auto |
 | `verified_at`, `resolved_at`, `closed_at` | DateTime, null | Set by actions |
 
-Methods (each validates the transition, writes `ComplaintUpdate`, sends notifications):
+Methods (each validates the transition, writes `ComplaintUpdate`, sends notifications, in one transaction; errors are `ValidationError`s with a message for the user):
 `start_review(actor)`, `verify(actor, priority, due_date)`, `reject(actor, reason)`, `start_work(actor, note="")`, `resolve(actor, note, proof_file=None)`, `confirm(student)`, `reopen(student, reason)`, `withdraw(student)`, `reassign(actor, department, reason)`, `add_note(actor, note, is_internal)`, `support(student)`, `rate(student, stars, comment="")`.
+Sprint 3 builds `start_review`, `verify`, `reject`, `start_work`, `resolve`, `withdraw` and `add_note`; Sprint 4 builds `confirm`, `reopen`, `reassign` and `rate`.
+`resolve()`: `proof_file` is one image (JPG, JPEG, PNG or WEBP; 15 MB; real type checked as in VR-07), stored as `Attachment(kind=proof_of_fix)`; the file is deleted again if the transaction fails. `add_note()`: open statuses and `resolved` only (`03` §2).
+`allowed_actions(user)` (method): the five C-05 buttons in order (`start_review`, `verify`, `reject`, `start_work`, `resolve`), each a dict `{"slug", "label", "enabled", "hint"}`; `hint` is empty when enabled, otherwise "Done", "Available after <step>" or "Not available: complaint is <status>". Empty list for users who cannot act on the complaint (`can_act_on_complaint`). `can_add_note(user)` (method): `can_act_on_complaint` and the status allows notes.
 Class methods: `submit(reporter, category, building, room, title, description, files)` creates the complaint, its `Attachment` rows, `ComplaintUpdate(action=submitted)` and the Dept Admin notifications in one transaction (C-02, C-04; checks VR-08); `find_duplicates(category, building, room)` returns open matches (`03` §6).
-Properties: `is_overdue`, `can_reopen`, `support_count`, `affected_count`, `allowed_actions(user)`, `is_open` (status in the open list, `03` §1), `location` (building label + room, e.g. "NAC 512"), `status_badge_class` (e.g. `badge-under-review`, used by `partials/status_badge.html`).
+Properties: `is_overdue`, `can_reopen`, `support_count`, `affected_count`, `is_open` (status in the open list, `03` §1), `location` (building label + room, e.g. "NAC 512"), `status_badge_class` (e.g. `badge-under-review`, used by `partials/status_badge.html`).
 
 **Action mapping** (one row per button; names must match across layers):
 
@@ -138,7 +147,7 @@ Properties: `is_overdue`, `can_reopen`, `support_count`, `affected_count`, `allo
 | `uploaded_by` | FK → User | |
 | `uploaded_at` | DateTime | Auto |
 
-Property: `is_image` (shown as a thumbnail; other files as a link). The VR-07 check is the module function `check_attachment_file(file)` in `complaints/models.py`, used by the form and by `submit()`; limits `MAX_FILE_SIZE` (15 MB) and `MAX_FILES` (5). The 5-file limit counts evidence files at submission only; the proof-of-fix photo added by `resolve()` (Sprint 3) is separate and does not count. `submit()` checks every file before writing any, and deletes files already written if the transaction fails (a rollback does not remove files from disk).
+Property: `is_image` (shown as a thumbnail; other files as a link). Proof-of-fix files (`kind=proof_of_fix`) are images only, checked by `check_proof_file(file)` (`PROOF_FILE_TYPES`). The VR-07 check is the module function `check_attachment_file(file)` in `complaints/models.py`, used by the form and by `submit()`; limits `MAX_FILE_SIZE` (15 MB) and `MAX_FILES` (5). The 5-file limit counts evidence files at submission only; the proof-of-fix photo added by `resolve()` (Sprint 3) is separate and does not count. `submit()` checks every file before writing any, and deletes files already written if the transaction fails (a rollback does not remove files from disk).
 
 ### complaints.ComplaintUpdate (history)
 
@@ -203,6 +212,7 @@ Property: `is_image` (shown as a thumbnail; other files as a link). The VR-07 ch
 | console | `queue` | `/console/complaints/` | A-02 |
 | console | `complaint_detail` | `/console/complaints/<tracking_id>/` | A-03 |
 | console | `complaint_action` | `/console/complaints/<tracking_id>/<action>/` | start_review, verify, reject, start_work, resolve, note, reassign |
+| console | `attachment` | `/console/complaints/<tracking_id>/files/<id>/` | A-03 (console twin of `student:attachment`; same file-sending helper `send_attachment()` in `complaints/views.py`) |
 | console | `student_list` | `/console/students/` | A-04 |
 | console | `student_detail` | `/console/students/<id>/` | A-05 |
 | console | `reports` | `/console/reports/` | SA-01 |
@@ -244,13 +254,17 @@ Priority text: `pri-high` (red), `pri-medium` (amber), `pri-low` (muted grey).
 | Text | `text-muted`, `text-mono` |
 | Page structure (Sprint 2) | `page-head` (title + main button), `section` (top spacing), `card-wide`, `card-head`, `table-scroll` (tables scroll inside the card), `list-item` |
 | Complaint pages (Sprint 2) | `steps` (S-02 progress), `match` (duplicate summary), `readonly-value`, `file-list` (chosen files), `next-steps`, `filters` (S-03), `details` (S-04 facts), `description`, `file-grid` (S-04 files), `timeline`, `timeline-note` |
+| Console and notifications (Sprint 3) | `action-bar` (A-03 buttons), `action-form` (one `<details>` inline form), `action-hint` (why a button is disabled), `reporter-card`, `row-overdue` (A-02 row), `timeline-internal` (internal note), `notification-unread`, `bell-dot` (gold unread dot), `avatar` (now an `<img>` of the SVG avatar) |
 
 ## 6. Design Tokens (top of `unifix.css`)
 
 | Token | Value | Use |
 |---|---|---|
-| `--navy` | `#14294a` | Sidebar, brand block, headings |
-| `--navy-2` | `#1d3a66` | Active sidebar item |
+| `--navy` | `#002f6c` | NSU Navy: top bar, sidebar, headings (CR-14) |
+| `--navy-2` | `#164a8c` | Active and hovered sidebar item (white text) |
+| `--on-navy` | `#ffffff` | Text and wordmark on navy; logo tile |
+| `--on-navy-muted` | `#b9c8dc` | Light blue-grey: top bar subtitle, sidebar labels, disabled sidebar links |
+| `--gold` | `#fec937` | NSU Gold accent only: active login tab underline, unread notification dot. Never the only cue for a state; on white only beside another cue |
 | `--bg` | `#eef2f7` | Page background |
 | `--surface` | `#ffffff` | Cards, tables, forms |
 | `--border` | `#e1e4ea` | Card, table and input borders |
@@ -263,7 +277,7 @@ Priority text: `pri-high` (red), `pri-medium` (amber), `pri-low` (muted grey).
 | `--warn` | `#b26a00` | Warnings, medium priority |
 | Card accents | blue `#1d5bbf`, teal `#0d8a7a`, amber `#b26a00`, purple `#6b4fd8`, green `#1a7f4b` | Top border of dashboard stat cards |
 
-No animations, gradients or shadows beyond a 1 px card shadow.
+No animations, gradients or shadows beyond a 1 px card shadow. IEEE blue `#137AAC` is not used: `--primary` has better contrast on white (CR-14). Status badge colours are unchanged.
 
 ## 7. Seed Data (demo and development)
 
@@ -276,4 +290,4 @@ No animations, gradients or shadows beyond a 1 px card shadow.
 
 Demo accounts: one Super Admin, one Dept Admin per department, about 10 students, and complaints in every status (including overdue and reopened examples).
 
-`seed_demo` grows by sprint: Sprint 1 seeds departments, categories and accounts; Sprint 2 adds complaints in every status, with supporters, history rows, notifications and small generated sample files, all dated relative to the day the command runs (so overdue examples stay overdue). Until the Sprint 3 action methods exist, the seed writes these rows directly to match `03` §4; from Sprint 3 it calls the real methods. Running the command again adds nothing.
+`seed_demo` grows by sprint: Sprint 1 seeds departments, categories and accounts; Sprint 2 adds complaints in every status, with supporters, history rows, notifications and small generated sample files, all dated relative to the day the command runs (so overdue examples stay overdue). Until the Sprint 3 action methods exist, the seed writes these rows directly to match `03` §4; from Sprint 3 it calls the real methods (`start_review`, `verify`, `reject`, `start_work`, `resolve`, `withdraw`, `add_note`). Confirm and reopen steps keep the direct writes until `confirm()` and `reopen()` are built in Sprint 4. Running the command again adds nothing.
