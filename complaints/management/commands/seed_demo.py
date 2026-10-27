@@ -7,15 +7,19 @@ email, and complaints by reporter and title, so nothing is duplicated; demo
 passwords are reset each run.
 
 Sprint 1 seeds departments, categories and accounts. Sprint 2 adds complaints
-in every status (docs/05 §7). Each one is created with Complaint.submit(), so
-files, history and notifications are real; the later steps are written to
-match docs/03 §4, because the Sprint 3 action methods do not exist yet. All
-times are counted back from today, so overdue examples stay overdue.
+in every status (docs/05 §7). From Sprint 3 every step runs through the real
+Complaint methods (submit, support, start_review, verify, reject, start_work,
+resolve, withdraw, add_note), so files, history and notifications are exactly
+what the app writes. Confirm and reopen are written directly until their
+methods are built in Sprint 4. All times are counted back from today, so
+overdue examples stay overdue.
 """
 
 import struct
 import zlib
+from contextlib import contextmanager
 from datetime import timedelta
+from unittest import mock
 
 from django.core.files.uploadedfile import SimpleUploadedFile
 from django.core.management.base import BaseCommand
@@ -23,7 +27,7 @@ from django.db import transaction
 from django.utils import timezone
 
 from accounts.models import User
-from complaints.models import Category, Complaint, ComplaintUpdate, Department, Support
+from complaints.models import Category, Complaint, Department
 from notifications.models import Notification
 
 # One shared password for every demo account (local development only).
@@ -75,6 +79,7 @@ STUDENTS = [
 #   steps: (action, days ago, actor, note, extra) after the submission, where
 #          actor is "admin" (the department's admin), "super" or "reporter",
 #          and extra holds verify's priority and due date (days from today),
+#          "internal" for a note, or "proof" for a proof photo on resolve,
 #   supporters: (email prefix, days ago).
 # Between them they show every status, an overdue and a reopened complaint,
 # and duplicate matches for the S-02 demo (NAC 512 projector, SAC 304 AC).
@@ -88,7 +93,7 @@ COMPLAINTS = [
             ("start_review", 8.8, "admin", "", {}),
             ("verify", 8.5, "admin", "", {"priority": "high", "due": 2}),
             ("start_work", 6, "admin", "Replacing the HDMI cable and checking the input board.", {}),
-            ("resolve", 1, "admin", "HDMI cable replaced and tested with two laptops.", {}),
+            ("resolve", 1, "admin", "HDMI cable replaced and tested with two laptops.", {"proof": True}),
         ],
         "supporters": [("ayesha.rahman", 8), ("tahmid.islam", 7)],
     },
@@ -226,17 +231,18 @@ COMPLAINTS = [
     },
 ]
 
-# action → resulting status (docs/05 action mapping); "note" keeps the status.
-STEP_STATUS = {
-    "start_review": Complaint.Status.UNDER_REVIEW,
-    "verify": Complaint.Status.VERIFIED,
-    "reject": Complaint.Status.REJECTED,
-    "start_work": Complaint.Status.IN_PROGRESS,
-    "resolve": Complaint.Status.RESOLVED,
-    "close": Complaint.Status.CLOSED,
-    "reopen": Complaint.Status.REOPENED,
-    "withdraw": Complaint.Status.WITHDRAWN,
-}
+
+@contextmanager
+def clock_at(when):
+    """Run the code inside as if the time were `when`.
+
+    The Complaint methods stamp everything with timezone.now() (created_at,
+    updated_at, verified_at, resolved_at, history and notification times, the
+    "reopen by" date). Setting the clock back lets the seed use the real
+    methods for steps that happened days ago, with consistent times.
+    """
+    with mock.patch("django.utils.timezone.now", return_value=when):
+        yield
 
 
 def sample_png(red, green, blue, width=160, height=120):
@@ -329,114 +335,80 @@ class Command(BaseCommand):
         if Complaint.objects.filter(reporter=reporter, title=spec["title"]).exists():
             return 0
         now = timezone.now()
+        today = timezone.localdate()  # due dates count from the real today
         files = [
             SimpleUploadedFile(f"photo_{number}.png", sample_png(70 + 40 * number, 110, 160))
             if kind == "photo"
             else SimpleUploadedFile(f"report_{number}.pdf", sample_pdf(spec["title"]))
             for number, kind in enumerate(spec["files"], start=1)
         ]
-        complaint = Complaint.submit(
-            reporter=reporter,
-            category=Category.objects.get(name=spec["category"]),
-            building=spec["building"],
-            room=spec["room"],
-            title=spec["title"],
-            description=spec["description"],
-            files=files,
-        )
-        # submit() stamped everything "now": move it back to the submission day.
-        submitted_at = now - timedelta(days=spec["submitted"])
-        Complaint.objects.filter(pk=complaint.pk).update(created_at=submitted_at, updated_at=submitted_at)
-        complaint.updates.update(created_at=submitted_at)
-        complaint.attachments.update(uploaded_at=submitted_at)
-        complaint.notifications.update(created_at=submitted_at)
-        complaint.refresh_from_db()
+        with clock_at(now - timedelta(days=spec["submitted"])):
+            complaint = Complaint.submit(
+                reporter=reporter,
+                category=Category.objects.get(name=spec["category"]),
+                building=spec["building"],
+                room=spec["room"],
+                title=spec["title"],
+                description=spec["description"],
+                files=files,
+            )
 
         # Steps and "Me too" presses, replayed oldest first so statuses build up in order.
         events = [(step[1], "step", step) for step in spec["steps"]]
         events += [(days, "support", email) for email, days in spec.get("supporters", [])]
         for days, kind, item in sorted(events, key=lambda event: -event[0]):  # oldest first
-            when = now - timedelta(days=days)
-            if kind == "support":
-                self.add_support(complaint, item, when)
-            else:
-                self.add_step(complaint, item, when)
+            with clock_at(now - timedelta(days=days)):
+                if kind == "support":
+                    complaint.support(User.objects.get(email=f"{item}@northsouth.edu"))
+                else:
+                    self.run_step(complaint, item, today)
         return 1
 
-    def add_support(self, complaint, email_prefix, when):
-        student = User.objects.get(email=f"{email_prefix}@northsouth.edu")
-        support = Support.objects.create(complaint=complaint, student=student)
-        Support.objects.filter(pk=support.pk).update(created_at=when)
-        update = complaint.updates.create(
-            actor=student,
-            action=ComplaintUpdate.Action.SUPPORT,
-            from_status=complaint.status,
-            to_status=complaint.status,
-        )
-        ComplaintUpdate.objects.filter(pk=update.pk).update(created_at=when)
-        Complaint.objects.filter(pk=complaint.pk).update(updated_at=when)
-
-    def add_step(self, complaint, step, when):
-        """Write one workflow step as docs/03 §4 describes it (Sprint 3 replaces this with the real methods)."""
+    def run_step(self, complaint, step, today):
+        """Run one workflow step through the Complaint method (docs/05 action mapping)."""
         action, _, actor_key, note, extra = step
         actor = {
             "admin": User.objects.filter(role=User.Role.DEPT_ADMIN, department=complaint.department).first(),
             "super": User.objects.get(role=User.Role.SUPER_ADMIN, email=SUPER_ADMIN[0]),
             "reporter": complaint.reporter,
         }[actor_key]
-        from_status = complaint.status
-        to_status = STEP_STATUS.get(action, from_status)
-        complaint.status = to_status
-        if action == "verify":
-            complaint.priority = extra["priority"]
-            complaint.due_date = timezone.localdate() + timedelta(days=extra["due"])
-            complaint.verified_at = when
+        if action == "start_review":
+            complaint.start_review(actor)
+        elif action == "verify":
+            complaint.verify(actor, extra["priority"], today + timedelta(days=extra["due"]))
+        elif action == "reject":
+            complaint.reject(actor, note)
+        elif action == "start_work":
+            complaint.start_work(actor, note)
         elif action == "resolve":
-            complaint.resolved_at = when
-        elif action == "close":
-            complaint.closed_at = when
-        elif action == "reopen":
-            complaint.reopen_count += 1
-        Complaint.objects.filter(pk=complaint.pk).update(
-            status=complaint.status,
-            priority=complaint.priority,
-            due_date=complaint.due_date,
-            verified_at=complaint.verified_at,
-            resolved_at=complaint.resolved_at,
-            closed_at=complaint.closed_at,
-            reopen_count=complaint.reopen_count,
-            updated_at=when,
-        )
-        is_internal = extra.get("internal", False)
-        update = complaint.updates.create(
-            actor=actor,
-            action=action,
-            from_status=from_status,
-            to_status=to_status,
-            note=note,
-            is_internal=is_internal,
-        )
-        ComplaintUpdate.objects.filter(pk=update.pk).update(created_at=when)
-
-        # Notifications as in docs/03 §4.
-        tracking_id = complaint.tracking_id
-        if action in ("start_review", "verify", "reject", "start_work", "resolve"):
-            self.notify([complaint.reporter], complaint, Notification.Event.STATUS_CHANGED,
-                        f"{tracking_id} is now {complaint.get_status_display()}", when)
-        elif action == "note" and not is_internal:
-            self.notify([complaint.reporter], complaint, Notification.Event.NOTE_ADDED,
-                        f"New note on {tracking_id}", when)
+            proof = SimpleUploadedFile("after_fix.png", sample_png(90, 170, 120)) if extra.get("proof") else None
+            complaint.resolve(actor, note, proof)
+        elif action == "withdraw":
+            complaint.withdraw(actor)
+        elif action == "note":
+            complaint.add_note(actor, note, is_internal=extra.get("internal", False))
         elif action in ("close", "reopen"):
-            admins = User.objects.filter(role=User.Role.DEPT_ADMIN, department=complaint.department)
-            if action == "close":
-                self.notify(admins, complaint, Notification.Event.STATUS_CHANGED,
-                            f"{tracking_id} was closed by the student", when)
-            else:
-                self.notify(admins, complaint, Notification.Event.REOPENED, f"{tracking_id} was reopened", when)
+            self.student_step(complaint, action, actor, note)
 
-    def notify(self, recipients, complaint, event, message, when):
-        for recipient in recipients:
-            notification = Notification.objects.create(
-                recipient=recipient, complaint=complaint, event=event, message=message
-            )
-            Notification.objects.filter(pk=notification.pk).update(created_at=when)
+    def student_step(self, complaint, action, student, note):
+        """Confirm fix or Reopen, written as docs/03 §4 describes them.
+
+        Sprint 4 replaces this with complaint.confirm() and complaint.reopen().
+        """
+        from_status = complaint.status
+        if action == "close":
+            complaint.status = Complaint.Status.CLOSED
+            complaint.closed_at = timezone.now()
+            message, event = f"{complaint.tracking_id} was closed by the student", Notification.Event.STATUS_CHANGED
+        else:
+            complaint.status = Complaint.Status.REOPENED
+            complaint.reopen_count += 1
+            message, event = f"{complaint.tracking_id} was reopened", Notification.Event.REOPENED
+        complaint.save(update_fields=["status", "closed_at", "reopen_count", "updated_at"])
+        complaint.updates.create(
+            actor=student, action=action, from_status=from_status, to_status=complaint.status, note=note
+        )
+        Notification.objects.bulk_create(
+            Notification(recipient=admin, complaint=complaint, event=event, message=message)
+            for admin in complaint.department_admins()
+        )

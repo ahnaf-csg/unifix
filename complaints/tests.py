@@ -116,6 +116,18 @@ class SeedDemoTests(TempMediaMixin, TestCase):
                 self.assertEqual(updates[-1].to_status, complaint.status)
                 if complaint.category.requires_attachment:
                     self.assertTrue(complaint.attachments.exists())  # VR-08 holds for seed data too
+                # Sprint 3: steps ran through the real methods at their own time, so each
+                # notification has the time of the history row that caused it.
+                update_times = {u.created_at for u in updates}
+                for notification in complaint.notifications.all():
+                    self.assertIn(notification.created_at, update_times)
+        # Resolve with a proof photo, and the "reopen by" date counted from resolved_at (docs/03 §4).
+        projector = Complaint.objects.get(title="Projector shows no signal")
+        self.assertEqual(projector.attachments.filter(kind=Attachment.Kind.PROOF_OF_FIX).count(), 1)
+        reopen_by = timezone.localdate(projector.resolved_at) + timedelta(days=7)
+        self.assertTrue(projector.notifications.filter(
+            message=f"{projector.tracking_id} was resolved. Please confirm or reopen by {reopen_by.day} {reopen_by:%b %Y}"
+        ).exists())
         # Running it again adds nothing.
         counts = (Complaint.objects.count(), Attachment.objects.count(), Notification.objects.count())
         self.seed()
