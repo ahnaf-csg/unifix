@@ -36,6 +36,7 @@ static/js/unifix.js     Small helpers only (form toggles, file previews, charts)
 static/img/nsu_logo.png NSU logo shown in the top bar
 media/                  Uploaded files (not committed to Git)
 docs/                   These documents
+docs/screenshots/       Screenshots of built pages with seed data (public/, student/, admin/; index in README.md)
 ```
 
 ## 3. Models

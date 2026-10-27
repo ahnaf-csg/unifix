@@ -18,6 +18,7 @@ Team: Sami Mohammad Abdullah, Ahnaf Tazwar Unmesh.
 | `09_verification_report.md` | Consistency checks, issues found and fixed, traceability matrix | Before each build phase |
 | `10_test_plan.md` | Test approach, test cases (TC-xx) mapped to rules, manual checklist | Each sprint |
 | `walkthroughs/` | Per-sprint walkthrough of every new or changed file (`sprint-1.md`, …) | Each sprint |
+| `screenshots/` | Screenshots of the built pages with seed data (demo accounts only), by area (`public/`, `student/`, `admin/`), indexed in its `README.md` | Each sprint |
 
 ## Rules for keeping the docs and code in sync
 

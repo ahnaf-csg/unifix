@@ -50,7 +50,8 @@
 | Student rating | Core | Move to optional if time is short |
 | Charts | Static charts | Counts and tables only |
 | Search scope | Role-scoped "contains" search on list pages | Extend: campus-wide issue search for students, filters by date, smarter matching |
-| Header and top-area spacing | Calmer spacing (v1.2 mockups) | Revisit after usability testing |
+| Header, top-area spacing and layout density | Calmer header spacing (v1.2 mockups). Team note (FB-13): pages with many buttons feel cluttered; padding and spacing are reviewed after the first full build | Revisit after usability testing; adjust padding, spacing and button grouping in the polish iteration |
+| Logic gaps from hands-on testing | Team note (FB-13): gaps found in hands-on testing after the first full build are logged as FB/CR items and fixed in a polish iteration | Fix within the sprint that built the feature, if small |
 | Supporter notifications | Only the reporter is notified | Also notify students who pressed "Me too" |
 | Due date after reopen | Original due date kept (may show overdue) | Admin sets a new due date on Start work |
 | Admin file access | Sprint 3 adds a console twin of `student:attachment` sharing the same helper | One shared file URL for all roles |
@@ -68,3 +69,4 @@ Instructor feedback and iteration changes are tracked in `08_iteration_log.md`.
 | Oct 2026 | v1.4 (CR-09): Sprint 1 pre-build fixes from the Claude Code review (I-17 to I-30): sprint coverage, User model details, file and partial names, CSS tokens and classes, Super Admin sidebar, search fields, room format, ER footnote, version tags | 00, 01, 02, 04, 05, 06, 07, 08, 09, `diagrams/er_diagram.*` |
 | Oct 2026 | Sprint 1 review: login type tabs and VR-15 (CR-10), three-zone top bar (CR-11), review fixes I-31 to I-35 (error pages, fast test hasher) | 02, 04, 05, 07, 08, 09, 10 |
 | Oct 2026 | Sprint 2 pre-build doc fixes (CR-12, I-36 to I-52): two-step S-02, limited view fields, 5-file limit, private files, `submit()`, new properties and URL, seed plan | 01, 02, 03, 04, 05, 06, 07, 08, 09, 10 |
+| Oct 2026 | Sprint 2 review notes: layout density and logic-gap keep-in-view rows (FB-13); optional gender and default avatars planned for Sprint 3 (FB-14, CR-13); screenshots folder | 00, 05, 07, 08 |

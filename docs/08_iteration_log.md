@@ -42,6 +42,8 @@ Tracks feedback and the changes it causes, iteration by iteration, so each phase
 | FB-10 | Oct 2026 | Team (Sprint 1 review) | Students and staff should choose how they log in; staff should not see the register link | CR-10 |
 | FB-11 | Oct 2026 | Team (Sprint 1 review) | Top bar should show the NSU logo, with the UniFix wordmark centred and tools on the right | CR-11 |
 | FB-12 | Oct 2026 | Claude Code review + team (Sprint 2 planning) | Pre-build review found gaps for Sprint 2 (submit method, limited view, private files, file limits, notifications timing, timeline privacy); team chose a two-step S-02 so files upload once | CR-12 |
+| FB-13 | Oct 2026 | Team (Sprint 2 review) | Pages with many buttons feel cluttered; logic gaps will surface in hands-on testing after the first full build | – (keep in view in `07`; polish iteration) |
+| FB-14 | Oct 2026 | Team (Sprint 2 review) | Optional gender at registration (male, female, other, prefer not to say) with generic default avatars (neutral for other / prefer not to say) | CR-13 |
 
 ## 4. Change Requests
 
@@ -59,6 +61,7 @@ Tracks feedback and the changes it causes, iteration by iteration, so each phase
 | CR-10 | FB-10 | Student/Staff tabs on P-01; wrong tab refused | P-01, VR-15, `login_type` (`05` §3), tab classes (`05` §5), TC-30 to TC-34 | Done (Sprint 1) |
 | CR-11 | FB-11 | Three-zone top bar with NSU logo. *Amended (clarified by team):* NSU logo moves to the centre beside the wordmark, replacing the "U" square; left zone left empty | `04` Layout, `static/img/nsu_logo.png`, top bar classes (`05` §5) | Done (Sprint 1, amended) |
 | CR-12 | FB-12 | Sprint 2 pre-build doc fixes (`09` I-36 to I-52) and decisions (`07`): two-step S-02, `submit()`, limited view fields and actor naming, 5-file limit, private files via `student:attachment`, `Notification` now, seed plan | C-02, C-03, C-06, VR-01, VR-07, VR-09, NFR-03, S-01 to S-04, `Complaint.submit()`, `tracking_id`, `location`, `status_badge_class`, `Attachment.file`, `03` §0, §4, §6, `05` §3, §4, §7, `06` §4 | Accepted (Sprint 2) |
+| CR-13 | FB-14 | Optional gender at registration (male, female, other, prefer not to say) and generic default avatars (neutral for other / prefer not to say). Names and choices are fixed in the Sprint 3 doc-first commit; no code before then | C-01, C-15, P-02, S-06, top bar avatar (`04` Layout), `User` (`05` §3) | Proposed (Sprint 3 doc-first commit) |
 
 ## 5. Iteration Template
 
@@ -88,11 +91,11 @@ Retrospective: Keep: plan checkpoint before building. Change: confirm UI placeme
 
 ### Iteration 2 (v0.3-sprint2): Oct 2026
 Goal: end-to-end student submission.
-Feedback received: FB-12 (Sprint 2 pre-build review; team chose the two-step S-02 and asked for file-safety checks at the halfway checkpoint)
+Feedback received: FB-12 (Sprint 2 pre-build review; team chose the two-step S-02 and asked for file-safety checks at the halfway checkpoint); FB-13, FB-14 (Sprint 2 review)
 Change requests: CR-12 (doc fixes done before coding)
 Foundation touched (03/05)? yes, 03 §0, §4, §6 and 05 §2–5, §7 → system workflow figure (two-step submission, login tabs) and ER diagram (`tracking_id` set after insert, `is_staff`/`is_superuser`, full footnote) updated
 Built / changed: `Complaint`, `Attachment`, `ComplaintUpdate`, `Support`, `Notification`; `submit()` with routing, history, notifications and file clean-up; VR-07 content-based file checks; `find_duplicates()`, `support()`; `can_view_complaint()` and the access helpers; two-step S-02, S-01, S-03, S-04, private file view; read-only admin; seed complaints in every status; 26 tests (TC-36 to TC-61, 61 in total)
-Carried over to next iteration: admin console and action methods (Sprint 3); `allowed_actions(user)`; console twin of `student:attachment`; notifications list and bell count; seed to call the real action methods; refresh the S-02 mockup
+Carried over to next iteration: admin console and action methods (Sprint 3); `allowed_actions(user)`; console twin of `student:attachment`; notifications list and bell count; seed to call the real action methods; refresh the S-02 mockup; CR-13 (optional gender, default avatars) in the Sprint 3 doc-first commit
 Retrospective: (team to fill in)
 
 ## 7. Suggested GitHub Practice

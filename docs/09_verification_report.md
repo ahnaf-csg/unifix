@@ -103,7 +103,7 @@ Purpose: confirm that requirements, workflow, screens, data dictionary, diagrams
 
 ## 4. Remaining Open Items (decided later, not inconsistencies)
 
-- Keep-in-view items in `07_decision_log.md` (Super Admin fallback, soft delete, withdraw, rating, charts, search extension, header spacing, supporter notifications, due date after reopen).
+- Keep-in-view items in `07_decision_log.md` (Super Admin fallback, soft delete, withdraw, rating, charts, search extension, header spacing and layout density, logic gaps from hands-on testing, supporter notifications, due date after reopen, admin file access).
 - 14 of 18 screens still need mockups (CR-03). Existing mockups predate CR-09: the S-01/S-02 search placeholder omits room, the SA-01 sidebar has no Students link, and class names are draft names; they are refreshed when the remaining mockups are drawn.
 - Sprint dates depend on semester deadlines.
 - The submitted proposal (v2 PDF) predates these decisions and is superseded by this documentation set.
