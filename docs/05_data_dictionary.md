@@ -21,7 +21,8 @@ Source of truth for names. Code, templates and diagrams must match exactly.
 ```
 unifix/                 Django project settings and root urls
 accounts/               User model, login, register, profile, user records
-accounts/permissions.py Role mixins and decorators (the one place for permission checks)
+accounts/permissions.py Role mixins and decorators, and complaint access helpers `get_complaint_for_user()`
+                        and `has_full_view()` (the one place for permission checks)
 complaints/             Models: Department, Category, Complaint, Attachment, ComplaintUpdate, Support, Rating;
                         student-facing views (URL namespace `student`)
 complaints/management/commands/seed_demo.py
@@ -35,6 +36,7 @@ static/js/unifix.js     Small helpers only (form toggles, file previews, charts)
 static/img/nsu_logo.png NSU logo shown in the top bar
 media/                  Uploaded files (not committed to Git)
 docs/                   These documents
+docs/screenshots/       Screenshots of built pages with seed data (public/, student/, admin/; index in README.md)
 ```
 
 ## 3. Models
@@ -59,6 +61,7 @@ Authentication uses Django's `AllowAllUsersModelBackend`; the login form's `conf
 | `date_joined` | DateTime (built-in) | Auto |
 
 Methods: `is_student()`, `is_dept_admin()`, `is_super_admin()`, `can_view_complaint(complaint)`, `suspend()`, `reactivate()`, `soft_delete()`.
+`can_view_complaint(complaint)` is `True` for the reporter, a supporter (limited view, VR-01), a Dept Admin of the complaint's department (VR-02) and the Super Admin; otherwise `False`. Which view a student gets (full or limited) is decided by whether they are the reporter.
 
 **Login form field** (P-01, VR-15): `login_type`, choices `student` (Student, default) and `staff` (Staff). Not stored; checked against `role` at login (`student` → `student`; `staff` → `dept_admin` or `super_admin`).
 
@@ -83,7 +86,7 @@ Methods: `is_student()`, `is_dept_admin()`, `is_super_admin()`, `can_view_compla
 
 | Field | Type | Rules |
 |---|---|---|
-| `tracking_id` | CharField(12) | Unique; `UF-` + primary key zero-padded to 4 digits (`UF-0001`) |
+| `tracking_id` | CharField(12), null | Unique; `UF-` + primary key zero-padded to 4 digits (`UF-0001`). The primary key exists only after the first insert, so `save()` inserts with NULL and fills the ID straight after, inside the same transaction (NULLs never clash in a unique column) |
 | `reporter` | FK → User | Student who submitted |
 | `category` | FK → Category | |
 | `department` | FK → Department | Copied from category; changed only by reassign |
@@ -101,13 +104,14 @@ Methods: `is_student()`, `is_dept_admin()`, `is_super_admin()`, `can_view_compla
 
 Methods (each validates the transition, writes `ComplaintUpdate`, sends notifications):
 `start_review(actor)`, `verify(actor, priority, due_date)`, `reject(actor, reason)`, `start_work(actor, note="")`, `resolve(actor, note, proof_file=None)`, `confirm(student)`, `reopen(student, reason)`, `withdraw(student)`, `reassign(actor, department, reason)`, `add_note(actor, note, is_internal)`, `support(student)`, `rate(student, stars, comment="")`.
-Class method: `find_duplicates(category, building, room)`.
-Properties: `is_overdue`, `can_reopen`, `support_count`, `affected_count`, `allowed_actions(user)`.
+Class methods: `submit(reporter, category, building, room, title, description, files)` creates the complaint, its `Attachment` rows, `ComplaintUpdate(action=submitted)` and the Dept Admin notifications in one transaction (C-02, C-04; checks VR-08); `find_duplicates(category, building, room)` returns open matches (`03` §6).
+Properties: `is_overdue`, `can_reopen`, `support_count`, `affected_count`, `allowed_actions(user)`, `is_open` (status in the open list, `03` §1), `location` (building label + room, e.g. "NAC 512"), `status_badge_class` (e.g. `badge-under-review`, used by `partials/status_badge.html`).
 
 **Action mapping** (one row per button; names must match across layers):
 
 | Button | URL action slug | Model method | `ComplaintUpdate.action` | Resulting status |
 |---|---|---|---|---|
+| Submit | (form post to `student:complaint_new`) | `submit()` | `submitted` | `submitted` |
 | Me too | `support` | `support()` | `support` | unchanged |
 | Withdraw | `withdraw` | `withdraw()` | `withdraw` | `withdrawn` |
 | Start review | `start_review` | `start_review()` | `start_review` | `under_review` |
@@ -126,13 +130,15 @@ Properties: `is_overdue`, `can_reopen`, `support_count`, `affected_count`, `allo
 | Field | Type | Rules |
 |---|---|---|
 | `complaint` | FK → Complaint | |
-| `file` | FileField | `media/complaints/<tracking_id>/` |
+| `file` | FileField | `media/complaints/<tracking_id>/<uuid>.<ext>`: a random name on disk; never served directly, only through `student:attachment` (NFR-03) |
 | `kind` | CharField choices | `evidence`, `proof_of_fix` |
-| `original_name` | CharField(255) | |
-| `mime_type` | CharField(100) | Checked against extension (VR-07) |
-| `size_bytes` | PositiveInteger | ≤ 15 MB |
+| `original_name` | CharField(255) | Name shown to users |
+| `mime_type` | CharField(100) | Detected from the file's content with the `filetype` library and checked against the extension (VR-07) |
+| `size_bytes` | PositiveInteger | ≤ 15 MB; at most 5 evidence files per complaint (VR-07) |
 | `uploaded_by` | FK → User | |
 | `uploaded_at` | DateTime | Auto |
+
+Property: `is_image` (shown as a thumbnail; other files as a link). The VR-07 check is the module function `check_attachment_file(file)` in `complaints/models.py`, used by the form and by `submit()`; limits `MAX_FILE_SIZE` (15 MB) and `MAX_FILES` (5). The 5-file limit counts evidence files at submission only; the proof-of-fix photo added by `resolve()` (Sprint 3) is separate and does not count. `submit()` checks every file before writing any, and deletes files already written if the transaction fails (a rollback does not remove files from disk).
 
 ### complaints.ComplaintUpdate (history)
 
@@ -190,6 +196,7 @@ Properties: `is_overdue`, `can_reopen`, `support_count`, `affected_count`, `allo
 | student | `complaint_list` | `/student/complaints/` | S-03 |
 | student | `complaint_detail` | `/student/complaints/<tracking_id>/` | S-04 |
 | student | `complaint_action` | `/student/complaints/<tracking_id>/<action>/` | support, withdraw, confirm, reopen, rate |
+| student | `attachment` | `/student/complaints/<tracking_id>/files/<id>/` | S-04 (sends an evidence or proof file after a permission check) |
 | notifications | `list` | `/notifications/` | S-05, A-06 |
 | notifications | `mark_all_read` | `/notifications/read-all/` | S-05, A-06 (form post) |
 | console | `dashboard` | `/console/` | A-01 |
@@ -235,6 +242,8 @@ Priority text: `pri-high` (red), `pri-medium` (amber), `pri-low` (muted grey).
 | Tabs | `tab-list` (group), `tab` (one tab; the active tab is the checked radio button), `tab-panel` (content shown for a tab) |
 | Messages | `alert-info`, `alert-success`, `alert-warning`, `alert-error` (Django message levels) |
 | Text | `text-muted`, `text-mono` |
+| Page structure (Sprint 2) | `page-head` (title + main button), `section` (top spacing), `card-wide`, `card-head`, `table-scroll` (tables scroll inside the card), `list-item` |
+| Complaint pages (Sprint 2) | `steps` (S-02 progress), `match` (duplicate summary), `readonly-value`, `file-list` (chosen files), `next-steps`, `filters` (S-03), `details` (S-04 facts), `description`, `file-grid` (S-04 files), `timeline`, `timeline-note` |
 
 ## 6. Design Tokens (top of `unifix.css`)
 
@@ -267,4 +276,4 @@ No animations, gradients or shadows beyond a 1 px card shadow.
 
 Demo accounts: one Super Admin, one Dept Admin per department, about 10 students, and complaints in every status (including overdue and reopened examples).
 
-`seed_demo` grows by sprint: Sprint 1 seeds departments, categories and accounts; complaints are added in Sprints 2–3 as their models and actions are built.
+`seed_demo` grows by sprint: Sprint 1 seeds departments, categories and accounts; Sprint 2 adds complaints in every status, with supporters, history rows, notifications and small generated sample files, all dated relative to the day the command runs (so overdue examples stay overdue). Until the Sprint 3 action methods exist, the seed writes these rows directly to match `03` §4; from Sprint 3 it calls the real methods. Running the command again adds nothing.

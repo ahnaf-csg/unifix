@@ -1,0 +1,107 @@
+{% extends "base.html" %}
+{% block title %}New complaint{% endblock %}
+{% block content %}
+{# S-02 New complaint, two steps (docs/03 §6, docs/04 S-02). #}
+{# step 1: category and location · "matches": similar open complaints · step 2: details and files #}
+<div class="breadcrumb"><a href="{% url 'student:home' %}">Home</a> / New complaint</div>
+<h1 class="page-title">Report a campus issue</h1>
+<p class="page-sub">Your report goes straight to the department responsible for the category you choose.</p>
+
+<ol class="steps" aria-label="Progress">
+  <li{% if step != 2 %} aria-current="step"{% endif %}>1. What and where</li>
+  <li{% if step == 2 %} aria-current="step"{% endif %}>2. Details and files</li>
+</ol>
+
+<div class="row section">
+  <div class="card card-wide">
+    {% if step == 1 %}
+      <form method="get" action="{% url 'student:complaint_new' %}" novalidate>
+        <input type="hidden" name="step" value="check">
+        {% for field in location_form %}
+          <div class="form-field">
+            <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+            {{ field }}
+            {% if field.help_text %}<div class="form-help">{{ field.help_text }}</div>{% endif %}
+            {% for error in field.errors %}<div class="form-error">{{ error }}</div>{% endfor %}
+          </div>
+        {% endfor %}
+        <button class="btn btn-primary" type="submit">Check for similar issues</button>
+        <a class="btn" href="{% url 'student:home' %}">Cancel</a>
+      </form>
+
+    {% elif step == "matches" %}
+      <h2>Similar open complaints found</h2>
+      <p class="text-muted">
+        An open report already matches {{ location.category.name }} at this location.
+        Supporting it helps {{ location.category.department.name }} prioritise and avoids a duplicate.
+      </p>
+      {% for match in matches %}
+        <div class="match">
+          <div>
+            <strong>{{ match.title }}</strong> <span class="text-mono">{{ match.tracking_id }}</span>
+            <div class="text-muted">{{ match.location }} · {{ match.category.name }} · {{ match.department.name }} · reported {{ match.created_at|date:"j M" }}</div>
+            <div>
+              {% include "partials/status_badge.html" with complaint=match %}
+              {% if match.due_date %}· Due {{ match.due_date|date:"j M" }}{% endif %}
+              · {{ match.affected_count }} student{{ match.affected_count|pluralize }} affected
+            </div>
+          </div>
+          {% if match.is_own %}
+            <a class="btn btn-sm" href="{% url 'student:complaint_detail' match.tracking_id %}">You reported this</a>
+          {% elif match.is_supported %}
+            <a class="btn btn-sm" href="{% url 'student:complaint_detail' match.tracking_id %}">You support this</a>
+          {% else %}
+            <form method="post" action="{% url 'student:complaint_action' match.tracking_id 'support' %}">
+              {% csrf_token %}
+              <button class="btn btn-primary btn-sm" type="submit">Me too – this is my issue</button>
+            </form>
+          {% endif %}
+        </div>
+      {% endfor %}
+      <p class="section">
+        Not the same problem? <a class="btn" href="{{ continue_url }}">Continue with a new complaint</a>
+        <a href="{{ change_url }}">Change category or location</a>
+      </p>
+
+    {% else %}
+      <form method="post" action="{% url 'student:complaint_new' %}" enctype="multipart/form-data" novalidate>
+        {% csrf_token %}
+        {# Carried over from step 1 and checked again on Submit; nothing was saved in between. #}
+        {{ form.category.as_hidden }}{{ form.building.as_hidden }}{{ form.room.as_hidden }}
+        {% for error in form.non_field_errors %}<div class="alert-error">{{ error }}</div>{% endfor %}
+        <div class="form-field">
+          <label>Category and location</label>
+          <div class="readonly-value">
+            {{ location.category.name }} ({{ location.category.department.name }}) · {{ building_label }} {{ location.room }}
+            <a href="{{ change_url }}">Change</a>
+          </div>
+        </div>
+        {% for field in detail_fields %}
+          <div class="form-field">
+            <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+            {{ field }}
+            {% if field.name == "attachments" %}
+              <ul class="file-list" id="file-list" hidden></ul>
+              <a href="#" class="form-help" data-clear-files="{{ field.id_for_label }}" hidden>Clear files</a>
+            {% endif %}
+            {% if field.help_text %}<div class="form-help">{{ field.help_text }}{% if field.name == "attachments" and location.category.requires_attachment %} This category needs at least one file.{% endif %}</div>{% endif %}
+            {% for error in field.errors %}<div class="form-error">{{ error }}</div>{% endfor %}
+          </div>
+        {% endfor %}
+        <button class="btn btn-primary" type="submit">Submit</button>
+        <a class="btn" href="{% url 'student:home' %}">Cancel</a>
+      </form>
+    {% endif %}
+  </div>
+
+  <aside class="card">
+    <h2>What happens next</h2>
+    <ol class="next-steps">
+      <li>Routed to <strong data-department-name>{% if location %}{{ location.category.department.name }}{% else %}the department for your category{% endif %}</strong></li>
+      <li>An admin reviews and verifies it, setting a due date</li>
+      <li>You can follow every step on the complaint's page</li>
+      <li>When it's resolved, you confirm the fix or reopen it</li>
+    </ol>
+  </aside>
+</div>
+{% endblock %}

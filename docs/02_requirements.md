@@ -31,10 +31,10 @@ Departments and categories are configured through Django's built-in admin panel 
 |---|---|---|
 | C-01 | Accounts and roles | Register (students only, `@northsouth.edu` email), login, logout. Admin accounts are created by the Super Admin or in Django admin. |
 | C-02 | Complaint submission | Title, category, building, room, description, attachments (photo, video, PDF). Server-side checks on required fields, file type and size. Categories marked `requires_attachment` need at least one file. A tracking ID (e.g. UF-1042) is issued. |
-| C-03 | Duplicate check and "Me too" | Before saving, open complaints matching the duplicate rule (`03_workflow.md` §5) are shown as summaries. The student can support one instead of submitting. Students affected = supporters + reporter. |
+| C-03 | Duplicate check and "Me too" | Step 1 of the form (category and location) checks for open complaints matching the duplicate rule (`03_workflow.md` §6) before any details or files are entered; matches are shown as limited summaries. The student can support one instead of submitting. Students affected = supporters + reporter. |
 | C-04 | Department routing | The complaint's department is copied from its category at submission and stored on the complaint. |
 | C-05 | Status action buttons | One button per step on the admin complaint page: Start review, Verify, Reject, Start work, Mark resolved. Only the buttons valid for the current status are enabled. |
-| C-06 | Verification with priority and due date | Verify requires a priority (Low, Medium, High) and a due date in the future. A complaint is overdue when today is past the due date and it is not Resolved, Closed, Rejected or Withdrawn. |
+| C-06 | Verification with priority and due date | Verify requires a priority (Low, Medium, High) and a due date in the future. A complaint is overdue as defined in `03_workflow.md` §5 (`is_overdue`). |
 | C-07 | Resolution with proof | Mark resolved requires a resolution note; a proof-of-fix photo is optional. |
 | C-08 | Status history | Every action creates a history record (who, what, when, note). Notes can be public (visible to the student) or internal (admins only). |
 | C-09 | Confirm or reopen | The student confirms the fix (Closed) or reopens within 7 days of resolution with a reason (Reopened). |
@@ -79,15 +79,15 @@ Charts are static (no animation): Chart.js with animation disabled, or plain CSS
 
 | ID | Rule |
 |---|---|
-| VR-01 | Students see complaints they reported in full, and complaints they supported in a limited view (title, category, location, status, public timeline; no reporter identity or attachments). Duplicate matches on S-02 show the same limited summary. |
+| VR-01 | Students see complaints they reported in full, and complaints they supported in a limited view: title, category, department, location, status, due date, students affected, date reported and the public timeline; no description, reporter identity or attachments. Duplicate matches on S-02 show the same limited summary (without the timeline). Every student-facing page names the actor of a timeline entry by role or department ("Reporter", "Facilities Management", "A student supported this"), never by a person's name. Complaints a student may not see return "not found". |
 | VR-02 | Dept Admins can only see and act on complaints of their own department. |
 | VR-03 | Only transitions listed in `03_workflow.md` are allowed; buttons for other transitions are disabled and rejected server-side. |
 | VR-04 | Reject requires a reason; Mark resolved requires a note; Reopen requires a reason. |
 | VR-05 | Verify requires a priority and a due date later than today. |
 | VR-06 | Reopen is allowed only within 7 days of `resolved_at`. |
-| VR-07 | Files: JPG, JPEG, PNG, WEBP, MP4, MOV, PDF only; maximum 15 MB each; MIME type must match the extension. |
+| VR-07 | Files: JPG, JPEG, PNG, WEBP, MP4, MOV, PDF only; maximum 15 MB each; at most 5 files per complaint; the file type detected from the file's content must match the extension. |
 | VR-08 | Categories with `requires_attachment` need at least one evidence file. |
-| VR-09 | A student cannot support their own complaint or support the same complaint twice. |
+| VR-09 | A student cannot support their own complaint or support the same complaint twice; only complaints with an open status can be supported. |
 | VR-10 | A complaint can be rated once, only by its reporter, and only when Closed. |
 | VR-11 | Suspended and deleted accounts cannot log in. |
 | VR-12 | Only the Super Admin can edit, suspend or delete users, and reassign complaints. |
@@ -101,7 +101,7 @@ Charts are static (no animation): Chart.js with animation disabled, or plain CSS
 |---|---|---|
 | NFR-01 | Usability | Every page uses the same layout, status badges and button styles; primary action is visually distinct. |
 | NFR-02 | Security | Django password hashing; permission checks in every view; CSRF protection on all forms. |
-| NFR-03 | Privacy | Attachments are only accessible to the reporter, the responsible department's admins and the Super Admin. |
+| NFR-03 | Privacy | Attachments are only accessible to the reporter, the responsible department's admins and the Super Admin. Uploaded files are never served directly from `/media/`; they are sent by a view that checks permission first. |
 | NFR-04 | Performance | Pages load in under 2 seconds with the demo dataset. |
 | NFR-05 | Compatibility | Works on current Chrome, Firefox and Edge, on desktop and phone browsers (responsive layout). |
 | NFR-06 | Maintainability | Names follow `05_data_dictionary.md`; workflow logic lives in model methods, not templates. |

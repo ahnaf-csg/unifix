@@ -1,0 +1,58 @@
+{% extends "base.html" %}
+{% block title %}{{ complaint.tracking_id }}{% endblock %}
+{% block content %}
+{# S-04 Complaint detail. Full view for the reporter; limited view for a supporter (VR-01): #}
+{# no description, reporter or files. Action buttons arrive in Sprints 3 and 4. #}
+<div class="breadcrumb"><a href="{% url 'student:complaint_list' %}">My complaints</a> / {{ complaint.tracking_id }}</div>
+<div class="page-head">
+  <div>
+    <h1 class="page-title">{{ complaint.title }}</h1>
+    <p class="page-sub">
+      <span class="text-mono">{{ complaint.tracking_id }}</span>
+      {% include "partials/status_badge.html" with complaint=complaint %}
+      {% if not full_view %} · You support this complaint{% endif %}
+    </p>
+  </div>
+</div>
+
+<div class="row">
+  <div class="card card-wide">
+    <dl class="details">
+      <dt>Category</dt><dd>{{ complaint.category.name }}</dd>
+      <dt>Department</dt><dd>{{ complaint.department.name }}</dd>
+      <dt>Location</dt><dd>{{ complaint.location }}</dd>
+      <dt>Reported</dt><dd>{{ complaint.created_at|date:"j M Y" }}</dd>
+      {% if complaint.due_date %}<dt>Due date</dt><dd>{{ complaint.due_date|date:"j M Y" }}{% if complaint.is_overdue %} <span class="flag-overdue">Overdue</span>{% endif %}</dd>{% endif %}
+      <dt>Students affected</dt><dd>{{ complaint.affected_count }}</dd>
+    </dl>
+
+    {% if full_view %}
+      <h2 class="section">Description</h2>
+      <p class="description">{{ complaint.description|linebreaksbr }}</p>
+
+      <h2 class="section">Evidence</h2>
+      {% include "student/attachment_list.html" with files=evidence empty="No files attached." %}
+
+      {% if proof %}
+        <h2 class="section">Proof of fix</h2>
+        {% include "student/attachment_list.html" with files=proof empty="" %}
+      {% endif %}
+    {% else %}
+      <p class="form-help section">This is the limited view of a complaint you supported. The description, the reporter and the files are only shown to the reporter and the department.</p>
+    {% endif %}
+  </div>
+
+  <div class="card">
+    <h2>Timeline</h2>
+    <ol class="timeline">
+      {% for entry in timeline %}
+        <li>
+          <strong>{{ entry.action }}</strong> <span class="text-muted">· {{ entry.actor }}</span>
+          <div class="text-muted">{{ entry.created_at|date:"j M Y, H:i" }}</div>
+          {% if entry.note %}<div class="timeline-note">{{ entry.note|linebreaksbr }}</div>{% endif %}
+        </li>
+      {% endfor %}
+    </ol>
+  </div>
+</div>
+{% endblock %}

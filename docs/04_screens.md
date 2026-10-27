@@ -65,21 +65,26 @@ Search reuses the existing list pages with a `?q=` parameter instead of adding n
 
 - Shows: greeting; cards (Open, Awaiting your confirmation, Closed, Issues you supported); "Needs your action" list (Resolved → Confirm/Reopen, Closed and unrated → Rate); recent complaints table (tracking ID, title, location, status badge, due date, updated); latest notifications.
 - Buttons: **New complaint**; row → S-04.
-- R: Complaint, Rating.
+- R: Complaint, Support, Notification, Rating.
+- Built in stages: Sprint 2 shows the cards, recent complaints and the Confirm/Reopen items of "Needs your action" as links to S-04; latest notifications arrive in Sprint 3, and Rate items with ratings in Sprint 4.
 
 ### S-02 New complaint
 `student:complaint_new` · `student/complaint_form.html`
 
-- Shows: category (grouped by department), building, room, title, description, attachments (multiple files, accepted types listed).
-- Step 2, only if duplicates found: "Similar open complaints" list (limited summaries with status, due date and students affected).
-- Side panel: "What happens next" (routing department and the steps that follow).
-- Buttons: **Check & submit** · **Me too** (on a duplicate) · **Submit as new**.
-- R: Category, Complaint (open, same category and location). W: Complaint, Attachment, ComplaintUpdate, Support, Notification.
+Two steps on one URL, so files are uploaded only once (`03_workflow.md` §6). Steps 1 and 2 are plain GET pages that save nothing; only **Submit** posts.
+
+- **Step 1** shows: category (active categories, grouped by department), building, room. Button: **Check for similar issues** (runs `find_duplicates()`).
+  - If matches are found: "Similar open complaints" list (limited summaries, VR-01: title, category, location, date reported, status, due date, students affected). Each has **Me too** (posts to `student:complaint_action` with `support`, then opens S-04 in the limited view), except the student's own complaints ("You reported this") and ones they already support ("You support this"). Below the list: **Continue with a new complaint** (→ step 2).
+  - If none: step 2 opens directly.
+- **Step 2** shows: category, building and room read-only with a **Change** link (→ step 1, values kept); title, description, attachments (multiple files, accepted types and limits listed, VR-07; a list of chosen files with sizes and a **Clear files** link). Button: **Submit** (runs `Complaint.submit()`, then opens S-04).
+  - The server re-checks the carried-over category and location on Submit; the duplicate check is not repeated.
+- Side panel (both steps): "What happens next" (routing department and the steps that follow).
+- R: Category, Complaint (open, same category and location), Support. W: Complaint, Attachment, ComplaintUpdate, Support, Notification.
 
 ### S-03 My complaints
 `student:complaint_list` · `student/complaint_list.html`
 
-- Shows: table of own complaints and supported complaints; filters by status; search by tracking ID, title or room.
+- Shows: table of own complaints and supported complaints (tracking ID, title, location, status badge, due date, updated; supported rows labelled "Supported"); filter by status; search by tracking ID, title or room (`?q=`, reused by the top-bar search in C-18).
 - Buttons: row → S-04.
 - R: Complaint, Support.
 
@@ -87,9 +92,12 @@ Search reuses the existing list pages with a `?q=` parameter instead of adding n
 `student:complaint_detail` · `student/complaint_detail.html`
 
 - Shows: tracking ID, status badge, category, department, location, description, evidence, public timeline, proof-of-fix photo, students affected, due date (once verified).
+- Timeline entries name the actor by role or department ("Reporter", "You", "Facilities Management", "A student supported this"), never by a person's name (VR-01).
+- Evidence and proof files open through `student:attachment` (permission-checked, NFR-03); the file list is the include `student/attachment_list.html` (images as thumbnails, other files as links).
 - For a supported (not reported) complaint: limited view only (VR-01), with no action buttons.
-- Buttons (by status): **Withdraw** (submitted) · **Confirm fix** and **Reopen** (resolved, within 7 days) · **Rate** (closed, not yet rated).
-- R: Complaint, Attachment, ComplaintUpdate (public only), Rating. W: via workflow actions.
+- A complaint the student may not see shows the 404 page.
+- Buttons (by status): **Withdraw** (submitted) · **Confirm fix** and **Reopen** (resolved, within 7 days) · **Rate** (closed, not yet rated). Read-only in Sprint 2; Withdraw arrives in Sprint 3, the others in Sprint 4.
+- R: Complaint, Attachment, ComplaintUpdate (public only), Support, Rating. W: via workflow actions.
 
 ### S-05 Notifications
 `notifications:list` · `notifications/list.html` (shared by all roles)

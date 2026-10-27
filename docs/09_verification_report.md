@@ -59,13 +59,31 @@ Purpose: confirm that requirements, workflow, screens, data dictionary, diagrams
 | I-33 | Test suite took about 50 s because of password hashing | Low | MD5 hasher when running tests only | `unifix/settings.py` |
 | I-34 | 403 and 404 showed Django's plain pages with no way back | Low | `403.html` and `404.html` extend `base.html` with a link home | 04, 05, templates |
 | I-35 | `/` routing by role was untested | Low | Verified correct (via the login page); test added | `accounts/tests.py` |
+| I-36 | C-03 pointed to `03` §5 for the duplicate rule; the rule is in §6 | Low | Reference fixed | 02 |
+| I-37 | VR-01's limited view omitted due date, students affected and date reported, which S-02 and its mockup show; the description was not mentioned | Medium | VR-01 lists the exact fields; no description | 02, 04 |
+| I-38 | Submit had no model method, though `03` §4 and CLAUDE.md require one; the action mapping had no Submit row | Medium | `Complaint.submit()` added; Submit row in the action mapping | 05 |
+| I-39 | S-02 writes a Notification, but notifications were planned for Sprint 3 | Medium | `Notification` model built in Sprint 2; list and bell stay in Sprint 3 | 07 |
+| I-40 | S-01 read only Complaint and Rating, but shows supported complaints and notifications; Rate items need `Rating` (Sprint 4) | Low | Reads Support and Notification too; staged build noted | 04 |
+| I-41 | The public timeline would name the reporter and other supporters, conflicting with VR-01 | Medium | Student pages name actors by role or department only | 02, 04 |
+| I-42 | `support()` did not say whether closed complaints can be supported; own complaints among duplicate matches were not covered | Medium | Open statuses only (VR-09); own and supported matches labelled, without Me too | 02, 03, 04 |
+| I-43 | `tracking_id` is unique and built from the primary key, which does not exist before the first insert | Low | Field is nullable; `save()` fills it right after the insert in the same transaction | 05 |
+| I-44 | NFR-03 keeps attachments private, but nothing said how files are served; `05` §4 had no file URL | High | Files sent only by `student:attachment` after a permission check; random names on disk | 02, 05 |
+| I-45 | VR-07 had no limit on the number of files | Low | At most 5 files per complaint | 02, 05 |
+| I-46 | Badge classes use hyphens (`badge-under-review`) but status values use underscores; no name for the mapping | Low | `Complaint.status_badge_class` property | 05 |
+| I-47 | "NAC 512" display had no property name; the S-02 mockup puts "SAC 304" in the Room box and labels the building "SAC – South Academic Building" | Low | `Complaint.location` property; mockup refresh noted in §4 | 05, 09 |
+| I-48 | C-06 and `03` §5 defined overdue in different words | Low | C-06 refers to `03` §5 | 02 |
+| I-49 | `08` Iteration 1 said 25 tests (35 after the review round); `v0.2-sprint1` still "planned"; README status said Sprint 1 | Low | Corrected | 08, README |
+| I-50 | `01` §3 said retrospectives go in `07`; they are recorded in `08` iteration entries | Low | Corrected | 01 |
+| I-51 | Nothing said whether inactive categories or departments can receive complaints | Low | S-02 lists active categories only; Submit re-checks | 03, 04 |
+| I-52 | S-02 mockup shows a Remove link per file, which a plain file input cannot do | Low | One "Clear files" link | 04, 07 |
+| I-53 | Opening a complaint in the Django admin crashed (`FieldError`): the read-only inlines listed auto-set fields such as `uploaded_at`. Found while taking screenshots | Medium | Inline fields are all read-only; complaints cannot be deleted in the admin either; TC-61 | `complaints/admin.py` |
 
 ## 3. Traceability Matrix
 
 | Feature | Screens | Rules | Use cases | Model elements |
 |---|---|---|---|---|
 | C-01 Accounts and roles | P-01, P-02 | VR-11, VR-13, VR-15 | UC-01, UC-02 | `User.role`, `account_state`, `login_type` |
-| C-02 Submission | S-02 | VR-07, VR-08 | UC-03 | `Complaint`, `Attachment` |
+| C-02 Submission | S-02 | VR-07, VR-08 | UC-03 | `Complaint.submit()`, `Attachment` |
 | C-03 Duplicates and Me too | S-02, S-03 | VR-01, VR-09 | UC-04, UC-05 | `find_duplicates()`, `support()`, `Support` |
 | C-04 Routing | S-02, A-02 | VR-02 | UC-03 | `Complaint.department`, `Category.department` |
 | C-05 Action buttons | A-03 | VR-02, VR-03 | UC-11 to UC-16 | Action mapping (`05`) |
@@ -85,14 +103,15 @@ Purpose: confirm that requirements, workflow, screens, data dictionary, diagrams
 
 ## 4. Remaining Open Items (decided later, not inconsistencies)
 
-- Keep-in-view items in `07_decision_log.md` (Super Admin fallback, soft delete, withdraw, rating, charts, search extension, header spacing, supporter notifications, due date after reopen).
+- Keep-in-view items in `07_decision_log.md` (Super Admin fallback, soft delete, withdraw, rating, charts, search extension, header spacing and layout density, logic gaps from hands-on testing, supporter notifications, due date after reopen, admin file access).
 - 14 of 18 screens still need mockups (CR-03). Existing mockups predate CR-09: the S-01/S-02 search placeholder omits room, the SA-01 sidebar has no Students link, and class names are draft names; they are refreshed when the remaining mockups are drawn.
 - Sprint dates depend on semester deadlines.
 - The submitted proposal (v2 PDF) predates these decisions and is superseded by this documentation set.
 - Course diagrams (use case, class, ER, sequence, activity) still to be drawn from `06`.
+- CR-12 follow-up for the next mockup update: the S-02 mockup shows one combined form, a Room value with the building, a long building label and per-file Remove links.
 
 ## 5. How to Re-run
 
 1. Run the automated checks (V-01 to V-05) with the verification script kept alongside these docs.
 2. Walk through the manual checks V-06 to V-13 for any section that changed.
-3. Log new issues here as I-36, I-37, … and link fixes to a CR in `08_iteration_log.md`.
+3. Log new issues here as I-54, I-55, … and link fixes to a CR in `08_iteration_log.md`.

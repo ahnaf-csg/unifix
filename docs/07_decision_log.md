@@ -27,6 +27,18 @@
 | Oct 2026 | CR-11 amended: NSU logo centred beside the wordmark (clarified by team) | One centred identity unit; the left zone stays free for a future mobile menu button |
 | Oct 2026 | Friendly 403 and 404 pages using `base.html` | Users always have a way back home (I-34) |
 | Oct 2026 | Tests use the MD5 password hasher (tests only) | Faster test runs; real passwords still use Django's default hasher (I-33) |
+| Oct 2026 | Sprint 2: `Notification` model built now; `submit()` writes rows for Dept Admins (list page and bell count in Sprint 3) | `submit()` is finished once; Sprint 3 starts with real data (CR-12) |
+| Oct 2026 | Sprint 2 seed: complaints in every status with history, supporters, notifications and sample files, dated relative to today | Every badge, overdue and reopened case can be shown from Sprint 2 (CR-12) |
+| Oct 2026 | S-03 status filter and `?q=` search built in Sprint 2 | Small GET form; the C-18 top-bar search reuses `?q=` in Sprint 4 (CR-12) |
+| Oct 2026 | Real file type detected with the `filetype` library (pure Python); 15 MB checked per file in the form; at most 5 files per complaint | No system library needed on Windows; limits enforced on the server (VR-07, CR-12) |
+| Oct 2026 | Uploads never served from `/media/`; files sent by a permission-checked view; random file names on disk | Attachments stay private, also in development (NFR-03, CR-12) |
+| Oct 2026 | S-02 is a two-step form: category and location → duplicate check → details and files | Files are uploaded only once, and only when no duplicate was chosen (CR-12) |
+| Oct 2026 | Complaints a user may not see return 404, not 403 | Does not reveal that a tracking ID exists; matches VR-14 (CR-12) |
+| Oct 2026 | Student pages name timeline actors by role or department, never by person; admin pages show names | Reporter and staff privacy (VR-01, CR-12) |
+| Oct 2026 | Own and already-supported complaints are shown among duplicate matches, labelled, without Me too | The student learns they already reported or support the issue (VR-09, CR-12) |
+| Oct 2026 | Submission logic in `Complaint.submit()` | Same pattern as every other action: one model method, one transaction (CR-12) |
+| Oct 2026 | One "Clear files" link instead of a Remove link per file | A file input cannot drop single files without extra JavaScript (CR-12) |
+| Oct 2026 | Me too is allowed on any open complaint a student can reach by URL; only the limited view (VR-01) is shown | The limited view holds the same fields as a duplicate summary on S-02, so nothing private is exposed; restricting Me too to S-02 matches would add complexity for no privacy gain (CR-12) |
 
 ## Keep in View
 
@@ -38,9 +50,11 @@
 | Student rating | Core | Move to optional if time is short |
 | Charts | Static charts | Counts and tables only |
 | Search scope | Role-scoped "contains" search on list pages | Extend: campus-wide issue search for students, filters by date, smarter matching |
-| Header and top-area spacing | Calmer spacing (v1.2 mockups) | Revisit after usability testing |
+| Header, top-area spacing and layout density | Calmer header spacing (v1.2 mockups). Team note (FB-13): pages with many buttons feel cluttered; padding and spacing are reviewed after the first full build | Revisit after usability testing; adjust padding, spacing and button grouping in the polish iteration |
+| Logic gaps from hands-on testing | Team note (FB-13): gaps found in hands-on testing after the first full build are logged as FB/CR items and fixed in a polish iteration | Fix within the sprint that built the feature, if small |
 | Supporter notifications | Only the reporter is notified | Also notify students who pressed "Me too" |
 | Due date after reopen | Original due date kept (may show overdue) | Admin sets a new due date on Start work |
+| Admin file access | Sprint 3 adds a console twin of `student:attachment` sharing the same helper | One shared file URL for all roles |
 
 Instructor feedback and iteration changes are tracked in `08_iteration_log.md`.
 
@@ -54,3 +68,5 @@ Instructor feedback and iteration changes are tracked in `08_iteration_log.md`.
 | Oct 2026 | v1.3: ER diagram; supported-complaint limited view and reopen due-date behaviour confirmed by team | 06, 07 |
 | Oct 2026 | v1.4 (CR-09): Sprint 1 pre-build fixes from the Claude Code review (I-17 to I-30): sprint coverage, User model details, file and partial names, CSS tokens and classes, Super Admin sidebar, search fields, room format, ER footnote, version tags | 00, 01, 02, 04, 05, 06, 07, 08, 09, `diagrams/er_diagram.*` |
 | Oct 2026 | Sprint 1 review: login type tabs and VR-15 (CR-10), three-zone top bar (CR-11), review fixes I-31 to I-35 (error pages, fast test hasher) | 02, 04, 05, 07, 08, 09, 10 |
+| Oct 2026 | Sprint 2 pre-build doc fixes (CR-12, I-36 to I-52): two-step S-02, limited view fields, 5-file limit, private files, `submit()`, new properties and URL, seed plan | 01, 02, 03, 04, 05, 06, 07, 08, 09, 10 |
+| Oct 2026 | Sprint 2 review notes: layout density and logic-gap keep-in-view rows (FB-13); optional gender and default avatars planned for Sprint 3 (FB-14, CR-13); screenshots folder | 00, 05, 07, 08 |

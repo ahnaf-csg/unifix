@@ -1,0 +1,16 @@
+{# Evidence or proof files on S-04. Every link goes through student:attachment (NFR-03). #}
+{% if files %}
+  <ul class="file-grid">
+    {% for file in files %}
+      <li>
+        <a href="{% url 'student:attachment' complaint.tracking_id file.pk %}" target="_blank" rel="noopener">
+          {% if file.is_image %}<img src="{% url 'student:attachment' complaint.tracking_id file.pk %}" alt="{{ file.original_name }}" loading="lazy">{% endif %}
+          <span>{{ file.original_name }}</span>
+        </a>
+        <span class="text-muted">{{ file.size_bytes|filesizeformat }}</span>
+      </li>
+    {% endfor %}
+  </ul>
+{% elif empty %}
+  <p class="text-muted">{{ empty }}</p>
+{% endif %}

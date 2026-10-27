@@ -29,7 +29,7 @@ Sprint length and dates are set once the semester deadlines are confirmed.
 - **Sprint planning:** pick features (by C-xx ID) from the backlog in `02_requirements.md`.
 - **Mid-sprint check-in:** a 15-minute sync on blockers.
 - **Sprint review:** demo working pages to each other, and to the instructor when possible.
-- **Retrospective:** one thing to keep, one thing to change, recorded in `07_decision_log.md`.
+- **Retrospective:** one thing to keep, one thing to change, recorded in the sprint's iteration entry in `08_iteration_log.md` (§6).
 
 ## 4. Work Split (suggested, to be agreed)
 

@@ -1,8 +1,10 @@
-"""Django admin setup for departments and categories (C-16)."""
+"""Django admin setup (C-16): departments and categories are edited here;
+complaints are shown read-only for checking data. Workflow changes go through
+the Complaint methods, never the admin."""
 
 from django.contrib import admin
 
-from .models import Category, Department
+from .models import Attachment, Category, Complaint, ComplaintUpdate, Department, Support
 
 
 class CategoryInline(admin.TabularInline):
@@ -23,3 +25,52 @@ class CategoryAdmin(admin.ModelAdmin):
     list_display = ["name", "department", "requires_attachment", "is_active"]
     list_filter = ["department", "requires_attachment", "is_active"]
     search_fields = ["name"]
+
+
+class ReadOnlyInline(admin.TabularInline):
+    extra = 0
+    can_delete = False
+
+    def has_add_permission(self, request, obj=None):
+        return False
+
+    def has_change_permission(self, request, obj=None):
+        return False
+
+    def get_readonly_fields(self, request, obj=None):
+        # Every listed field is display-only; auto-set fields such as `uploaded_at`
+        # cannot appear in an inline's form at all, so they must be read-only.
+        return self.fields
+
+
+class AttachmentInline(ReadOnlyInline):
+    model = Attachment
+    # No file link: files are only sent by the permission-checked view (NFR-03).
+    fields = ["original_name", "kind", "mime_type", "size_bytes", "uploaded_by", "uploaded_at"]
+
+
+class ComplaintUpdateInline(ReadOnlyInline):
+    model = ComplaintUpdate
+    fields = ["created_at", "actor", "action", "from_status", "to_status", "note", "is_internal"]
+
+
+class SupportInline(ReadOnlyInline):
+    model = Support
+    fields = ["student", "created_at"]
+
+
+@admin.register(Complaint)
+class ComplaintAdmin(admin.ModelAdmin):
+    list_display = ["tracking_id", "title", "department", "category", "status", "due_date", "created_at"]
+    list_filter = ["status", "department", "building"]
+    search_fields = ["tracking_id", "title", "room", "reporter__email"]
+    inlines = [AttachmentInline, ComplaintUpdateInline, SupportInline]
+
+    def has_add_permission(self, request):
+        return False
+
+    def has_change_permission(self, request, obj=None):
+        return False
+
+    def has_delete_permission(self, request, obj=None):
+        return False  # a delete would bypass the workflow and leave files on disk

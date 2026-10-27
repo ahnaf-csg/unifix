@@ -81,7 +81,7 @@ erDiagram
 
 ## 4. Sequence Diagrams (minimum two)
 
-1. **Submit complaint with duplicate check (UC-03, UC-05):** Student → New complaint page → ComplaintForm (validate) → Complaint query (duplicates) → [found] show list → Support created / [none] Complaint created → Attachment saved → ComplaintUpdate → Notification to dept admins → redirect to detail.
+1. **Submit complaint with duplicate check (UC-03, UC-05):** Student → New complaint step 1 (category, location) → `Complaint.find_duplicates()` → [found] show list → Me too: `Complaint.support()` → Support + ComplaintUpdate / Continue → step 2 (title, description, files) → form validates (VR-07, VR-08) → `Complaint.submit()` → Complaint created → Attachment saved → ComplaintUpdate → Notification to dept admins → redirect to detail.
 2. **Resolve and confirm (UC-15, UC-07):** Dept Admin → Mark resolved form → `Complaint.resolve()` → Attachment (proof) → ComplaintUpdate → Notification to student → Student opens detail → Confirm fix → `Complaint.confirm()` → ComplaintUpdate → Notification to admins.
 3. *(Optional)* **Verify with due date (UC-12).**
 

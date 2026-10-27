@@ -119,7 +119,15 @@ USE_TZ = True
 STATIC_URL = "static/"
 STATICFILES_DIRS = [BASE_DIR / "static"]
 
+# Uploads are stored under MEDIA_ROOT but never served from a public URL: the
+# student:attachment view sends each file after a permission check (NFR-03).
+# There is deliberately no MEDIA_URL route in unifix/urls.py.
 MEDIA_URL = "media/"
 MEDIA_ROOT = BASE_DIR / "media"
+
+# A request with more files than this is refused outright (HTTP 400). It is set
+# above the 5-file limit (VR-07) so that 6 to 10 files get the form's friendly
+# message instead.
+DATA_UPLOAD_MAX_NUMBER_FILES = 10
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"

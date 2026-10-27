@@ -4,8 +4,8 @@
   {% if user.is_student %}
     <div class="sidebar-label">Student</div>
     <a class="sidebar-link{% if page == 'student:home' %} sidebar-link-active{% endif %}" href="{% url 'student:home' %}">Home</a>
-    <span class="sidebar-link" aria-disabled="true" title="Coming in Sprint 2">New complaint</span>
-    <span class="sidebar-link" aria-disabled="true" title="Coming in Sprint 2">My complaints</span>
+    <a class="sidebar-link{% if page == 'student:complaint_new' %} sidebar-link-active{% endif %}" href="{% url 'student:complaint_new' %}">New complaint</a>
+    <a class="sidebar-link{% if page == 'student:complaint_list' or page == 'student:complaint_detail' %} sidebar-link-active{% endif %}" href="{% url 'student:complaint_list' %}">My complaints</a>
   {% else %}
     <div class="sidebar-label">{% if user.is_super_admin %}Super admin{% else %}{{ user.department.name }}{% endif %}</div>
     <a class="sidebar-link{% if page == 'console:dashboard' %} sidebar-link-active{% endif %}" href="{% url 'console:dashboard' %}">Dashboard</a>
