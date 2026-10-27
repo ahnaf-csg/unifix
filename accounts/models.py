@@ -109,6 +109,12 @@ class User(AbstractUser):
             return complaint.department_id == self.department_id
         return complaint.reporter_id == self.pk or complaint.supports.filter(student=self).exists()
 
+    def can_act_on_complaint(self, complaint):
+        """Who may use the admin action buttons and add notes (VR-02, C-13)."""
+        if self.is_super_admin():
+            return True
+        return self.is_dept_admin() and complaint.department_id == self.department_id
+
     @property
     def avatar_kind(self):
         """Avatar file for this user's own pages: male, female or neutral (CR-13).

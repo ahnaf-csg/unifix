@@ -44,6 +44,14 @@ Rules:
 | NFR-03 private files | TC-58 |
 | Computed values (`03` §5) | TC-44 |
 | S-01, S-03 (and VR-14 groundwork) | TC-59, TC-60 |
+| *Sprint 3:* CR-13 optional gender, avatars; VR-16 | TC-62, TC-63 |
+| Workflow methods, history and notifications (`03` §4) | TC-64, TC-68 to TC-73 |
+| VR-02 own department; Super Admin on any department | TC-66 |
+| VR-03 allowed transitions | TC-65 |
+| VR-04 (reject reason, resolve note) | TC-68 |
+| VR-05 priority and future due date | TC-67 |
+| C-07 proof photo, file clean-up | TC-69, TC-70 |
+| `allowed_actions(user)` and hints, `can_add_note()` | TC-74 |
 
 ## 3. Test Cases
 
@@ -115,6 +123,24 @@ Rules:
 | TC-59 | `complaints/tests.py` | S-03 with own, supported and someone else's complaints; status filter; search by room and tracking ID | Own and supported (labelled) only; filter and `?q=` work; another student's ID finds nothing (VR-14) |
 | TC-60 | `complaints/tests.py` | S-01 with one open, one resolved and one supported complaint | Cards 1, 1, 0, 1; recent complaints; New complaint and My complaints links enabled |
 | TC-61 | `complaints/tests.py` | Super Admin opens a complaint and the complaint list in `/django-admin/` (C-16, I-53) | 200; attachment shown as text; no Save or Delete button; a delete POST is refused (403) |
+
+### Sprint 3
+
+| ID | File | Checks | Expected |
+|---|---|---|---|
+| TC-62 | `accounts/tests.py` | Register without and with gender; change it on the profile (CR-13) | Default `prefer_not_to_say`; `female` stored and own avatar shown in top bar and profile; `other` → neutral avatar |
+| TC-63 | `accounts/tests.py` | Super Admin opens the user list and a user in `/django-admin/` (VR-16) | 200; no gender anywhere |
+| TC-64 | `complaints/tests.py` | Start review → Verify → Start work → Resolve (C-05 to C-08) | Status, priority, due date, `verified_at`, `resolved_at` set; one history row each with from/to status and note; reporter gets "UF-… is now <status>" each time; the acting admin gets nothing |
+| TC-65 | `complaints/tests.py` | Every action from every status (VR-03) | Only the `03` §2 transitions succeed; others raise an error and write nothing |
+| TC-66 | `complaints/tests.py` | Other department's admin, reporter and stranger act; Super Admin acts (VR-02, C-13) | Refused (actions and notes); Super Admin allowed on any department |
+| TC-67 | `complaints/tests.py` | Verify with a bad priority, no due date, today, yesterday; then tomorrow (VR-05) | Refused; accepted |
+| TC-68 | `complaints/tests.py` | Reject with a blank reason, then with one; resolve with a blank note (VR-04) | Refused; rejected with the trimmed reason and reporter notified; refused |
+| TC-69 | `complaints/tests.py` | Resolve with a PDF, a PDF renamed `.jpg`, an MP4, then a JPG, on a complaint with 5 evidence files (C-07) | Refused; the JPG is stored as `proof_of_fix` by the admin under `complaints/<tracking_id>/` |
+| TC-70 | `complaints/tests.py` | Resolve with a photo while notifications fail | Status, `resolved_at` and history unchanged; no attachment row; no new file on disk |
+| TC-71 | `complaints/tests.py` | Start work on a reopened complaint past its due date (`03` §7) | In progress; due date kept; still overdue |
+| TC-72 | `complaints/tests.py` | Withdraw by another student, admin, Super Admin, then the reporter; withdraw while Under review (C-10) | Refused; withdrawn, history row, only the active department admin notified; refused |
+| TC-73 | `complaints/tests.py` | Public and internal note on a Resolved complaint; blank note; note on Closed, Rejected, Withdrawn | Both stored with `is_internal`; only the public note notifies the reporter; refused |
+| TC-74 | `complaints/tests.py` | `allowed_actions()` on each status, for own admin, Super Admin, other admin, student; `can_add_note()` | Enabled buttons match `03` §2; hints "Available after …", "Done", "Not available: complaint is …"; empty for others |
 
 ## 4. Manual Checklist (each sprint)
 
