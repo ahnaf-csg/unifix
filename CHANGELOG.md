@@ -3,7 +3,19 @@
 Format: [Keep a Changelog](https://keepachangelog.com). Versions match Git tags. Reasons for changes are in `docs/08_iteration_log.md`.
 
 ## [Unreleased]
+### Added
+- Sprint 3: optional gender at registration and on the profile with three SVG avatars; gender is only ever seen by its owner, everyone else sees the neutral avatar (CR-13, VR-16; migration `accounts/0002`).
+- Workflow methods on `Complaint`: `start_review`, `verify` (priority, future due date), `reject` (reason), `start_work`, `resolve` (note, optional proof photo, file removed if it fails), `withdraw`, `add_note` (public or internal; also on Resolved). Each checks who acts (VR-02) and the transition (VR-03), and writes history and notifications in one transaction. `allowed_actions(user)` with disabled-button hints, `can_add_note()`, `User.can_act_on_complaint()`.
+- Admin console: A-02 queue (own department, all for the Super Admin) with status, category, priority, overdue and department filters, search and sort; A-03 detail with the five action buttons, inline `<details>` forms, Add note, reporter card and full history; `console:attachment`.
+- Notifications: S-05/A-06 list with Mark all as read, bell with unread count on every page, latest notifications on S-01 (C-11). Reject and Resolved messages carry the reason and the "reopen by" date.
+- S-04 Withdraw with a confirmation (C-10).
+- 21 tests (TC-62 to TC-82); 82 in total. Screenshots retaken; `docs/walkthroughs/sprint-3.md`.
+
 ### Changed
+- NSU Navy top bar and sidebar with white text, logo on a white tile, gold as a small accent (CR-14).
+- `seed_demo` runs every step through the real methods with the clock set to the step's time; the resolved projector complaint has a proof photo. Confirm and reopen remain direct writes until Sprint 4.
+- Complaint files are sent by one shared helper, `send_attachment()`, for both `student:attachment` and `console:attachment`.
+- Docs, Sprint 3 build: notification messages in `03` §4; OP-11 (email copies, FB-18); FB-17 (Reject reason dropdown) as a Sprint 4 idea; manual checklist items 15–24.
 - Docs, Sprint 3 doc-first (CR-13, CR-14, FB-15, FB-16): optional gender and avatars with VR-16; NSU Navy chrome and new design tokens; Sprint 3 decisions in `07`; withdraw notifies department admins; notes allowed on Resolved; `console:attachment`; `allowed_actions(user)` as a method; login protection kept in view; fixes I-54 to I-64; ER diagram shows `gender`.
 
 ## [0.3-sprint2] - 2026-10

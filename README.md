@@ -5,7 +5,7 @@ Students report campus issues with photo, video or PDF evidence; complaints are 
 
 **Team:** Sami Mohammad Abdullah, Ahnaf Tazwar Unmesh
 **Stack:** Django, Django templates, vanilla CSS/JS, SQLite (development)
-**Status:** Sprint 1 (accounts, roles, login/register, profile, setup) released as `v0.2-sprint1`; Sprint 2 (complaint submission and student pages) in progress on `feature/sprint-2`
+**Status:** Sprint 1 released as `v0.2-sprint1`; Sprint 2 (complaint submission and student pages) released as `v0.3-sprint2`; Sprint 3 (admin console and complaint lifecycle up to Resolved) in progress on `feature/sprint-3`
 
 ## Documentation
 

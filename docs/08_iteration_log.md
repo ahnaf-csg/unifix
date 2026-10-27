@@ -108,8 +108,8 @@ Goal: full complaint lifecycle up to Resolved, run from the admin console.
 Feedback received: FB-15 (NSU colours), FB-16 (login protection, kept in view); FB-17 (Reject reason dropdown, Sprint 4 idea), FB-18 (email copies, OP-11) during the build. Notification messages for Reject and Mark resolved reworded (`03` §4)
 Change requests: CR-13, CR-14 (doc-first commit before coding)
 Foundation touched (03/05)? yes, 03 §2, §4 and 05 §1–7 → ER diagram (`User.gender`) and class blueprint enumerations updated
-Built / changed: (in progress)
-Carried over to next iteration: (in progress)
+Built / changed: `User.gender` (migration `accounts/0002`), `avatar_kind`, `can_act_on_complaint()`, three SVG avatars; NSU Navy chrome and tokens; workflow methods `start_review`, `verify`, `reject`, `start_work`, `resolve` (optional proof photo), `withdraw`, `add_note`, with `allowed_actions(user)` and `can_add_note()`; A-02 queue with filters, search and sort; A-03 detail with action bar, inline `<details>` forms, Add note, reporter card and grouped history; `console:attachment` sharing `send_attachment()`; S-05/A-06 notifications, mark all read, bell count (context processor), S-01 latest notifications; S-04 Withdraw; `seed_demo` on the real methods (clock set to each step's time); 21 tests (TC-62 to TC-82, 82 in total); screenshots retaken with the navy chrome
+Carried over to next iteration: Sprint 4 scope (`01`): `confirm()`, `reopen()`, `reassign()`, `rate()` and their buttons (the seed's confirm and reopen steps then switch to the methods); A-01 dashboard content; A-04/A-05 student records (the A-03 reporter-card link is disabled until then); SA-01 to SA-03; top-bar search (C-18). Sprint 4 ideas: FB-17 (Reject reason dropdown). Keep in view: FB-16 (login protection), OP-11 (email copies)
 Retrospective: To be written after the first full draft.
 
 ## 7. Suggested GitHub Practice

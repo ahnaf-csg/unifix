@@ -177,6 +177,19 @@ From Sprint 2, as a student (`rafiq.hasan@northsouth.edu`):
 13. Open another student's complaint by URL (e.g. `UF-0008`) → 404. Open a file's `/media/...` path → 404.
 14. Repeat 9–12 at 375 px: no sideways page scroll; tables scroll inside their cards.
 
+From Sprint 3 (fresh database, `seed_demo`):
+
+15. Every page: navy top bar and sidebar, NSU logo on a white tile, white wordmark, light blue-grey subtitle; gold only on the active login tab underline and the unread dot (CR-14).
+16. Profile: set gender to Female, save; the own avatar changes in the top bar and on the profile. As an admin, the same student's reporter card on A-03 shows the neutral avatar and no gender (VR-16).
+17. As `it.admin@northsouth.edu`: A-02 shows only IT complaints, open by default, soonest due first; try each filter, `?q=` with a student name, sort by Last updated. As `fac.admin@northsouth.edu`, Overdue only shows UF-0002 and UF-0007 with flagged rows.
+18. A-03 on UF-0006 (Submitted): only Start review is enabled; the others show "Available after …". Press it; the page shows Under review and Verify/Reject open their forms. Verify with today's date: the form stays open with "The due date must be later than today." Verify with tomorrow, Start work, Mark resolved with a JPG: proof photo shown; the student sees "UF-0006 was resolved. Please confirm or reopen by <date>".
+19. Reject on an Under review complaint with a long reason: the student's notification ends with "…"; the history keeps the full reason.
+20. Add note, public and internal: the student sees only the public one (timeline and a notification); the internal one is marked "Internal" on A-03.
+21. As the reporter of a Submitted complaint: Withdraw → confirmation → Withdraw complaint; the department admin gets "UF-… was withdrawn by the student". The button is gone once withdrawn and never shown on other statuses.
+22. Bell: the number matches the unread notifications; Mark all as read clears it and hides the dot. Notifications link to S-04 for students and A-03 for admins.
+23. The Super Admin can act on any department's complaint; another department's admin gets 404 on A-03 and on its files (`console:attachment`).
+24. Repeat 17, 18 and 22 at 375 px: no sideways page scroll; the open action form fits the screen.
+
 ## 5. Planned for Later Sprints
 
 | Sprint | Rules to cover |

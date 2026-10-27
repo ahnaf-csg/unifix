@@ -53,6 +53,9 @@
 | Oct 2026 | Proof of fix is one image (JPG, PNG, WEBP; 15 MB; content checked) | C-07 asks for a photo; same file checks as VR-07 |
 | Oct 2026 | A-02 shows open complaints by default, sorted by due date; search (`?q=`) built now, top-bar search stays disabled until C-18 | The queue is a work list; `?q=` is reused by C-18 in Sprint 4 |
 | Oct 2026 | Sprint 3 seed uses the real action methods; confirm and reopen steps keep direct writes until Sprint 4 | Those methods are Sprint 4 work (C-09) |
+| Oct 2026 | The seed runs each step with the clock set to that step's time (`clock_at()`) | The methods stamp times with `timezone.now()`; setting the clock keeps every time stamp, notification and "reopen by" date consistent without rewriting rows afterwards |
+| Oct 2026 | Reject and Resolved notifications carry the reason and the reopen deadline; the reason is shortened with "…" to fit 255 characters | The student learns why, or until when they can reopen, without opening the complaint (`03` §4) |
+| Oct 2026 | An action that is no longer possible when posted (e.g. another admin acted first) shows its error above the A-03 action bar; the methods lock the complaint row while checking the status | Its button is disabled by then, so the form is not shown; two admins cannot both act on an old status |
 
 ## Keep in View
 
@@ -86,4 +89,5 @@ Instructor feedback and iteration changes are tracked in `08_iteration_log.md`.
 | Oct 2026 | Sprint 1 review: login type tabs and VR-15 (CR-10), three-zone top bar (CR-11), review fixes I-31 to I-35 (error pages, fast test hasher) | 02, 04, 05, 07, 08, 09, 10 |
 | Oct 2026 | Sprint 2 pre-build doc fixes (CR-12, I-36 to I-52): two-step S-02, limited view fields, 5-file limit, private files, `submit()`, new properties and URL, seed plan | 01, 02, 03, 04, 05, 06, 07, 08, 09, 10 |
 | Oct 2026 | Sprint 2 review notes: layout density and logic-gap keep-in-view rows (FB-13); optional gender and default avatars planned for Sprint 3 (FB-14, CR-13); screenshots folder | 00, 05, 07, 08 |
+| Oct 2026 | Sprint 3 build: notification messages for Reject and Resolved (`03` §4); OP-11 email copies (FB-18); FB-17 Reject reason dropdown as a Sprint 4 idea; `ALLOWED_FROM`, `NOTE_STATUSES`, `department_admins()`, console templates and Sprint 3 classes in `05`; TC-62 to TC-82 and the Sprint 3 manual checklist in `10`; Iteration 3 in `08`; screenshots retaken | 02, 03, 04, 05, 07, 08, 10, screenshots |
 | Oct 2026 | Sprint 3 doc-first changes: optional gender and avatars, VR-16 (CR-13); NSU Navy chrome and tokens (CR-14); login protection kept in view (FB-16); Sprint 3 decisions; fixes I-54 to I-64 | 01, 02, 03, 04, 05, 06, 07, 08, 09, 10, `diagrams/er_diagram.*` |
