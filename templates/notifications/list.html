@@ -1,0 +1,27 @@
+{% extends "base.html" %}
+{% block title %}Notifications{% endblock %}
+{% block content %}
+{# S-05 / A-06 Notifications (shared by all roles). Unread ones are highlighted. #}
+<div class="page-head">
+  <div>
+    <h1 class="page-title">Notifications</h1>
+    <p class="page-sub">{% if unread_count %}{{ unread_count }} unread{% else %}You're all caught up.{% endif %}</p>
+  </div>
+  {% if unread_count %}
+    <form method="post" action="{% url 'notifications:mark_all_read' %}">
+      {% csrf_token %}
+      <button class="btn" type="submit">Mark all as read</button>
+    </form>
+  {% endif %}
+</div>
+<div class="card">
+  {% for n in notifications %}
+    <div class="list-item{% if not n.is_read %} notification-unread{% endif %}">
+      {% if n.link %}<a href="{{ n.link }}">{{ n.message }}</a>{% else %}{{ n.message }}{% endif %}
+      <div class="text-muted">{% if not n.is_read %}<strong>Unread</strong> · {% endif %}{{ n.get_event_display }} · {{ n.created_at|date:"j M Y, H:i" }}</div>
+    </div>
+  {% empty %}
+    <p class="text-muted">No notifications yet.</p>
+  {% endfor %}
+</div>
+{% endblock %}

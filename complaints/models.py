@@ -2,7 +2,7 @@
 
 Department and Category came in Sprint 1 and are managed in the Django admin
 panel (C-16). Sprint 2 adds Complaint, Attachment, ComplaintUpdate and Support.
-Rating follows in Sprint 4.
+Sprint 3 adds the admin workflow methods and withdraw. Rating follows in Sprint 4.
 
 Workflow logic lives in Complaint methods (CLAUDE.md): each one checks the
 rules, writes a ComplaintUpdate (history) and the notifications, inside one
@@ -92,10 +92,30 @@ def check_attachment_file(uploaded_file):
     return kind.mime
 
 
+# Proof of fix (C-07) is one photo: images only, otherwise the same checks as VR-07.
+PROOF_FILE_TYPES = {".jpg", ".jpeg", ".png", ".webp"}
+
+
+def check_proof_file(uploaded_file):
+    """Check a proof-of-fix photo and return its detected file type."""
+    name = os.path.basename(uploaded_file.name)
+    if os.path.splitext(name)[1].lower() not in PROOF_FILE_TYPES:
+        raise ValidationError(f"{name}: the proof of fix must be a JPG, PNG or WEBP photo.")
+    return check_attachment_file(uploaded_file)
+
+
 def attachment_upload_to(attachment, filename):
     """media/complaints/<tracking_id>/<random>.<ext>: the user's file name never reaches the disk."""
     extension = os.path.splitext(filename)[1].lower()
     return f"complaints/{attachment.complaint.tracking_id}/{uuid.uuid4().hex}{extension}"
+
+
+def fit_message(start, text, limit=255):
+    """start + text, with text shortened with "…" so the whole fits Notification.message."""
+    text = " ".join(text.split())  # one line
+    if len(start) + len(text) > limit:
+        text = text[: limit - len(start) - 1].rstrip() + "…"
+    return start + text
 
 
 def normalise_room(room):
@@ -125,6 +145,18 @@ class Complaint(models.Model):
         Status.IN_PROGRESS,
         Status.REOPENED,
     ]
+
+    # Statuses each action may start from (docs/03 §2, VR-03).
+    ALLOWED_FROM = {
+        "start_review": [Status.SUBMITTED],
+        "verify": [Status.UNDER_REVIEW],
+        "reject": [Status.UNDER_REVIEW],
+        "start_work": [Status.VERIFIED, Status.REOPENED],
+        "resolve": [Status.IN_PROGRESS],
+        "withdraw": [Status.SUBMITTED],
+    }
+    # Add note: open statuses and Resolved (docs/03 §2).
+    NOTE_STATUSES = OPEN_STATUSES + [Status.RESOLVED]
 
     class Priority(models.TextChoices):
         LOW = "low", "Low"
@@ -292,17 +324,10 @@ class Complaint(models.Model):
                 action=ComplaintUpdate.Action.SUBMITTED,
                 to_status=cls.Status.SUBMITTED,
             )
-            admins = User.objects.filter(
-                role=User.Role.DEPT_ADMIN, department=complaint.department, is_active=True
-            )
-            Notification.objects.bulk_create(
-                Notification(
-                    recipient=admin,
-                    complaint=complaint,
-                    event=Notification.Event.NEW_COMPLAINT,
-                    message=f"New complaint {complaint.tracking_id}: {title}"[:255],
-                )
-                for admin in admins
+            complaint._notify(
+                complaint.department_admins(),
+                Notification.Event.NEW_COMPLAINT,
+                f"New complaint {complaint.tracking_id}: {title}",
             )
         return complaint
 
@@ -325,6 +350,220 @@ class Complaint(models.Model):
                 to_status=self.status,
             )
             self.save(update_fields=["updated_at"])
+
+    # --- Workflow actions (docs/03 §2 and §4, Sprint 3) ---------------------
+    #
+    # Each method checks who is acting (VR-02) and whether the transition is
+    # allowed (VR-03), then changes the complaint, writes one ComplaintUpdate
+    # and the notifications, all in one transaction.
+
+    def start_review(self, actor):
+        with transaction.atomic():
+            self._check_action(actor, "start_review")
+            self.status = self.Status.UNDER_REVIEW
+            self.save(update_fields=["status", "updated_at"])
+            self._record(actor, ComplaintUpdate.Action.START_REVIEW, self.Status.SUBMITTED)
+
+    def verify(self, actor, priority, due_date):
+        """Valid complaint: set priority and due date (C-06, VR-05)."""
+        if priority not in self.Priority.values:
+            raise ValidationError("Choose a priority: low, medium or high.")
+        if due_date is None or due_date <= timezone.localdate():
+            raise ValidationError("The due date must be later than today.")
+        with transaction.atomic():
+            self._check_action(actor, "verify")
+            self.status = self.Status.VERIFIED
+            self.priority = priority
+            self.due_date = due_date
+            self.verified_at = timezone.now()
+            self.save(update_fields=["status", "priority", "due_date", "verified_at", "updated_at"])
+            self._record(actor, ComplaintUpdate.Action.VERIFY, self.Status.UNDER_REVIEW)
+
+    def reject(self, actor, reason):
+        """Invalid, duplicate or out of scope (final). A reason is required (VR-04)."""
+        reason = (reason or "").strip()
+        if not reason:
+            raise ValidationError("Give a reason for rejecting the complaint.")
+        with transaction.atomic():
+            self._check_action(actor, "reject")
+            self.status = self.Status.REJECTED
+            self.save(update_fields=["status", "updated_at"])
+            self._record(actor, ComplaintUpdate.Action.REJECT, self.Status.UNDER_REVIEW, note=reason)
+
+    def start_work(self, actor, note=""):
+        """From Verified, or from Reopened when work restarts (docs/03 §2)."""
+        with transaction.atomic():
+            self._check_action(actor, "start_work")
+            from_status = self.status
+            self.status = self.Status.IN_PROGRESS
+            self.save(update_fields=["status", "updated_at"])
+            self._record(actor, ComplaintUpdate.Action.START_WORK, from_status, note=(note or "").strip())
+
+    def resolve(self, actor, note, proof_file=None):
+        """Fixed: a note is required (VR-04); one proof photo is optional (C-07)."""
+        note = (note or "").strip()
+        if not note:
+            raise ValidationError("Describe what was done to resolve the complaint.")
+        mime_type = check_proof_file(proof_file) if proof_file else None
+        # As in submit(): a rollback does not delete a file already written to disk.
+        stored_files = []
+        try:
+            with transaction.atomic():
+                self._check_action(actor, "resolve")
+                self.status = self.Status.RESOLVED
+                self.resolved_at = timezone.now()
+                self.save(update_fields=["status", "resolved_at", "updated_at"])
+                if proof_file:
+                    attachment = Attachment(
+                        complaint=self,
+                        kind=Attachment.Kind.PROOF_OF_FIX,
+                        original_name=os.path.basename(proof_file.name)[:255],
+                        mime_type=mime_type,
+                        size_bytes=proof_file.size,
+                        uploaded_by=actor,
+                    )
+                    attachment.file.save(proof_file.name, proof_file, save=False)  # writes to disk
+                    stored_files.append(attachment.file)
+                    attachment.save()
+                self._record(actor, ComplaintUpdate.Action.RESOLVE, self.Status.IN_PROGRESS, note=note)
+        except Exception:
+            for stored in stored_files:
+                stored.storage.delete(stored.name)
+            raise
+
+    def withdraw(self, student):
+        """The reporter cancels a complaint that is still Submitted (C-10)."""
+        if student.pk != self.reporter_id:
+            raise ValidationError("Only the student who reported this complaint can withdraw it.")
+        with transaction.atomic():
+            self._lock_and_check("withdraw")
+            self.status = self.Status.WITHDRAWN
+            self.save(update_fields=["status", "updated_at"])
+            self._record(student, ComplaintUpdate.Action.WITHDRAW, self.Status.SUBMITTED)
+
+    def add_note(self, actor, note, is_internal):
+        """Public note (the reporter sees it) or internal note (admins only), C-08."""
+        note = (note or "").strip()
+        if not note:
+            raise ValidationError("Write the note first.")
+        with transaction.atomic():
+            if not actor.can_act_on_complaint(self):  # VR-02
+                raise ValidationError("You cannot act on this complaint.")
+            self._lock_status()
+            if self.status not in self.NOTE_STATUSES:
+                raise ValidationError(f"Notes cannot be added to a {self.get_status_display().lower()} complaint.")
+            self.save(update_fields=["updated_at"])
+            self._record(actor, ComplaintUpdate.Action.NOTE, self.status, note=note, is_internal=bool(is_internal))
+
+    # --- Helpers for the actions -------------------------------------------
+
+    def _lock_status(self):
+        """Re-read the status inside the transaction and lock the row, so two
+        admins pressing buttons at the same moment cannot both act on an old status."""
+        self.status = Complaint.objects.select_for_update().values_list("status", flat=True).get(pk=self.pk)
+
+    def _lock_and_check(self, action):
+        self._lock_status()
+        if self.status not in self.ALLOWED_FROM[action]:  # VR-03
+            label = dict(ADMIN_ACTIONS).get(action, "Withdraw")
+            raise ValidationError(f"{label} is not possible while the complaint is {self.get_status_display()}.")
+
+    def _check_action(self, actor, action):
+        if not actor.can_act_on_complaint(self):  # VR-02
+            raise ValidationError("You cannot act on this complaint.")
+        self._lock_and_check(action)
+
+    def _record(self, actor, action, from_status, note="", is_internal=False):
+        """Write the history row and the notifications for one action (docs/03 §4)."""
+        self.updates.create(
+            actor=actor,
+            action=action,
+            from_status=from_status,
+            to_status=self.status,
+            note=note,
+            is_internal=is_internal,
+        )
+        tracking_id = self.tracking_id
+        if action == ComplaintUpdate.Action.NOTE:
+            if not is_internal:  # internal notes notify nobody
+                self._notify([self.reporter], Notification.Event.NOTE_ADDED, f"New note on {tracking_id}")
+        elif action == ComplaintUpdate.Action.WITHDRAW:
+            self._notify(self.department_admins(), Notification.Event.STATUS_CHANGED,
+                         f"{tracking_id} was withdrawn by the student")
+        elif action == ComplaintUpdate.Action.REJECT:
+            self._notify([self.reporter], Notification.Event.STATUS_CHANGED,
+                         fit_message(f"{tracking_id} was rejected: ", note))
+        elif action == ComplaintUpdate.Action.RESOLVE:
+            reopen_by = timezone.localdate(self.resolved_at) + timedelta(days=7)  # same window as can_reopen
+            self._notify([self.reporter], Notification.Event.STATUS_CHANGED,
+                         f"{tracking_id} was resolved. Please confirm or reopen by {reopen_by.day} {reopen_by:%b %Y}")
+        else:
+            self._notify([self.reporter], Notification.Event.STATUS_CHANGED,
+                         f"{tracking_id} is now {self.get_status_display()}")
+
+    def _notify(self, recipients, event, message):
+        Notification.objects.bulk_create(
+            Notification(recipient=recipient, complaint=self, event=event, message=message[:255])
+            for recipient in recipients
+        )
+
+    def department_admins(self):
+        """Active Dept Admins of this complaint's department (notification recipients)."""
+        return User.objects.filter(role=User.Role.DEPT_ADMIN, department_id=self.department_id, is_active=True)
+
+    # --- Buttons for the admin page (A-03) ----------------------------------
+
+    def allowed_actions(self, user):
+        """The five C-05 buttons, each {slug, label, enabled, hint} (docs/05 §3).
+
+        Empty for users who cannot act on this complaint.
+        """
+        if not user.can_act_on_complaint(self):
+            return []
+        buttons = []
+        for slug, label in ADMIN_ACTIONS:
+            enabled = self.status in self.ALLOWED_FROM[slug]
+            hint = "" if enabled else self._disabled_hint(slug)
+            buttons.append({"slug": slug, "label": label, "enabled": enabled, "hint": hint})
+        return buttons
+
+    def _disabled_hint(self, slug):
+        """"Done", "Available after <step>" or "Not available: complaint is <status>"."""
+        here = STATUS_STEP.get(self.status)
+        not_available = f"Not available: complaint is {self.get_status_display()}"
+        if here is None:  # Rejected, Closed, Withdrawn
+            return not_available
+        if here < ACTION_STEP[slug]:
+            return f"Available after {dict(ADMIN_ACTIONS)[PREVIOUS_ACTION[slug]]}"
+        if slug == "reject":  # the complaint was verified instead
+            return not_available
+        return "Done"
+
+    def can_add_note(self, user):
+        return user.can_act_on_complaint(self) and self.status in self.NOTE_STATUSES
+
+
+# The A-03 action bar, in order (C-05; slugs from the docs/05 action mapping).
+ADMIN_ACTIONS = [
+    ("start_review", "Start review"),
+    ("verify", "Verify"),
+    ("reject", "Reject"),
+    ("start_work", "Start work"),
+    ("resolve", "Mark resolved"),
+]
+# Position of each status along the main path, for the disabled-button hints.
+# Reopened sits with Verified: work has to start again.
+STATUS_STEP = {
+    Complaint.Status.SUBMITTED: 0,
+    Complaint.Status.UNDER_REVIEW: 1,
+    Complaint.Status.VERIFIED: 2,
+    Complaint.Status.REOPENED: 2,
+    Complaint.Status.IN_PROGRESS: 3,
+    Complaint.Status.RESOLVED: 4,
+}
+# The step at which each button becomes possible, and the button before it.
+ACTION_STEP = {"start_review": 0, "verify": 1, "reject": 1, "start_work": 2, "resolve": 3}
+PREVIOUS_ACTION = {"verify": "start_review", "reject": "start_review", "start_work": "verify", "resolve": "start_work"}
 
 
 class Attachment(models.Model):

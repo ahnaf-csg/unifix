@@ -1,5 +1,5 @@
 {% load static %}
-{# Top bar on every page (docs/04 Layout, CR-11 amended): empty left zone, NSU logo + #}
+{# Top bar on every page (docs/04 Layout, CR-11 amended, NSU Navy CR-14): empty left zone, NSU logo + #}
 {# UniFix wordmark centred together, tools right. Signed-out pages have no right zone. #}
 <header class="topbar">
   {# Empty on desktop: keeps the centre group centred; reserved for a future mobile menu button. #}
@@ -19,10 +19,15 @@
       <input class="topbar-search" type="search" aria-label="Search" disabled
              title="Search arrives in Sprint 4"
              placeholder="{% if user.is_student %}Search your complaints by tracking ID, title or room{% else %}Search complaints, students, tracking IDs{% endif %}">
-      {# Notifications (C-11) are built in Sprint 3; until then the bell has no count. #}
-      <span class="bell" title="Notifications arrive in Sprint 3">Notifications</span>
+      {# Bell (C-11): the unread number is the cue; the gold dot is an accent (CR-14). #}
+      {# unread_count comes from notifications.context_processors.unread_count. #}
+      <a class="bell" href="{% url 'notifications:list' %}"
+         aria-label="Notifications{% if unread_count %}, {{ unread_count }} unread{% endif %}">
+        Notifications{% if unread_count %}<span class="bell-count">{{ unread_count }}</span><span class="bell-dot"></span>{% endif %}
+      </a>
       <div class="user-menu">
-        <span class="avatar" title="{{ user.full_name }}">{{ user.full_name|slice:":1"|upper }}</span>
+        {# The signed-in user's own avatar may follow their gender (VR-16). #}
+        {% include "partials/avatar.html" with kind=user.avatar_kind %}
         <span>
           {{ user.full_name }}
           <small>

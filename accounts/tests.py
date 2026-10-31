@@ -338,3 +338,42 @@ class ErrorPageTests(TestCase):
         self.assertTemplateUsed(response, "404.html")
         self.assertContains(response, "Page not found", status_code=404)
         self.assertContains(response, 'href="/"', status_code=404)
+
+
+class GenderAndAvatarTests(TestCase):
+    """CR-13, VR-16: optional gender and avatars (TC-62, TC-63)."""
+
+    def register(self, **extra):
+        data = {
+            "full_name": "New Student", "student_id": "2311111042", "email": "new.student@northsouth.edu",
+            "phone": "", "password1": PASSWORD, "password2": PASSWORD,
+        }
+        data.update(extra)
+        return self.client.post(reverse("accounts:register"), data)
+
+    def test_tc62_gender_is_optional_and_drives_own_avatar(self):
+        # Registration without gender keeps the default; with gender it is stored.
+        self.register()
+        self.assertEqual(User.objects.get().gender, User.Gender.PREFER_NOT_TO_SAY)
+        self.client.logout()
+        self.register(email="second@northsouth.edu", student_id="2311111043", gender="female")
+        user = User.objects.get(email="second@northsouth.edu")
+        self.assertEqual((user.gender, user.avatar_kind), ("female", "female"))
+        # Own top bar and own profile show the gender-based avatar.
+        response = self.client.get(reverse("accounts:profile"))
+        self.assertContains(response, "img/avatars/female.svg", count=2)
+        self.assertContains(response, "Only you can see this")
+        # Changing it on the profile; "other" uses the neutral avatar.
+        self.client.post(reverse("accounts:profile"), {"full_name": "Renamed", "phone": "", "gender": "other"})
+        user.refresh_from_db()
+        self.assertEqual((user.gender, user.avatar_kind), ("other", "neutral"))
+        self.assertEqual(make_user("m@northsouth.edu", gender="male").avatar_kind, "male")
+
+    def test_tc63_gender_hidden_from_the_django_admin(self):
+        student = make_user("student@northsouth.edu", gender="male")
+        self.client.force_login(make_user("boss@northsouth.edu", User.Role.SUPER_ADMIN))
+        for url in [reverse("admin:accounts_user_changelist"), reverse("admin:accounts_user_change", args=[student.pk])]:
+            response = self.client.get(url)
+            self.assertEqual(response.status_code, 200)
+            self.assertNotContains(response, "gender")
+            self.assertNotContains(response, "Gender")

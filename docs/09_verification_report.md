@@ -77,12 +77,23 @@ Purpose: confirm that requirements, workflow, screens, data dictionary, diagrams
 | I-51 | Nothing said whether inactive categories or departments can receive complaints | Low | S-02 lists active categories only; Submit re-checks | 03, 04 |
 | I-52 | S-02 mockup shows a Remove link per file, which a plain file input cannot do | Low | One "Clear files" link | 04, 07 |
 | I-53 | Opening a complaint in the Django admin crashed (`FieldError`): the read-only inlines listed auto-set fields such as `uploaded_at`. Found while taking screenshots | Medium | Inline fields are all read-only; complaints cannot be deleted in the admin either; TC-61 | `complaints/admin.py` |
+| I-54 | `04` Layout and CR-11 describe a white top bar; CR-14 asks for an NSU Navy top bar, where the NSU logo would not read | Medium | Navy top bar and sidebar; logo on a white rounded tile; CR-14 replaces CR-11's white bar | 04, 05, 07 |
+| I-55 | CR-13 put a gender-based avatar on the A-03 reporter card, which would show the reporter's gender to admins | Medium | VR-16: gender-based avatars only for the user themselves; everyone else sees the neutral avatar | 02, 04, 05, 07 |
+| I-56 | `05` §4 had no console file URL, although `07` planned a console twin of `student:attachment` | Medium | `console:attachment` added, sharing `send_attachment()` | 04, 05, 07 |
+| I-57 | `allowed_actions(user)` was listed under Properties although it takes an argument; `05` §1 still used `mark_resolved()` as an example | Low | Listed as a method with its return shape; example is `resolve()` | 05 |
+| I-58 | `10` §5 put VR-06 (reopen window) in Sprint 3, but reopen is Sprint 4; VR-04 is only partly covered in Sprint 3 | Low | VR-06 moved to Sprint 4; VR-04 split (reject and resolve in Sprint 3, reopen in Sprint 4) | 10 |
+| I-59 | The seed was to call the real action methods from Sprint 3, but `confirm()` and `reopen()` are Sprint 4 | Low | Confirm and reopen steps keep direct writes until Sprint 4 | 05, 07 |
+| I-60 | Withdraw notified nobody, so a complaint silently left the department queue; nothing said whether the Super Admin's actions notify the department | Low | Withdraw notifies the department's admins; Super Admin actions add no notification (keep in view) | 02, 03, 07 |
+| I-61 | Add note was limited to open statuses, so admins could not add a note to a Resolved complaint | Low | Allowed on open statuses and Resolved; not on Closed, Rejected or Withdrawn | 03, 04, 05, 07 |
+| I-62 | `04` still said the bell has no count until Sprint 3; S-01 latest notifications, A-02 search and the A-03 link to A-05 had no sprint | Low | Bell count and S-01 notifications in Sprint 3; A-02 `?q=` now (top-bar search in Sprint 4); A-05 link disabled until Sprint 4 | 04 |
+| I-63 | `01` Sprint 3 row listed only "5 action buttons"; `08` showed `v0.3-sprint2` as planned and CR-12 as Accepted, and lacked FB-15, FB-16 and CR-14 | Low | `01` row lists the full Sprint 3 scope; `08` updated | 01, 08 |
+| I-64 | NSU Gold has very low contrast on white (about 1.6:1), so it cannot carry a state on its own | Low | Gold is an accent only: on navy, or beside another state cue | 04, 05, 07 |
 
 ## 3. Traceability Matrix
 
 | Feature | Screens | Rules | Use cases | Model elements |
 |---|---|---|---|---|
-| C-01 Accounts and roles | P-01, P-02 | VR-11, VR-13, VR-15 | UC-01, UC-02 | `User.role`, `account_state`, `login_type` |
+| C-01 Accounts and roles | P-01, P-02 | VR-11, VR-13, VR-15, VR-16 | UC-01, UC-02 | `User.role`, `account_state`, `login_type`, `gender` |
 | C-02 Submission | S-02 | VR-07, VR-08 | UC-03 | `Complaint.submit()`, `Attachment` |
 | C-03 Duplicates and Me too | S-02, S-03 | VR-01, VR-09 | UC-04, UC-05 | `find_duplicates()`, `support()`, `Support` |
 | C-04 Routing | S-02, A-02 | VR-02 | UC-03 | `Complaint.department`, `Category.department` |
@@ -96,14 +107,14 @@ Purpose: confirm that requirements, workflow, screens, data dictionary, diagrams
 | C-12 User records | A-04, A-05, SA-02, SA-03 | VR-11, VR-12 | UC-17, UC-18 | `User.suspend()`, `soft_delete()` |
 | C-13 Super Admin control | A-03, A-02 | VR-12 | UC-19 | `reassign()` |
 | C-14 Dashboards | S-01, A-01, SA-01 | VR-01, VR-02 | UC-20 | Aggregates over `Complaint`, `Rating` |
-| C-15 Profile | S-06, A-07 | – | UC-22 | `User` |
+| C-15 Profile | S-06, A-07 | VR-16 | UC-22 | `User`, `gender`, `avatar_kind` |
 | C-16 Setup | Django admin | – | – | `Department`, `Category` |
 | C-17 Rating | S-01, S-04 | VR-10 | UC-09 | `rate()`, `Rating` |
 | C-18 Search | Top bar → S-03, A-02, A-04, SA-02 | VR-14 | UC-23 | Query filters (`icontains`) |
 
 ## 4. Remaining Open Items (decided later, not inconsistencies)
 
-- Keep-in-view items in `07_decision_log.md` (Super Admin fallback, soft delete, withdraw, rating, charts, search extension, header spacing and layout density, logic gaps from hands-on testing, supporter notifications, due date after reopen, admin file access).
+- Keep-in-view items in `07_decision_log.md` (Super Admin fallback, soft delete, withdraw, rating, charts, search extension, header spacing and layout density, logic gaps from hands-on testing, supporter notifications, due date after reopen, admin file access, Super Admin acting on another department, login protection).
 - 14 of 18 screens still need mockups (CR-03). Existing mockups predate CR-09: the S-01/S-02 search placeholder omits room, the SA-01 sidebar has no Students link, and class names are draft names; they are refreshed when the remaining mockups are drawn.
 - Sprint dates depend on semester deadlines.
 - The submitted proposal (v2 PDF) predates these decisions and is superseded by this documentation set.

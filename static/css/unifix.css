@@ -5,8 +5,11 @@
 
 /* ---------- 1. Design tokens (docs/05 §6) ---------- */
 :root {
-  --navy: #14294a;
-  --navy-2: #1d3a66;
+  --navy: #002f6c;          /* NSU Navy (CR-14) */
+  --navy-2: #164a8c;
+  --on-navy: #ffffff;
+  --on-navy-muted: #b9c8dc;  /* light blue-grey on navy */
+  --gold: #fec937;           /* NSU Gold: accent only, never the only cue */
   --bg: #eef2f7;
   --surface: #ffffff;
   --border: #e1e4ea;
@@ -54,7 +57,7 @@ body:not(:has(> .sidebar)) > .main { max-width: 480px; margin: 40px auto; paddin
 .row { display: flex; gap: 16px; flex-wrap: wrap; }
 .row > * { flex: 1 1 0; min-width: 200px; }
 
-/* ---------- 4. Top bar (docs/04 Layout, CR-11 amended) ----------
+/* ---------- 4. Top bar (docs/04 Layout, CR-11 amended, CR-14 NSU Navy) ----------
    Three zones on one row: empty left zone, centre group (NSU logo + UniFix
    wordmark), tools (right, signed-in pages only). The two outer columns are
    equal (1fr), so the centre group stays centred whether or not the right
@@ -66,8 +69,8 @@ body:not(:has(> .sidebar)) > .main { max-width: 480px; margin: 40px auto; paddin
   gap: 16px;
   min-height: 64px;
   padding: 8px 24px;
-  background: var(--surface);
-  border-bottom: 1px solid var(--border);
+  background: var(--navy);
+  color: var(--on-navy);
 }
 .topbar-left { justify-self: start; display: flex; align-items: center; }
 .topbar-center { justify-self: center; }
@@ -77,63 +80,59 @@ body:not(:has(> .sidebar)) > .main { max-width: 480px; margin: 40px auto; paddin
 
 /* Centre group: NSU logo beside the UniFix wordmark, subtitle underneath.
    align-items: center puts the logo and the text block on one centre line. */
-.brand { display: flex; align-items: center; gap: 10px; color: var(--navy); font-weight: bold; font-size: 18px; line-height: 1.15; }
+.brand { display: flex; align-items: center; gap: 10px; color: var(--on-navy); font-weight: bold; font-size: 18px; line-height: 1.15; }
 .brand:hover { text-decoration: none; }
-.topbar-logo { display: block; height: 36px; width: auto; flex: none; }
-.brand small { display: block; font-weight: normal; font-size: 11px; color: var(--muted); }
+/* The NSU logo sits on a small white rounded tile so it stays readable on navy (CR-14). */
+.topbar-logo { display: block; height: 44px; width: auto; flex: none; padding: 4px; background: var(--on-navy); border-radius: 8px; }
+.brand small { display: block; font-weight: normal; font-size: 11px; color: var(--on-navy-muted); }
 
 /* Search: magnifier icon on the left; collapses to just the icon on phones. */
 .topbar-search {
   width: 260px;
   min-width: 120px;
   flex: 0 1 260px;
-  border: 1px solid #e6eaf0;
+  border: 1px solid transparent;
   border-radius: 6px;
   padding: 8px 12px 8px 32px;
-  background: #f6f8fb url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='none' stroke='%23667085' stroke-width='2' stroke-linecap='round'%3E%3Ccircle cx='7' cy='7' r='5'/%3E%3Cpath d='m11 11 4 4'/%3E%3C/svg%3E") no-repeat 10px center;
+  background: #fff url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='none' stroke='%23667085' stroke-width='2' stroke-linecap='round'%3E%3Ccircle cx='7' cy='7' r='5'/%3E%3Cpath d='m11 11 4 4'/%3E%3C/svg%3E") no-repeat 10px center;
   font: inherit;
   font-size: 13px;
 }
+.topbar-search:disabled { opacity: .85; }
+/* Bell: link to the notifications page. With unread notifications it shows the
+   number (the main cue) and a small gold dot (accent, CR-14). */
 .bell {
   position: relative;
   white-space: nowrap;
   font-size: 13px;
-  color: var(--muted);
-  background: #f1f4f9;
+  color: var(--on-navy);
+  background: rgba(255, 255, 255, .12);
   border-radius: 6px;
   padding: 8px 12px;
 }
-.bell-count {
+.bell:hover { text-decoration: none; background: rgba(255, 255, 255, .2); }
+.bell-count { font-weight: bold; margin-left: 4px; }
+.bell-dot {
   position: absolute;
-  top: -6px;
-  right: -6px;
-  background: var(--danger);
-  color: #fff;
-  border-radius: 9px;
-  font-size: 10px;
-  padding: 1px 6px;
+  top: -3px;
+  right: -3px;
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: var(--gold);
+  border: 2px solid var(--navy);
 }
 .user-menu {
   display: flex;
   align-items: center;
   gap: 10px;
   padding-left: 18px;
-  border-left: 1px solid var(--border);
+  border-left: 1px solid rgba(255, 255, 255, .25);
   font-size: 13px;
 }
-.user-menu small { display: block; color: var(--muted); font-size: 11px; white-space: nowrap; }
-.avatar {
-  width: 32px;
-  height: 32px;
-  flex: none;
-  border-radius: 50%;
-  background: #dfe7f5;
-  color: var(--primary);
-  font-weight: bold;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
+.user-menu small { display: block; color: var(--on-navy-muted); font-size: 11px; white-space: nowrap; }
+/* Avatar: one of the SVGs in static/img/avatars/ (CR-13, VR-16). */
+.avatar { display: block; width: 32px; height: 32px; flex: none; border-radius: 50%; }
 
 /* ---------- 5. Sidebar ---------- */
 .sidebar { background: var(--navy); padding: 18px 12px; }
@@ -142,7 +141,7 @@ body:not(:has(> .sidebar)) > .main { max-width: 480px; margin: 40px auto; paddin
   letter-spacing: .8px;
   font-weight: bold;
   text-transform: uppercase;
-  color: #7f95ba;
+  color: var(--on-navy-muted);
   margin: 6px 10px 8px;
 }
 .sidebar-link {
@@ -150,12 +149,12 @@ body:not(:has(> .sidebar)) > .main { max-width: 480px; margin: 40px auto; paddin
   padding: 9px 10px;
   margin-bottom: 2px;
   border-radius: 6px;
-  color: #d3ddef;
+  color: #e3eaf4;
 }
 .sidebar-link:hover { background: var(--navy-2); text-decoration: none; }
-.sidebar-link-active { background: var(--navy-2); color: #fff; font-weight: bold; border-left: 3px solid #6ea2ff; }
+.sidebar-link-active { background: var(--navy-2); color: var(--on-navy); font-weight: bold; border-left: 3px solid #8fb8ff; }
 /* Pages not built yet are listed but not clickable. */
-.sidebar-link[aria-disabled="true"] { opacity: .5; cursor: default; }
+.sidebar-link[aria-disabled="true"] { opacity: .55; cursor: default; }
 .sidebar-link[aria-disabled="true"]:hover { background: none; }
 
 /* ---------- 6. Cards ---------- */
@@ -269,7 +268,8 @@ input[readonly] { background: #f6f8fb; color: var(--muted); }
   cursor: pointer;
 }
 .tab input { position: absolute; opacity: 0; width: 1px; height: 1px; padding: 0; border: 0; }
-.tab:has(input:checked) { color: var(--primary); background: var(--primary-soft); border-bottom-color: var(--primary); }
+/* Active tab: text colour and background carry the state; the gold underline is an accent (CR-14). */
+.tab:has(input:checked) { color: var(--primary); background: var(--primary-soft); border-bottom-color: var(--gold); }
 .tab:has(input:focus-visible) { outline: 2px solid var(--primary); outline-offset: 2px; }
 .tab-panel { margin-bottom: 14px; }
 /* Show the panel for the checked login type; Student is the default. */
@@ -344,6 +344,33 @@ form:has(input[name="login_type"][value="staff"]:checked) .tab-panel[data-tab="s
 .timeline li::before { content: ""; position: absolute; left: -20px; top: 5px; width: 10px; height: 10px; border-radius: 50%; background: var(--primary); }
 .timeline-note { margin-top: 4px; padding: 6px 8px; background: #f6f8fb; border-radius: 6px; overflow-wrap: anywhere; }
 
+/* ---------- 11c. Console (A-02, A-03, Sprint 3) ---------- */
+.filter-check { display: flex; align-items: center; gap: 6px; font-size: 13px; white-space: nowrap; }
+.filter-check input { width: auto; }
+.row-overdue td { background: #fff6f5; }
+.row-overdue td:first-child { box-shadow: inset 3px 0 0 var(--danger); }
+/* Action bar: one .action per C-05 button. An open <details> form takes a full row. */
+.action-bar { display: flex; flex-wrap: wrap; gap: 12px 16px; align-items: flex-start; }
+.action { display: flex; flex-direction: column; align-items: flex-start; gap: 4px; }
+.action:has(details[open]) { flex-basis: 100%; }
+.action-hint { font-size: 11px; color: var(--muted); max-width: 150px; }
+.action-form > summary { list-style: none; display: inline-block; }
+.action-form > summary::-webkit-details-marker { display: none; }
+.action-form[open] > summary { margin-bottom: 12px; }
+.action-form form { max-width: 520px; padding: 14px; border: 1px solid var(--border); border-radius: 6px; background: #f9fafc; }
+.action-form form p { margin-bottom: 12px; }
+.action-form ul { list-style: none; }  /* radio choices */
+.action-form ul input { width: auto; margin-right: 6px; }
+.page-head > .action-form { margin-bottom: 20px; }
+.reporter-card-person { display: flex; gap: 10px; align-items: center; margin-bottom: 8px; overflow-wrap: anywhere; }
+.reporter-card .text-muted { font-size: 12px; }
+.link-disabled { display: inline-block; margin-top: 8px; color: var(--muted); font-size: 12px; cursor: default; }
+.timeline-internal .timeline-note { background: #fff8e6; border: 1px dashed #f1dca6; }
+.timeline .timeline-internal::before { background: var(--warn); }
+
+/* ---------- 11d. Notifications (S-05, A-06, S-01) ---------- */
+.notification-unread { background: var(--primary-soft); margin: 0 -16px; padding-left: 16px; padding-right: 16px; border-left: 3px solid var(--primary); }
+
 /* ---------- 12. Text helpers ---------- */
 .text-muted { color: var(--muted); }
 .text-mono { font-family: ui-monospace, Consolas, monospace; font-size: 12px; color: var(--muted); }
@@ -369,14 +396,14 @@ form:has(input[name="login_type"][value="staff"]:checked) .tab-panel[data-tab="s
   body:has(> .sidebar) { display: block; }
   /* Phones: the logo shrinks first; search collapses to its magnifier icon. */
   .brand { gap: 8px; }
-  .topbar-logo { height: 30px; }
+  .topbar-logo { height: 38px; }
   .topbar-search { flex: 0 0 36px; width: 36px; min-width: 36px; padding: 8px 0 8px 34px; background-position: center; margin-right: auto; }
   .topbar-search::placeholder { color: transparent; }
   .topbar-search:focus { flex-basis: 180px; width: 180px; background-position: 10px center; }
   .sidebar { display: flex; gap: 4px; overflow-x: auto; padding: 8px; }
   .sidebar-label { display: none; }
   .sidebar-link { white-space: nowrap; margin: 0; }
-  .sidebar-link-active { border-left: none; border-bottom: 3px solid #6ea2ff; }
+  .sidebar-link-active { border-left: none; border-bottom: 3px solid #8fb8ff; }
   .main { padding: 20px 16px; }
   body:not(:has(> .sidebar)) > .main { margin-top: 20px; }
 }

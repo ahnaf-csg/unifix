@@ -52,7 +52,7 @@ Classes and attributes from `05_data_dictionary.md` §3. Include the methods lis
 | User (student) — Rating | 1 to many |
 | User — Notification | 1 to many |
 
-Enumerations to draw: Role, AccountState, Status, Priority, Building, Action (includes `support`), AttachmentKind, Event.
+Enumerations to draw: Role, AccountState, Gender (CR-13), Status, Priority, Building, Action (includes `support`), AttachmentKind, Event.
 
 ## 3. ER Diagram
 

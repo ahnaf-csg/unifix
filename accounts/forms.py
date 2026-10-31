@@ -12,6 +12,20 @@ LOGIN_TYPE_STUDENT = "student"
 LOGIN_TYPE_STAFF = "staff"
 
 
+GENDER_HELP = "Only you can see this. Others see a neutral avatar."
+
+
+class OptionalGenderMixin:
+    """Gender is optional (CR-13): a form posted without it keeps "Prefer not to say"."""
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields["gender"].required = False
+
+    def clean_gender(self):
+        return self.cleaned_data.get("gender") or User.Gender.PREFER_NOT_TO_SAY
+
+
 class LoginForm(AuthenticationForm):
     """Email + password login (P-01). The `username` field holds the email."""
 
@@ -51,14 +65,17 @@ class LoginForm(AuthenticationForm):
             raise forms.ValidationError(self.error_messages["use_staff_tab"], code="wrong_tab")
 
 
-class RegisterForm(BaseUserCreationForm):
+class RegisterForm(OptionalGenderMixin, BaseUserCreationForm):
     """Student self-registration (P-02, C-01). Admins are created by the Super Admin."""
 
     class Meta:
         model = User
-        fields = ["full_name", "student_id", "email", "phone"]
-        labels = {"email": "NSU email", "student_id": "Student ID"}
-        help_texts = {"email": f"Must end with {NSU_EMAIL_DOMAIN}"}
+        fields = ["full_name", "student_id", "email", "phone", "gender"]
+        labels = {"email": "NSU email", "student_id": "Student ID", "gender": "Gender (optional)"}
+        help_texts = {
+            "email": f"Must end with {NSU_EMAIL_DOMAIN}",
+            "gender": GENDER_HELP,
+        }
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -82,9 +99,11 @@ class RegisterForm(BaseUserCreationForm):
         return user
 
 
-class ProfileForm(forms.ModelForm):
-    """Edit own name and phone (C-15). Email, role and student ID are read-only."""
+class ProfileForm(OptionalGenderMixin, forms.ModelForm):
+    """Edit own name, phone and gender (C-15, CR-13). Email, role and student ID are read-only."""
 
     class Meta:
         model = User
-        fields = ["full_name", "phone"]
+        fields = ["full_name", "phone", "gender"]
+        labels = {"gender": "Gender (optional)"}
+        help_texts = {"gender": GENDER_HELP}

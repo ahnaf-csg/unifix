@@ -6,7 +6,11 @@
 <p class="page-sub">Your account details. Contact the Super Admin to change your email or role.</p>
 <div class="row">
   <div class="card">
-    <h2>Your details</h2>
+    <div class="card-head">
+      <h2>Your details</h2>
+      {# Own avatar: only you see the gender-based one (VR-16). #}
+      {% include "partials/avatar.html" with kind=user.avatar_kind %}
+    </div>
     <div class="form-field">
       <label for="profile-email">Email</label>
       <input id="profile-email" type="email" value="{{ user.email }}" readonly>
@@ -29,6 +33,7 @@
         <div class="form-field">
           <label for="{{ field.id_for_label }}">{{ field.label }}</label>
           {{ field }}
+          {% if field.help_text %}<div class="form-help">{{ field.help_text }}</div>{% endif %}
           {% for error in field.errors %}<div class="form-error">{{ error }}</div>{% endfor %}
         </div>
       {% endfor %}

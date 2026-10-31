@@ -1,9 +1,10 @@
 {% extends "base.html" %}
 {% block title %}Dashboard{% endblock %}
 {% block content %}
-{# A-01 Dashboard: placeholder until Sprints 3-4 (cards, tables and charts follow) #}
+{# A-01 Dashboard: placeholder with a link to the queue until Sprint 4 (cards, tables and charts) #}
 <h1 class="page-title">Dashboard</h1>
-<p class="page-sub">{% if user.is_super_admin %}All departments{% else %}{{ user.department.name }}{% endif %} · the complaint queue and charts arrive in Sprints 3 and 4.</p>
+<p class="page-sub">{% if user.is_super_admin %}All departments{% else %}{{ user.department.name }}{% endif %} · cards, tables and charts arrive in Sprint 4.</p>
+<p class="section"><a class="btn btn-primary" href="{% url 'console:queue' %}">Go to complaint queue</a></p>
 <div class="card">
   <h2>Categories routed to {% if user.is_super_admin %}each department{% else %}your department{% endif %}</h2>
   <table>

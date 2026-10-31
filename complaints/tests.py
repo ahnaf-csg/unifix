@@ -1,7 +1,7 @@
 """Tests for the complaints app. IDs match docs/10_test_plan.md.
 
 Sprint 1: seed data (TC-23 to TC-25). Sprint 2: complaint models and access
-rules (TC-36 onwards).
+rules (TC-36 to TC-61). Sprint 3: workflow methods (TC-64 onwards).
 """
 
 import os
@@ -116,6 +116,18 @@ class SeedDemoTests(TempMediaMixin, TestCase):
                 self.assertEqual(updates[-1].to_status, complaint.status)
                 if complaint.category.requires_attachment:
                     self.assertTrue(complaint.attachments.exists())  # VR-08 holds for seed data too
+                # Sprint 3: steps ran through the real methods at their own time, so each
+                # notification has the time of the history row that caused it.
+                update_times = {u.created_at for u in updates}
+                for notification in complaint.notifications.all():
+                    self.assertIn(notification.created_at, update_times)
+        # Resolve with a proof photo, and the "reopen by" date counted from resolved_at (docs/03 §4).
+        projector = Complaint.objects.get(title="Projector shows no signal")
+        self.assertEqual(projector.attachments.filter(kind=Attachment.Kind.PROOF_OF_FIX).count(), 1)
+        reopen_by = timezone.localdate(projector.resolved_at) + timedelta(days=7)
+        self.assertTrue(projector.notifications.filter(
+            message=f"{projector.tracking_id} was resolved. Please confirm or reopen by {reopen_by.day} {reopen_by:%b %Y}"
+        ).exists())
         # Running it again adds nothing.
         counts = (Complaint.objects.count(), Attachment.objects.count(), Notification.objects.count())
         self.seed()
@@ -558,3 +570,449 @@ class DjangoAdminTests(ComplaintFixtures):
         self.assertEqual(self.client.post(delete_url, {"post": "yes"}).status_code, 403)
         self.assertTrue(Complaint.objects.filter(pk=complaint.pk).exists())
         self.assertEqual(self.client.get(reverse("admin:complaints_complaint_changelist")).status_code, 200)
+
+
+# --- Sprint 3: workflow methods (docs/03 §2, §4) ------------------------------
+
+
+class WorkflowFixtures(ComplaintFixtures):
+    def at_status(self, status, **fields):
+        """A submitted IT complaint moved straight to `status` (test set-up only)."""
+        complaint = self.submit()
+        Complaint.objects.filter(pk=complaint.pk).update(status=status, **fields)
+        complaint.refresh_from_db()
+        return complaint
+
+    def tomorrow(self):
+        return timezone.localdate() + timedelta(days=1)
+
+    def run_action(self, complaint, action, actor):
+        """Call one action method with valid input."""
+        inputs = {
+            "start_review": {},
+            "verify": {"priority": "high", "due_date": self.tomorrow()},
+            "reject": {"reason": "Out of scope"},
+            "start_work": {},
+            "resolve": {"note": "Fixed"},
+        }
+        getattr(complaint, action)(actor, **inputs[action])
+
+
+class WorkflowTests(WorkflowFixtures):
+    """C-05 to C-08, C-10: the Sprint 3 action methods (TC-64 to TC-74)."""
+
+    def test_tc64_full_path_writes_history_and_notifies_reporter(self):
+        complaint = self.submit()
+        complaint.start_review(self.it_admin)
+        complaint.verify(self.it_admin, "high", self.tomorrow())
+        complaint.start_work(self.it_admin, note="Ordering a cable")
+        complaint.resolve(self.it_admin, "Cable replaced")
+        complaint.refresh_from_db()
+        self.assertEqual(complaint.status, "resolved")
+        self.assertEqual((complaint.priority, complaint.due_date), ("high", self.tomorrow()))
+        self.assertIsNotNone(complaint.verified_at)
+        self.assertIsNotNone(complaint.resolved_at)
+        history = list(complaint.updates.values_list("action", "from_status", "to_status", "note", "actor"))
+        self.assertEqual(history[1:], [
+            ("start_review", "submitted", "under_review", "", self.it_admin.pk),
+            ("verify", "under_review", "verified", "", self.it_admin.pk),
+            ("start_work", "verified", "in_progress", "Ordering a cable", self.it_admin.pk),
+            ("resolve", "in_progress", "resolved", "Cable replaced", self.it_admin.pk),
+        ])
+        messages = list(
+            Notification.objects.filter(recipient=self.reporter).order_by("pk").values_list("event", "message")
+        )
+        tid = complaint.tracking_id
+        reopen_by = timezone.localdate(complaint.resolved_at) + timedelta(days=7)
+        self.assertEqual(messages, [
+            ("status_changed", f"{tid} is now Under review"),
+            ("status_changed", f"{tid} is now Verified"),
+            ("status_changed", f"{tid} is now In progress"),
+            ("status_changed", f"{tid} was resolved. Please confirm or reopen by {reopen_by.day} {reopen_by:%b %Y}"),
+        ])
+        # The acting admin is never notified about their own action.
+        self.assertFalse(Notification.objects.filter(recipient=self.it_admin).exclude(event="new_complaint").exists())
+
+    def test_tc65_vr03_only_listed_transitions_are_allowed(self):
+        for status in Complaint.Status.values:
+            for action in ["start_review", "verify", "reject", "start_work", "resolve"]:
+                with self.subTest(status=status, action=action):
+                    complaint = self.at_status(status)
+                    if status in Complaint.ALLOWED_FROM[action]:
+                        self.run_action(complaint, action, self.it_admin)
+                        self.assertNotEqual(Complaint.objects.get(pk=complaint.pk).status, status)
+                    else:
+                        with self.assertRaises(ValidationError):
+                            self.run_action(complaint, action, self.it_admin)
+                        self.assertEqual(Complaint.objects.get(pk=complaint.pk).status, status)
+                        self.assertEqual(complaint.updates.count(), 1)  # only "submitted"
+
+    def test_tc66_vr02_only_own_department_or_super_admin_can_act(self):
+        complaint = self.submit()
+        for outsider in [self.fac_admin, self.reporter, self.stranger]:
+            with self.subTest(user=outsider.email):
+                with self.assertRaises(ValidationError):
+                    complaint.start_review(outsider)
+                with self.assertRaises(ValidationError):
+                    complaint.add_note(outsider, "Hello", is_internal=False)
+        self.assertEqual(Complaint.objects.get(pk=complaint.pk).status, "submitted")
+        complaint.start_review(self.boss)  # Super Admin: any department (C-13)
+        self.assertEqual(complaint.status, "under_review")
+        self.assertEqual(complaint.updates.last().actor, self.boss)
+
+    def test_tc67_vr05_verify_needs_priority_and_future_due_date(self):
+        complaint = self.at_status("under_review")
+        today = timezone.localdate()
+        for priority, due in [("urgent", self.tomorrow()), ("", self.tomorrow()), ("high", None),
+                              ("high", today), ("high", today - timedelta(days=1))]:
+            with self.subTest(priority=priority, due=due):
+                with self.assertRaises(ValidationError):
+                    complaint.verify(self.it_admin, priority, due)
+        self.assertEqual(Complaint.objects.get(pk=complaint.pk).status, "under_review")
+        complaint.verify(self.it_admin, "low", self.tomorrow())
+        self.assertEqual(Complaint.objects.get(pk=complaint.pk).status, "verified")
+
+    def test_tc68_vr04_reject_needs_reason_and_resolve_needs_note(self):
+        complaint = self.at_status("under_review")
+        for blank in ["", "   ", None]:
+            with self.assertRaises(ValidationError):
+                complaint.reject(self.it_admin, blank)
+        complaint.reject(self.it_admin, "  Duplicate of UF-0001  ")
+        update = complaint.updates.last()
+        self.assertEqual((complaint.status, update.action, update.note), ("rejected", "reject", "Duplicate of UF-0001"))
+        self.assertEqual(
+            Notification.objects.get(recipient=self.reporter).message,
+            f"{complaint.tracking_id} was rejected: Duplicate of UF-0001",
+        )
+        # A long reason is shortened with "…" so the message fits 255 characters (docs/03 §4).
+        long_one = self.at_status("under_review")
+        long_one.reject(self.it_admin, "Out of scope. " * 40)
+        message = Notification.objects.get(complaint=long_one, recipient=self.reporter).message
+        self.assertEqual(len(message), 255)
+        self.assertTrue(message.startswith(f"{long_one.tracking_id} was rejected: Out of scope."))
+        self.assertTrue(message.endswith("…"))
+        self.assertEqual(long_one.updates.last().note, ("Out of scope. " * 40).strip())  # history keeps it all
+        working = self.at_status("in_progress")
+        with self.assertRaises(ValidationError):
+            working.resolve(self.it_admin, " ")
+        self.assertEqual(Complaint.objects.get(pk=working.pk).status, "in_progress")
+
+    def test_tc69_c07_resolve_with_optional_proof_photo(self):
+        # 5 evidence files at submission do not block a proof photo (docs/05 Attachment).
+        complaint = self.submit(files=[upload(f"p{n}.png") for n in range(5)])
+        Complaint.objects.filter(pk=complaint.pk).update(status="in_progress")
+        complaint.refresh_from_db()
+        for bad in [upload("report.pdf"), upload("photo.jpg", kind="pdf"), upload("clip.mp4")]:
+            with self.subTest(file=bad.name):
+                with self.assertRaises(ValidationError):
+                    complaint.resolve(self.it_admin, "Fixed", proof_file=bad)
+        self.assertEqual(Complaint.objects.get(pk=complaint.pk).status, "in_progress")
+        complaint.resolve(self.it_admin, "Fixed", proof_file=upload("after.jpg"))
+        proof = complaint.attachments.get(kind=Attachment.Kind.PROOF_OF_FIX)
+        self.assertEqual(
+            (proof.original_name, proof.mime_type, proof.uploaded_by), ("after.jpg", "image/jpeg", self.it_admin)
+        )
+        self.assertTrue(proof.file.name.startswith(f"complaints/{complaint.tracking_id}/"))
+
+    def test_tc70_failed_resolve_keeps_status_and_leaves_no_file(self):
+        complaint = self.at_status("in_progress")
+        folder = os.path.join(self.media_root, "complaints", complaint.tracking_id)
+        files_before = sorted(os.listdir(folder)) if os.path.isdir(folder) else []
+        with mock.patch.object(Notification.objects, "bulk_create", side_effect=RuntimeError):
+            with self.assertRaises(RuntimeError):
+                complaint.resolve(self.it_admin, "Fixed", proof_file=upload("after.jpg"))
+        complaint.refresh_from_db()
+        self.assertEqual((complaint.status, complaint.resolved_at), ("in_progress", None))
+        self.assertFalse(complaint.attachments.exists())
+        self.assertEqual(complaint.updates.count(), 1)
+        self.assertEqual(sorted(os.listdir(folder)) if os.path.isdir(folder) else [], files_before)
+
+    def test_tc71_start_work_after_reopen_keeps_due_date(self):
+        due = timezone.localdate() - timedelta(days=2)
+        complaint = self.at_status("reopened", priority="medium", due_date=due)
+        complaint.start_work(self.it_admin)
+        complaint.refresh_from_db()
+        self.assertEqual((complaint.status, complaint.due_date), ("in_progress", due))  # docs/03 §7
+        self.assertTrue(complaint.is_overdue)
+        self.assertEqual(complaint.updates.last().from_status, "reopened")
+
+    def test_tc72_c10_withdraw_by_reporter_while_submitted_notifies_department(self):
+        User.objects.create_user(  # a suspended IT admin is not notified
+            "old.it@northsouth.edu", "pw", full_name="Old", role=User.Role.DEPT_ADMIN,
+            department=self.it, account_state=User.AccountState.SUSPENDED,
+        )
+        complaint = self.submit()
+        for not_reporter in [self.other, self.it_admin, self.boss]:
+            with self.assertRaises(ValidationError):
+                complaint.withdraw(not_reporter)
+        complaint.withdraw(self.reporter)
+        self.assertEqual(Complaint.objects.get(pk=complaint.pk).status, "withdrawn")
+        self.assertEqual(complaint.updates.last().action, "withdraw")
+        withdrawn = Notification.objects.filter(message=f"{complaint.tracking_id} was withdrawn by the student")
+        self.assertEqual(list(withdrawn.values_list("recipient", flat=True)), [self.it_admin.pk])
+        with self.assertRaises(ValidationError):  # only while Submitted
+            self.at_status("under_review").withdraw(self.reporter)
+
+    def test_tc73_add_note_public_or_internal_on_allowed_statuses(self):
+        complaint = self.at_status("resolved")  # notes are allowed on Resolved
+        complaint.add_note(self.it_admin, "Please confirm the fix.", is_internal=False)
+        complaint.add_note(self.it_admin, "Vendor invoice pending.", is_internal=True)
+        notes = list(complaint.updates.filter(action="note").values_list("note", "is_internal", "to_status"))
+        self.assertEqual(notes, [
+            ("Please confirm the fix.", False, "resolved"),
+            ("Vendor invoice pending.", True, "resolved"),
+        ])
+        self.assertEqual(Notification.objects.filter(recipient=self.reporter, event="note_added").count(), 1)
+        with self.assertRaises(ValidationError):
+            complaint.add_note(self.it_admin, "  ", is_internal=False)
+        for status in ["closed", "rejected", "withdrawn"]:
+            with self.subTest(status=status):
+                with self.assertRaises(ValidationError):
+                    self.at_status(status).add_note(self.it_admin, "Late note", is_internal=False)
+
+    def test_tc74_allowed_actions_and_hints(self):
+        def bar(status, user=None):
+            complaint = self.at_status(status)
+            return {b["slug"]: (b["enabled"], b["hint"]) for b in complaint.allowed_actions(user or self.it_admin)}
+
+        self.assertEqual(bar("submitted"), {
+            "start_review": (True, ""),
+            "verify": (False, "Available after Start review"),
+            "reject": (False, "Available after Start review"),
+            "start_work": (False, "Available after Verify"),
+            "resolve": (False, "Available after Start work"),
+        })
+        self.assertEqual(bar("under_review")["verify"], (True, ""))
+        self.assertEqual(bar("under_review")["reject"], (True, ""))
+        self.assertEqual(bar("verified"), {
+            "start_review": (False, "Done"),
+            "verify": (False, "Done"),
+            "reject": (False, "Not available: complaint is Verified"),
+            "start_work": (True, ""),
+            "resolve": (False, "Available after Start work"),
+        })
+        self.assertEqual(bar("reopened")["start_work"], (True, ""))
+        self.assertEqual(bar("resolved")["resolve"], (False, "Done"))
+        for final in ["rejected", "closed", "withdrawn"]:
+            label = Complaint.Status(final).label
+            self.assertEqual(set(bar(final).values()), {(False, f"Not available: complaint is {label}")})
+        self.assertEqual(list(bar("submitted", self.boss)), ["start_review", "verify", "reject", "start_work", "resolve"])
+        complaint = self.submit()
+        self.assertEqual(complaint.allowed_actions(self.fac_admin), [])
+        self.assertEqual(complaint.allowed_actions(self.reporter), [])
+        self.assertTrue(complaint.can_add_note(self.it_admin))
+        self.assertFalse(complaint.can_add_note(self.fac_admin))
+        self.assertFalse(self.at_status("closed").can_add_note(self.boss))
+
+
+# --- Sprint 3: pages (notifications, S-04 withdraw, console) -------------------
+
+
+class NotificationPageTests(WorkflowFixtures):
+    """C-11: S-05/A-06 list, mark all as read, bell count, S-01 latest (TC-75, TC-76)."""
+
+    def test_tc75_list_bell_and_mark_all_read(self):
+        complaint = self.submit()  # notifies the IT admin
+        complaint.start_review(self.it_admin)  # notifies the reporter
+        complaint.add_note(self.it_admin, "Checking the cable.", is_internal=False)
+        self.submit(category=self.electrical, files=[upload("photo.jpg")])  # FAC: not for the IT admin
+
+        self.client.force_login(self.reporter)
+        response = self.client.get(reverse("notifications:list"))
+        self.assertEqual([n.message for n in response.context["notifications"]],
+                         [f"New note on {complaint.tracking_id}", f"{complaint.tracking_id} is now Under review"])
+        detail_url = reverse("student:complaint_detail", args=[complaint.tracking_id])
+        self.assertContains(response, f'href="{detail_url}"', count=2)
+        self.assertContains(response, "notification-unread", count=2)
+        self.assertContains(response, 'aria-label="Notifications, 2 unread"')  # bell, from the context processor
+        self.assertEqual(Notification.objects.filter(recipient=self.reporter, is_read=False).count(), 2)  # opening reads nothing
+
+        self.assertEqual(self.client.get(reverse("notifications:mark_all_read")).status_code, 405)
+        response = self.client.post(reverse("notifications:mark_all_read"), follow=True)
+        self.assertRedirects(response, reverse("notifications:list"))
+        self.assertNotContains(response, "notification-unread")
+        self.assertContains(response, 'aria-label="Notifications"')
+        self.assertTrue(Notification.objects.filter(recipient=self.it_admin, is_read=False).exists())  # only own
+
+        self.client.force_login(self.it_admin)
+        response = self.client.get(reverse("notifications:list"))
+        self.assertEqual(len(response.context["notifications"]), 1)  # own department only
+        self.assertContains(response, reverse("console:complaint_detail", args=[complaint.tracking_id]))
+
+    def test_tc76_student_home_shows_five_latest_notifications(self):
+        complaint = self.submit()
+        complaint.start_review(self.it_admin)
+        for number in range(5):
+            complaint.add_note(self.it_admin, f"Update {number}", is_internal=False)
+        self.client.force_login(self.reporter)
+        response = self.client.get(reverse("student:home"))
+        latest = response.context["latest_notifications"]
+        self.assertEqual(len(latest), 5)
+        self.assertNotIn("is now Under review", [n.message for n in latest])  # the oldest is left out
+        self.assertContains(response, reverse("notifications:list"))
+
+
+class WithdrawPageTests(WorkflowFixtures):
+    """C-10: Withdraw on S-04 (TC-77)."""
+
+    def test_tc77_withdraw_button_and_post(self):
+        complaint = self.submit()
+        complaint.support(self.other)
+        url = reverse("student:complaint_action", args=[complaint.tracking_id, "withdraw"])
+        detail = reverse("student:complaint_detail", args=[complaint.tracking_id])
+
+        self.client.force_login(self.other)  # supporter: limited view, no button, refused
+        self.assertNotContains(self.client.get(detail), url)
+        self.client.post(url)
+        self.assertEqual(Complaint.objects.get(pk=complaint.pk).status, "submitted")
+        self.client.force_login(self.stranger)
+        self.assertEqual(self.client.post(url).status_code, 404)
+
+        self.client.force_login(self.reporter)
+        response = self.client.get(detail)
+        self.assertContains(response, url)
+        self.assertContains(response, "Withdraw this complaint? This cannot be undone.")
+        self.assertEqual(self.client.get(url).status_code, 405)
+        response = self.client.post(url, follow=True)
+        self.assertRedirects(response, detail)
+        self.assertContains(response, f"{complaint.tracking_id} was withdrawn.")
+        self.assertEqual(Complaint.objects.get(pk=complaint.pk).status, "withdrawn")
+        self.assertNotContains(response, url)  # no button once withdrawn
+        self.assertNotContains(self.client.get(reverse("student:complaint_detail", args=[
+            self.at_status("under_review").tracking_id])), "Withdraw this complaint")
+
+
+class QueuePageTests(WorkflowFixtures):
+    """A-02 queue: scope, filters, search, sort, overdue flag (TC-78)."""
+
+    def test_tc78_queue_scope_filters_search_and_sort(self):
+        today = timezone.localdate()
+        late = self.at_status("in_progress", priority="high", due_date=today - timedelta(days=1))
+        soon = self.at_status("verified", priority="low", due_date=today + timedelta(days=2))
+        new = self.submit()
+        closed = self.at_status("closed")
+        fac = self.submit(category=self.electrical, files=[upload("photo.jpg")], reporter=self.other)
+        queue = reverse("console:queue")
+
+        def ids(user, **params):
+            self.client.force_login(user)
+            return [c.tracking_id for c in self.client.get(queue, params).context["complaints"]]
+
+        # Default: open complaints of the own department, soonest due first, no due date last.
+        self.assertEqual(ids(self.it_admin), [late.tracking_id, soon.tracking_id, new.tracking_id])
+        self.assertIn(closed.tracking_id, ids(self.it_admin, status="all"))
+        self.assertEqual(ids(self.it_admin, status="closed"), [closed.tracking_id])
+        self.assertEqual(ids(self.it_admin, priority="low"), [soon.tracking_id])
+        self.assertEqual(ids(self.it_admin, overdue="1"), [late.tracking_id])
+        self.assertEqual(ids(self.it_admin, category=self.network.pk), [])
+        self.assertEqual(ids(self.it_admin, sort="updated")[0], new.tracking_id)
+        self.assertEqual(ids(self.it_admin, q=fac.tracking_id), [])  # other department: nothing (VR-02)
+        self.assertEqual(ids(self.it_admin, department=self.fac.pk), ids(self.it_admin))  # not for Dept Admins
+        self.assertEqual(ids(self.fac_admin, q="Name other"), [fac.tracking_id])  # reporter name
+        self.assertEqual(ids(self.fac_admin, q="OTHER@north"), [fac.tracking_id])  # email
+        # Super Admin: every department, with a department filter.
+        self.assertIn(fac.tracking_id, ids(self.boss))
+        self.assertEqual(ids(self.boss, department=self.fac.pk), [fac.tracking_id])
+
+        self.client.force_login(self.it_admin)
+        response = self.client.get(queue)
+        self.assertContains(response, 'class="row-overdue"', count=1)
+        self.assertContains(response, reverse("console:complaint_detail", args=[late.tracking_id]))
+        self.client.force_login(self.reporter)
+        self.assertEqual(self.client.get(queue).status_code, 403)
+
+
+class ConsoleDetailTests(WorkflowFixtures):
+    """A-03: access, reporter card, history, action bar, actions, files (TC-79 to TC-82)."""
+
+    def detail(self, complaint, user=None):
+        self.client.force_login(user or self.it_admin)
+        return self.client.get(reverse("console:complaint_detail", args=[complaint.tracking_id]))
+
+    def act(self, complaint, action, data=None, user=None):
+        self.client.force_login(user or self.it_admin)
+        url = reverse("console:complaint_action", args=[complaint.tracking_id, action])
+        return self.client.post(url, data or {})
+
+    def test_tc79_access_reporter_card_and_history(self):
+        self.reporter.gender = User.Gender.FEMALE
+        self.reporter.save()
+        complaint = self.submit()
+        complaint.support(self.other)
+        complaint.support(self.stranger)
+        complaint.start_review(self.it_admin)
+        complaint.add_note(self.it_admin, "Vendor called.", is_internal=True)
+        self.assertEqual(self.detail(complaint, self.fac_admin).status_code, 404)  # VR-02
+        self.assertEqual(self.detail(complaint, self.reporter).status_code, 403)
+        self.assertEqual(self.detail(complaint, self.boss).status_code, 200)
+        response = self.detail(complaint)
+        self.assertContains(response, self.reporter.full_name)
+        self.assertContains(response, "Complaints filed: 1 · Rejected: 0")
+        self.assertContains(response, "img/avatars/neutral.svg")  # VR-16: never the reporter's own avatar
+        self.assertNotContains(response, "female")
+        self.assertContains(response, 'aria-disabled="true" title="Student records arrive in Sprint 4"')
+        history = response.context["history"]
+        self.assertEqual([h["action"] for h in history], ["Submitted", "Me too", "Review started", "Note"])
+        self.assertEqual(history[1]["actors"], [self.other.full_name, self.stranger.full_name])  # grouped
+        self.assertTrue(history[3]["is_internal"])
+        self.assertContains(response, "Vendor called.")
+        self.assertContains(response, self.it_admin.full_name)  # admin pages show names
+
+    def test_tc80_action_bar_matches_allowed_actions(self):
+        response = self.detail(self.submit())
+        self.assertContains(response, "<details", count=1)  # only Add note: Start review needs no form
+        self.assertContains(response, "Available after Start review", count=2)
+        self.assertContains(response, "disabled>Verify</button>")
+        complaint = self.at_status("under_review")
+        response = self.detail(complaint)
+        self.assertContains(response, '<summary class="btn btn-primary">Verify</summary>')
+        self.assertContains(response, '<summary class="btn btn-danger">Reject</summary>')
+        self.assertContains(response, "disabled>Start review</button>")
+        response = self.detail(self.at_status("closed"))
+        self.assertContains(response, "Not available: complaint is Closed", count=5)
+        self.assertNotContains(response, "Add note")
+        self.assertEqual(self.detail(complaint, self.boss).context["buttons"][1]["enabled"], True)
+
+    def test_tc81_actions_post_redirect_or_show_errors(self):
+        complaint = self.submit()
+        detail = reverse("console:complaint_detail", args=[complaint.tracking_id])
+        self.assertEqual(self.act(complaint, "start_review", user=self.fac_admin).status_code, 404)  # VR-02
+        self.assertEqual(self.act(complaint, "reassign").status_code, 404)  # Sprint 4
+        self.client.force_login(self.it_admin)
+        self.assertEqual(self.client.get(reverse("console:complaint_action", args=[complaint.tracking_id, "start_review"])).status_code, 405)
+        # VR-03: verify while Submitted is refused with the form open.
+        response = self.act(complaint, "verify", {"priority": "high", "due_date": self.tomorrow().isoformat()})
+        self.assertEqual(response.status_code, 400)
+        self.assertEqual(response.context["open_action"], "verify")
+        self.assertContains(response, "Verify is not possible while the complaint is Submitted.", status_code=400)
+
+        self.assertRedirects(self.act(complaint, "start_review"), detail)
+        response = self.act(complaint, "verify", {"priority": "high", "due_date": timezone.localdate().isoformat()})
+        self.assertContains(response, "The due date must be later than today.", status_code=400)  # VR-05
+        self.assertContains(response, "<details class=\"action-form\" open>", status_code=400)
+        self.assertContains(self.act(complaint, "reject", {"reason": " "}), "This field is required.", status_code=400)  # VR-04
+        self.assertRedirects(self.act(complaint, "verify", {"priority": "high", "due_date": self.tomorrow().isoformat()}), detail)
+        self.assertRedirects(self.act(complaint, "start_work", {"note": ""}), detail)
+        self.assertContains(self.act(complaint, "resolve", {"note": "Fixed", "proof_file": upload("x.pdf")}),
+                            "must be a JPG, PNG or WEBP photo", status_code=400)
+        response = self.client.post(
+            reverse("console:complaint_action", args=[complaint.tracking_id, "resolve"]),
+            {"note": "Fixed", "proof_file": upload("after.png")}, follow=True,
+        )
+        self.assertContains(response, f"{complaint.tracking_id} is now Resolved.")
+        self.assertEqual(Complaint.objects.get(pk=complaint.pk).status, "resolved")
+        self.assertContains(response, reverse("console:attachment", args=[complaint.tracking_id, complaint.attachments.get().pk]))
+        self.assertRedirects(self.act(complaint, "note", {"note": "Internal check", "visibility": "internal"}), detail)
+        self.assertTrue(complaint.updates.get(action="note").is_internal)
+
+    def test_tc82_console_attachment_is_permission_checked(self):
+        complaint = self.submit(files=[upload("photo.jpg")])
+        url = reverse("console:attachment", args=[complaint.tracking_id, complaint.attachments.get().pk])
+        for user, expected in [(self.it_admin, 200), (self.boss, 200), (self.fac_admin, 404), (self.reporter, 403)]:
+            with self.subTest(user=user.email):
+                self.client.force_login(user)
+                response = self.client.get(url)
+                self.assertEqual(response.status_code, expected)
+                if expected == 200:
+                    self.assertEqual(b"".join(response.streaming_content), FILE_BYTES["jpg"])
+                    self.assertEqual(response["Cache-Control"], "private")

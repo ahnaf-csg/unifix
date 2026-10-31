@@ -1,0 +1,115 @@
+{% extends "base.html" %}
+{% block title %}{{ complaint.tracking_id }}{% endblock %}
+{% block content %}
+{# A-03 Complaint detail and actions. The buttons come from complaint.allowed_actions(user); #}
+{# each enabled one except Start review opens its inline form in a <details> block (no JavaScript). #}
+<div class="breadcrumb"><a href="{% url 'console:queue' %}">Complaint queue</a> / {{ complaint.tracking_id }}</div>
+<div class="page-head">
+  <div>
+    <h1 class="page-title">{{ complaint.title }}</h1>
+    <p class="page-sub">
+      <span class="text-mono">{{ complaint.tracking_id }}</span>
+      {% include "partials/status_badge.html" with complaint=complaint %}
+      {% if complaint.priority %}<span class="pri-{{ complaint.priority }}">{{ complaint.get_priority_display }} priority</span>{% endif %}
+    </p>
+  </div>
+</div>
+
+{% for error in bar_errors %}<div class="alert-error">{{ error }}</div>{% endfor %}
+{% if buttons %}
+  <div class="card action-bar" aria-label="Actions">
+    {% for b in buttons %}
+      <div class="action">
+        {% if not b.enabled %}
+          <button class="btn" type="button" disabled>{{ b.label }}</button>
+          <div class="action-hint">{{ b.hint }}</div>
+        {% elif not b.form %}
+          {# Start review: no input needed. #}
+          <form method="post" action="{% url 'console:complaint_action' complaint.tracking_id b.slug %}">
+            {% csrf_token %}
+            <button class="btn btn-primary" type="submit">{{ b.label }}</button>
+          </form>
+        {% else %}
+          <details class="action-form"{% if open_action == b.slug %} open{% endif %}>
+            <summary class="btn {% if b.slug == 'reject' %}btn-danger{% else %}btn-primary{% endif %}">{{ b.label }}</summary>
+            <form method="post" action="{% url 'console:complaint_action' complaint.tracking_id b.slug %}"
+                  {% if b.slug == "resolve" %}enctype="multipart/form-data"{% endif %} novalidate>
+              {% csrf_token %}
+              {% include "console/action_fields.html" with form=b.form %}
+              <button class="btn {% if b.slug == 'reject' %}btn-danger{% else %}btn-primary{% endif %}" type="submit">{{ b.label }}</button>
+            </form>
+          </details>
+        {% endif %}
+      </div>
+    {% endfor %}
+  </div>
+{% endif %}
+
+<div class="row section">
+  <div class="card card-wide">
+    <dl class="details">
+      <dt>Category</dt><dd>{{ complaint.category.name }}</dd>
+      <dt>Department</dt><dd>{{ complaint.department.name }}</dd>
+      <dt>Location</dt><dd>{{ complaint.location }}</dd>
+      <dt>Reported</dt><dd>{{ complaint.created_at|date:"j M Y, H:i" }}</dd>
+      {% if complaint.due_date %}<dt>Due date</dt><dd>{{ complaint.due_date|date:"j M Y" }}{% if complaint.is_overdue %} <span class="flag-overdue">Overdue</span>{% endif %}</dd>{% endif %}
+      <dt>Students affected</dt><dd>{{ complaint.affected_count }}</dd>
+    </dl>
+
+    <h2 class="section">Description</h2>
+    <p class="description">{{ complaint.description|linebreaksbr }}</p>
+
+    <h2 class="section">Evidence</h2>
+    {% include "student/attachment_list.html" with files=evidence empty="No files attached." url_name="console:attachment" %}
+
+    {% if proof %}
+      <h2 class="section">Proof of fix</h2>
+      {% include "student/attachment_list.html" with files=proof empty="" url_name="console:attachment" %}
+    {% endif %}
+  </div>
+
+  <div>
+    <div class="card reporter-card">
+      <h2>Reporter</h2>
+      <div class="reporter-card-person">
+        {# Other people are always shown with the neutral avatar (VR-16). #}
+        {% include "partials/avatar.html" with kind="neutral" %}
+        <div>
+          <strong>{{ reporter.full_name }}</strong>
+          <div class="text-muted">{{ reporter.student_id|default:"" }} · {{ reporter.email }}</div>
+        </div>
+      </div>
+      <p class="text-muted">Complaints filed: {{ reporter_filed }} · Rejected: {{ reporter_rejected }}</p>
+      <span class="link-disabled" aria-disabled="true" title="Student records arrive in Sprint 4">View student record</span>
+    </div>
+
+    {% if can_add_note %}
+      <div class="card">
+        <details class="action-form"{% if open_action == "note" %} open{% endif %}>
+          <summary class="btn">Add note</summary>
+          <form method="post" action="{% url 'console:complaint_action' complaint.tracking_id 'note' %}" novalidate>
+            {% csrf_token %}
+            {% include "console/action_fields.html" with form=note_form %}
+            <button class="btn btn-primary" type="submit">Add note</button>
+          </form>
+        </details>
+      </div>
+    {% endif %}
+
+    <div class="card">
+      <h2>History</h2>
+      <ol class="timeline">
+        {% for entry in history %}
+          <li{% if entry.is_internal %} class="timeline-internal"{% endif %}>
+            <strong>{{ entry.action }}</strong>{% if entry.actors|length > 1 %} ×{{ entry.actors|length }}{% endif %}
+            {% if entry.is_internal %}<span class="text-muted">· Internal</span>{% endif %}
+            <span class="text-muted">· {{ entry.actors|join:", " }}</span>
+            <div class="text-muted">{{ entry.created_at|date:"j M Y, H:i" }}</div>
+            {% if entry.note %}<div class="timeline-note">{{ entry.note|linebreaksbr }}</div>{% endif %}
+          </li>
+        {% endfor %}
+      </ol>
+    </div>
+  </div>
+</div>
+{% endblock %}

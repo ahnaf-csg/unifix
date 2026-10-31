@@ -16,6 +16,7 @@ from django.urls import reverse
 from django.views.decorators.http import require_POST
 
 from accounts.permissions import get_complaint_for_user, has_full_view, student_required
+from notifications.views import with_links
 
 from .forms import ComplaintForm, LocationForm
 from .models import Attachment, Complaint, ComplaintUpdate, Support
@@ -31,7 +32,7 @@ def own_and_supported(user):
 
 @student_required
 def home(request):
-    """S-01 Student home: cards, needs your action, recent complaints."""
+    """S-01 Student home: cards, needs your action, recent complaints, latest notifications."""
     own = Complaint.objects.filter(reporter=request.user)
     awaiting = own.filter(status=Complaint.Status.RESOLVED).order_by("resolved_at")
     context = {
@@ -41,6 +42,9 @@ def home(request):
         "supported_count": Support.objects.filter(student=request.user).count(),
         "needs_action": awaiting,
         "recent": own_and_supported(request.user).order_by("-updated_at")[:5],
+        "latest_notifications": with_links(
+            request.user, request.user.notifications.select_related("complaint")[:5]
+        ),
     }
     return render(request, "student/home.html", context)
 
@@ -223,8 +227,10 @@ def complaint_detail(request, tracking_id):
 @student_required
 @require_POST
 def complaint_action(request, tracking_id, action):
-    """Student actions (docs/05 action mapping). Sprint 2 builds "Me too" (support);
-    withdraw, confirm, reopen and rate arrive in Sprints 3 and 4."""
+    """Student actions (docs/05 action mapping): "Me too" (support, Sprint 2) and
+    withdraw (C-10, Sprint 3); confirm, reopen and rate arrive in Sprint 4."""
+    if action == "withdraw":
+        return withdraw(request, tracking_id)
     if action != "support":
         raise Http404
     complaint = get_object_or_404(Complaint, tracking_id=tracking_id)
@@ -241,6 +247,27 @@ def complaint_action(request, tracking_id, action):
     return redirect("student:complaint_new")
 
 
+def withdraw(request, tracking_id):
+    """C-10: the reporter withdraws a complaint that is still Submitted."""
+    complaint = get_complaint_for_user(request.user, tracking_id)  # 404 for others
+    try:
+        complaint.withdraw(request.user)
+    except ValidationError as error:
+        messages.error(request, error.messages[0])
+    else:
+        messages.success(request, f"{complaint.tracking_id} was withdrawn.")
+    return redirect("student:complaint_detail", tracking_id=complaint.tracking_id)
+
+
+def send_attachment(complaint, pk):
+    """Send one of the complaint's files (NFR-03). Used by student:attachment and
+    console:attachment, which check permissions first."""
+    file = get_object_or_404(complaint.attachments, pk=pk)
+    response = FileResponse(file.file.open("rb"), content_type=file.mime_type, filename=file.original_name)
+    response["Cache-Control"] = "private"
+    return response
+
+
 @student_required
 def attachment(request, tracking_id, pk):
     """Send an evidence or proof file after the permission check (NFR-03).
@@ -250,7 +277,4 @@ def attachment(request, tracking_id, pk):
     complaint = get_complaint_for_user(request.user, tracking_id)
     if not has_full_view(request.user, complaint):
         raise Http404
-    file = get_object_or_404(complaint.attachments, pk=pk)
-    response = FileResponse(file.file.open("rb"), content_type=file.mime_type, filename=file.original_name)
-    response["Cache-Control"] = "private"
-    return response
+    return send_attachment(complaint, pk)

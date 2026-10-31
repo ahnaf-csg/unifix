@@ -29,7 +29,7 @@ Departments and categories are configured through Django's built-in admin panel 
 
 | ID | Feature | Description |
 |---|---|---|
-| C-01 | Accounts and roles | Register (students only, `@northsouth.edu` email), login, logout. Admin accounts are created by the Super Admin or in Django admin. |
+| C-01 | Accounts and roles | Register (students only, `@northsouth.edu` email, optional gender), login, logout. Admin accounts are created by the Super Admin or in Django admin. |
 | C-02 | Complaint submission | Title, category, building, room, description, attachments (photo, video, PDF). Server-side checks on required fields, file type and size. Categories marked `requires_attachment` need at least one file. A tracking ID (e.g. UF-1042) is issued. |
 | C-03 | Duplicate check and "Me too" | Step 1 of the form (category and location) checks for open complaints matching the duplicate rule (`03_workflow.md` §6) before any details or files are entered; matches are shown as limited summaries. The student can support one instead of submitting. Students affected = supporters + reporter. |
 | C-04 | Department routing | The complaint's department is copied from its category at submission and stored on the complaint. |
@@ -39,11 +39,11 @@ Departments and categories are configured through Django's built-in admin panel 
 | C-08 | Status history | Every action creates a history record (who, what, when, note). Notes can be public (visible to the student) or internal (admins only). |
 | C-09 | Confirm or reopen | The student confirms the fix (Closed) or reopens within 7 days of resolution with a reason (Reopened). |
 | C-10 | Withdraw | The student can withdraw a complaint while it is still Submitted. *(Keep in view)* |
-| C-11 | In-app notifications | The reporter is notified on every status change, reassignment and public note; department admins are notified of new, reassigned-in, reopened, closed and rated complaints in their department (see `03_workflow.md` §4). |
+| C-11 | In-app notifications | The reporter is notified on every status change, reassignment and public note; department admins are notified of new, reassigned-in, withdrawn, reopened, closed and rated complaints in their department (see `03_workflow.md` §4). |
 | C-12 | User records | Super Admin: view, edit, suspend, delete (soft) any account. Dept Admin: view students and their complaint history (read-only). |
 | C-13 | Super Admin complaint control | Acts on any complaint and reassigns complaints between departments with a reason. |
 | C-14 | Dashboards and reports | Student home, Dept Admin dashboard and Super Admin reports (see section 4). |
-| C-15 | Profile | Edit name and phone; change password. |
+| C-15 | Profile | Edit name, phone and optional gender (male, female, other, prefer not to say); change password. Each user has a simple default avatar (VR-16). |
 | C-16 | Setup | Departments and categories managed in the Django admin panel (Super Admin accounts have `is_staff` and `is_superuser`). |
 | C-17 | Student rating | After closing, the student rates the resolution 1–5 stars with an optional comment, once per complaint. *(Keep in view)* |
 | C-18 | Search | Role-scoped search bar in the top bar (see `04_screens.md` §Search). An exact tracking ID opens the complaint directly. |
@@ -74,6 +74,7 @@ Charts are static (no animation): Chart.js with animation disabled, or plain CSS
 | OP-08 | Quick-fix guides: admin-written self-help steps per category, shown before submitting |
 | OP-09 | Campus issue board: public list of open issues by building |
 | OP-10 | Auto-close Resolved complaints not confirmed within 7 days |
+| OP-11 | Email copies of key notifications (Resolved, Rejected) |
 
 ## 6. Validation Rules
 
@@ -94,6 +95,7 @@ Charts are static (no animation): Chart.js with animation disabled, or plain CSS
 | VR-13 | Registration requires an `@northsouth.edu` email address that is not already registered. |
 | VR-14 | Search results only include records the user is allowed to see (VR-01, VR-02). |
 | VR-15 | Login is refused when the chosen login type does not match the account role (Student tab: `student`; Staff tab: `dept_admin`, `super_admin`). Inactive accounts see "Account inactive" first (VR-11). |
+| VR-16 | Gender is visible only to its owner; other users only ever see the neutral avatar. Admin pages, reports and filters never show or use gender. |
 
 ## 7. Non-Functional Requirements
 

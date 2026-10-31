@@ -2,7 +2,8 @@
 
 Django's built-in UserAdmin expects a `username` field, so it is adjusted for
 email login. `is_active`, `is_staff` and `is_superuser` are not edited here:
-User.save() derives them from `account_state` and `role`.
+User.save() derives them from `account_state` and `role`. `gender` is left out
+of the list, filters and fieldsets on purpose: only its owner sees it (VR-16).
 """
 
 from django.contrib import admin
