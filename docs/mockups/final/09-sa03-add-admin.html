@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Add admin · UniFix (mockup)</title>
+  <link rel="stylesheet" href="../../../static/css/unifix.css">
+  <link rel="stylesheet" href="mockup.css">
+  <script src="../../../static/js/unifix.js" defer></script>
+</head>
+<body>
+<header class="topbar">
+  <div class="topbar-left"></div>
+  <div class="topbar-center">
+    <a class="brand" href="/">
+      <img class="topbar-logo" src="../../../static/img/nsu_logo.png" alt="North South University" width="36" height="36">
+      <span>UniFix<small>Admin Console</small></span>
+    </a>
+  </div>
+    <div class="topbar-right">
+      <input class="topbar-search" type="search" aria-label="Search"
+             placeholder="Search complaints, students, tracking IDs">
+      <a class="bell" href="/notifications/"
+         aria-label="Notifications">
+        Notifications
+      </a>
+      <div class="user-menu">
+<img class="avatar" src="../../../static/img/avatars/neutral.svg" alt="" width="32" height="32">
+        <span>
+          Tanvir Ahmed
+          <small>
+            Super admin
+          </small>
+        </span>
+        <form method="post" action="/logout/">
+          <input type="hidden" name="csrfmiddlewaretoken" value="">
+          <button class="btn btn-sm" type="submit">Log out</button>
+        </form>
+      </div>
+    </div>
+</header>
+<nav class="sidebar" aria-label="Main">
+    <div class="sidebar-label">Super admin</div>
+    <a class="sidebar-link" href="/console/">Dashboard</a>
+    <a class="sidebar-link" href="/console/complaints/">Complaint queue (all)</a>
+    <a class="sidebar-link" href="/console/students/">Students</a>
+      <a class="sidebar-link" href="/console/reports/">Reports</a>
+      <a class="sidebar-link sidebar-link-active" href="/console/users/">Users</a>
+  <a class="sidebar-link" href="/notifications/">Notifications</a>
+  <a class="sidebar-link" href="/profile/">Profile</a>
+</nav>
+  <main class="main">
+<p class="mockup-label">Mockup — built in Sprint 4</p>
+<div class="breadcrumb"><a href="/console/users/">Users</a> / Add admin</div>
+<div class="page-head">
+  <div>
+    <h1 class="page-title">Add admin</h1>
+    <p class="page-sub">Staff accounts are created here; students register themselves (P-02).</p>
+  </div>
+</div>
+<div class="card form-card">
+  <form method="post" action="/console/users/new/" novalidate>
+    <input type="hidden" name="csrfmiddlewaretoken" value="">
+    <div class="form-field">
+      <label for="id_full_name">Full name</label>
+      <input type="text" name="full_name" id="id_full_name">
+    </div>
+    <div class="form-field">
+      <label for="id_email">Email</label>
+      <input type="email" name="email" id="id_email">
+      <div class="form-help">Must end in @northsouth.edu (VR-13).</div>
+    </div>
+    <div class="form-field">
+      <label for="id_phone">Phone</label>
+      <input type="tel" name="phone" id="id_phone">
+    </div>
+    <div class="form-field">
+      <label for="id_role">Role</label>
+      <select name="role" id="id_role"><option value="dept_admin" selected>Dept admin</option><option value="super_admin">Super admin</option></select>
+    </div>
+    <div class="form-field">
+      <label for="id_department">Department</label>
+      <select name="department" id="id_department"><option value="">Choose a department</option><option>Facilities Management</option><option>Housekeeping</option><option>IT Services</option><option>Security</option></select>
+      <div class="form-help">Required for a Dept admin.</div>
+    </div>
+    <div class="form-field">
+      <label for="id_account_state">Account state</label>
+      <select name="account_state" id="id_account_state"><option value="active" selected>Active</option><option value="suspended">Suspended</option></select>
+    </div>
+    <p class="form-help">Suspend and Delete appear only when editing an existing account.</p>
+    <button class="btn btn-primary" type="submit">Save</button> <a href="/console/users/">Cancel</a>
+  </form>
+</div>
+  </main>
+</body>
+</html>

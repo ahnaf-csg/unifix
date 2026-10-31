@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Home · UniFix (mockup)</title>
+  <link rel="stylesheet" href="../../../static/css/unifix.css">
+  <link rel="stylesheet" href="mockup.css">
+  <script src="../../../static/js/unifix.js" defer></script>
+</head>
+<body>
+<header class="topbar">
+  <div class="topbar-left"></div>
+  <div class="topbar-center">
+    <a class="brand" href="/">
+      <img class="topbar-logo" src="../../../static/img/nsu_logo.png" alt="North South University" width="36" height="36">
+      <span>UniFix<small>NSU Campus Services</small></span>
+    </a>
+  </div>
+    <div class="topbar-right">
+      <input class="topbar-search" type="search" aria-label="Search"
+             placeholder="Search your complaints by tracking ID, title or room">
+      <a class="bell" href="/notifications/"
+         aria-label="Notifications, 1 unread">
+        Notifications<span class="bell-count">1</span><span class="bell-dot"></span>
+      </a>
+      <div class="user-menu">
+<img class="avatar" src="../../../static/img/avatars/neutral.svg" alt="" width="32" height="32">
+        <span>
+          Rafiq Hasan
+          <small>
+            Student · 2112345642
+          </small>
+        </span>
+        <form method="post" action="/logout/">
+          <input type="hidden" name="csrfmiddlewaretoken" value="">
+          <button class="btn btn-sm" type="submit">Log out</button>
+        </form>
+      </div>
+    </div>
+</header>
+<nav class="sidebar" aria-label="Main">
+    <div class="sidebar-label">Student</div>
+    <a class="sidebar-link sidebar-link-active" href="/student/">Home</a>
+    <a class="sidebar-link" href="/student/complaints/new/">New complaint</a>
+    <a class="sidebar-link" href="/student/complaints/">My complaints</a>
+  <a class="sidebar-link" href="/notifications/">Notifications</a>
+  <a class="sidebar-link" href="/profile/">Profile</a>
+</nav>
+  <main class="main">
+<p class="mockup-label">Mockup — built in Sprint 4 (Needs your action buttons)</p>
+<div class="page-head">
+  <div>
+    <h1 class="page-title">Welcome, Rafiq Hasan</h1>
+    <p class="page-sub">Here's where your campus reports stand today.</p>
+  </div>
+  <a class="btn btn-primary" href="/student/complaints/new/">+ New complaint</a>
+</div>
+<div class="row">
+  <div class="card card-stat">
+    <div class="stat-label">Open complaints</div>
+    <div class="stat-value">4</div>
+    <div class="stat-note">Being handled by departments</div>
+  </div>
+  <div class="card card-stat">
+    <div class="stat-label">Awaiting your confirmation</div>
+    <div class="stat-value">1</div>
+    <div class="stat-note">Resolved, needs your check</div>
+  </div>
+  <div class="card card-stat">
+    <div class="stat-label">Closed</div>
+    <div class="stat-value">1</div>
+    <div class="stat-note">Fix confirmed</div>
+  </div>
+  <div class="card card-stat">
+    <div class="stat-label">Issues you supported</div>
+    <div class="stat-value">2</div>
+    <div class="stat-note">"Me too" on others' reports</div>
+  </div>
+</div>
+<div class="row section">
+  <div class="card card-wide">
+    <div class="card-head">
+      <h2>Recent complaints</h2>
+      <a href="/student/complaints/">View all</a>
+    </div>
+      <div class="table-scroll">
+        <table>
+          <thead><tr><th>Tracking ID</th><th>Title</th><th>Location</th><th>Status</th><th>Due</th><th>Updated</th></tr></thead>
+          <tbody>
+              <tr>
+                <td><a class="text-mono" href="/student/complaints/UF-0003/">UF-0003</a></td>
+                <td>
+                  <a href="/student/complaints/UF-0003/">Broken chair armrest</a>
+                  <div class="text-muted">Furniture · Facilities Management</div>
+                </td>
+                <td>NAC 208</td>
+                <td><span class="badge-verified">Verified</span></td>
+                <td>2 Nov</td>
+                <td>31 Oct, 10:15</td>
+              </tr>
+              <tr>
+                <td><a class="text-mono" href="/student/complaints/UF-0006/">UF-0006</a></td>
+                <td>
+                  <a href="/student/complaints/UF-0006/">Lab PC 14 won&#x27;t boot</a>
+                  <div class="text-muted">Lab computers · IT Services</div>
+                </td>
+                <td>NAC 712</td>
+                <td><span class="badge-submitted">Submitted</span></td>
+                <td>–</td>
+                <td>27 Oct, 18:28</td>
+              </tr>
+              <tr>
+                <td><a class="text-mono" href="/student/complaints/UF-0001/">UF-0001</a></td>
+                <td>
+                  <a href="/student/complaints/UF-0001/">Projector shows no signal</a>
+                  <div class="text-muted">Projector &amp; AV · IT Services</div>
+                </td>
+                <td>NAC 512</td>
+                <td><span class="badge-resolved">Resolved</span></td>
+                <td>29 Oct</td>
+                <td>26 Oct, 20:52</td>
+              </tr>
+              <tr>
+                <td><a class="text-mono" href="/student/complaints/UF-0011/">UF-0011</a></td>
+                <td>
+                  <a href="/student/complaints/UF-0011/">Loose handrail on library stairs</a>
+                  <div class="text-muted">Safety hazard · Security · Supported</div>
+                </td>
+                <td>Library Stairs B</td>
+                <td><span class="badge-verified">Verified</span> <span class="flag-overdue">Overdue</span></td>
+                <td>28 Oct</td>
+                <td>26 Oct, 20:52</td>
+              </tr>
+              <tr>
+                <td><a class="text-mono" href="/student/complaints/UF-0004/">UF-0004</a></td>
+                <td>
+                  <a href="/student/complaints/UF-0004/">Library 3rd floor Wi-Fi drops</a>
+                  <div class="text-muted">Network · IT Services</div>
+                </td>
+                <td>Library L3</td>
+                <td><span class="badge-verified">Verified</span></td>
+                <td>31 Oct</td>
+                <td>24 Oct, 23:16</td>
+              </tr>
+          </tbody>
+        </table>
+      </div>
+  </div>
+  <div>
+    <div class="card">
+      <h2>Needs your action</h2>
+        <div class="list-item">
+          <a href="/student/complaints/UF-0001/">Projector shows no signal</a> <span class="text-mono">UF-0001</span>
+          <div class="text-muted">IT Services marked this resolved on 26 Oct. Confirm or reopen by 2 Nov.</div>
+          <div class="item-actions">
+            <a class="btn btn-primary btn-sm" href="/student/complaints/UF-0001/">Confirm fix</a>
+            <a class="btn btn-danger btn-sm" href="/student/complaints/UF-0001/">Reopen</a>
+          </div>
+        </div>
+        <div class="list-item">
+          <a href="/student/complaints/UF-0005/">Washroom tap not closing</a> <span class="text-mono">UF-0005</span>
+          <div class="text-muted">Closed on 13 Oct. How was the service?</div>
+          <div class="item-actions">
+            <a class="btn btn-sm" href="/student/complaints/UF-0005/">Rate</a>
+          </div>
+        </div>
+    </div>
+    <div class="card">
+      <div class="card-head">
+        <h2>Latest notifications</h2>
+        <a href="/notifications/">View all</a>
+      </div>
+        <div class="list-item notification-unread">
+          <a href="/student/complaints/UF-0003/">UF-0003 is now Verified</a>
+          <div class="text-muted">31 Oct, 10:15</div>
+        </div>
+        <div class="list-item">
+          <a href="/student/complaints/UF-0001/">UF-0001 was resolved. Please confirm or reopen by 2 Nov 2026</a>
+          <div class="text-muted">26 Oct, 20:52</div>
+        </div>
+        <div class="list-item">
+          <a href="/student/complaints/UF-0003/">UF-0003 is now Under review</a>
+          <div class="text-muted">25 Oct, 20:52</div>
+        </div>
+        <div class="list-item">
+          <a href="/student/complaints/UF-0004/">New note on UF-0004</a>
+          <div class="text-muted">24 Oct, 20:52</div>
+        </div>
+        <div class="list-item">
+          <a href="/student/complaints/UF-0004/">UF-0004 is now Verified</a>
+          <div class="text-muted">23 Oct, 08:52</div>
+        </div>
+    </div>
+  </div>
+</div>
+  </main>
+</body>
+</html>

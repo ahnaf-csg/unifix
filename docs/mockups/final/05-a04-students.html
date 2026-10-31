@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Students · UniFix (mockup)</title>
+  <link rel="stylesheet" href="../../../static/css/unifix.css">
+  <link rel="stylesheet" href="mockup.css">
+  <script src="../../../static/js/unifix.js" defer></script>
+</head>
+<body>
+<header class="topbar">
+  <div class="topbar-left"></div>
+  <div class="topbar-center">
+    <a class="brand" href="/">
+      <img class="topbar-logo" src="../../../static/img/nsu_logo.png" alt="North South University" width="36" height="36">
+      <span>UniFix<small>Admin Console</small></span>
+    </a>
+  </div>
+    <div class="topbar-right">
+      <input class="topbar-search" type="search" aria-label="Search"
+             placeholder="Search complaints, students, tracking IDs">
+      <a class="bell" href="/notifications/"
+         aria-label="Notifications, 9 unread">
+        Notifications<span class="bell-count">9</span><span class="bell-dot"></span>
+      </a>
+      <div class="user-menu">
+<img class="avatar" src="../../../static/img/avatars/neutral.svg" alt="" width="32" height="32">
+        <span>
+          Nusrat Karim
+          <small>
+            Department admin · Facilities Management
+          </small>
+        </span>
+        <form method="post" action="/logout/">
+          <input type="hidden" name="csrfmiddlewaretoken" value="">
+          <button class="btn btn-sm" type="submit">Log out</button>
+        </form>
+      </div>
+    </div>
+</header>
+<nav class="sidebar" aria-label="Main">
+    <div class="sidebar-label">Facilities Management</div>
+    <a class="sidebar-link" href="/console/">Dashboard</a>
+    <a class="sidebar-link" href="/console/complaints/">Complaint queue</a>
+    <a class="sidebar-link sidebar-link-active" href="/console/students/">Students</a>
+  <a class="sidebar-link" href="/notifications/">Notifications</a>
+  <a class="sidebar-link" href="/profile/">Profile</a>
+</nav>
+  <main class="main">
+<p class="mockup-label">Mockup — built in Sprint 4</p>
+<div class="page-head">
+  <div>
+    <h1 class="page-title">Students</h1>
+    <p class="page-sub">Facilities Management · students who filed complaints in your department · 3 students</p>
+  </div>
+</div>
+<form class="filters" method="get">
+  <div class="form-field">
+    <label for="filter-q">Search</label>
+    <input id="filter-q" type="search" name="q" placeholder="Name, student ID or email">
+  </div>
+  <div class="filters-buttons">
+    <button class="btn btn-primary" type="submit">Search</button>
+    <a href="/console/students/">Reset</a>
+  </div>
+</form>
+<div class="card">
+<div class="table-scroll">
+  <table>
+    <thead><tr><th>Name</th><th>Student ID</th><th>Email</th><th>Complaints</th><th>Open</th><th>Account</th></tr></thead>
+    <tbody>
+        <tr><td><a href="/console/students/7/">Ayesha Rahman</a></td><td class="text-mono">2113456042</td><td>ayesha.rahman@northsouth.edu</td><td>1</td><td>1</td><td>Active</td></tr>
+        <tr><td><a href="/console/students/6/">Rafiq Hasan</a></td><td class="text-mono">2112345642</td><td>rafiq.hasan@northsouth.edu</td><td>3</td><td>2</td><td>Active</td></tr>
+        <tr><td><a href="/console/students/14/">Zubair Ahmed</a></td><td class="text-mono">2221234642</td><td>zubair.ahmed@northsouth.edu</td><td>1</td><td>0</td><td>Active</td></tr>
+    </tbody>
+  </table>
+</div>
+  <p class="form-help section">Read-only. Counts cover complaints in Facilities Management only (VR-02).</p>
+</div>
+  </main>
+</body>
+</html>

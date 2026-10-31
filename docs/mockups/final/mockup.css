@@ -1,0 +1,62 @@
+/* UniFix final mockups (CR-03, CR-15): only the rules static/css/unifix.css does not have yet.
+   The mockups link unifix.css first, then this file. Sprint 4/5 port these rules into
+   unifix.css (and their class names into docs/05 §5) when the pages are built.
+   Same tokens as unifix.css; no animations, gradients or JavaScript. */
+
+/* Mockup label: marks every mockup page. Not ported. */
+.mockup-label {
+  display: inline-block;
+  margin-bottom: 12px;
+  padding: 3px 10px;
+  border: 1px dashed var(--warn);
+  border-radius: 12px;
+  color: var(--warn);
+  font-size: 11px;
+  font-weight: bold;
+}
+
+/* A-01, SA-01: a stat card that is also a link to A-02 filtered (docs/04 A-01 Buttons). */
+.card-link { display: block; color: inherit; }
+.card-link:hover { text-decoration: none; border-color: #c8cfda; }
+
+/* Buttons beside a page title (A-05, S-04) and under a list item (S-01). */
+.page-actions { display: flex; gap: 10px; align-items: flex-start; flex-wrap: wrap; margin-bottom: 20px; }
+.page-actions form { margin: 0; }
+.item-actions { display: flex; gap: 8px; margin-top: 8px; }
+
+/* SA-03: a single form card of readable width. */
+.form-card { max-width: 560px; }
+.field-label { display: block; font-size: 12px; font-weight: bold; margin-bottom: 6px; }
+
+/* Charts (CR-15): horizontal bars for counts and times; the number is printed beside each bar. */
+.chart-bars { display: grid; grid-template-columns: minmax(0, max-content) 1fr 3.5em; gap: 8px 10px; align-items: center; font-size: 12px; }
+.bar-label { overflow-wrap: anywhere; }
+.bar-track { height: 14px; background: #f0f3f8; border-radius: 3px; }
+.bar { display: block; height: 100%; background: var(--primary); border-radius: 3px; }
+.bar-value { font-weight: bold; text-align: right; white-space: nowrap; }
+
+/* Charts (CR-15): columns for trends; a second series uses the teal card accent. */
+.chart-columns { display: flex; gap: 6px; align-items: flex-end; padding-top: 18px; border-bottom: 1px solid var(--border); }
+.col { flex: 1 1 0; display: flex; flex-direction: column; align-items: center; min-width: 0; }
+.col-plot { height: 150px; width: 100%; display: flex; gap: 3px; align-items: flex-end; justify-content: center; }
+.col-bar { position: relative; width: 18px; min-height: 2px; background: var(--primary); border-radius: 3px 3px 0 0; }
+.col-bar-alt { background: #0d8a7a; }
+.col-value { position: absolute; bottom: 100%; left: 50%; transform: translateX(-50%); padding-bottom: 2px; font-size: 11px; font-weight: bold; }
+.col-label { margin: 6px 0 2px; font-size: 11px; color: var(--muted); white-space: nowrap; }
+.chart-legend { margin-top: 8px; font-size: 12px; color: var(--muted); }
+.legend-key { display: inline-block; width: 10px; height: 10px; margin: 0 4px 0 8px; background: var(--primary); border-radius: 2px; }
+.legend-key:first-child { margin-left: 0; }
+.legend-key-alt { background: #0d8a7a; }
+
+/* S-04 Rate: 1-5 as radio buttons styled as buttons; the checked one carries text and background colour. */
+.rating-input { display: flex; gap: 6px; flex-wrap: wrap; }
+.rating-input label { display: inline-flex; align-items: center; gap: 4px; padding: 6px 12px; border: 1px solid var(--border); border-radius: 6px; background: var(--surface); font-weight: bold; cursor: pointer; }
+.rating-input input { width: auto; }
+.rating-input label:has(input:checked) { border-color: var(--primary); background: var(--primary-soft); color: var(--primary); }
+
+/* Top-bar search results: tabs as links (the login tabs in unifix.css are radio buttons). */
+a.tab { text-decoration: none; }
+a.tab[aria-current="page"] { color: var(--primary); background: var(--primary-soft); border-bottom-color: var(--gold); }
+
+/* A-03 Reject (FB-17): the reason list shown open in the mockup; a dropdown in the app. */
+select[size] { padding: 4px; }
