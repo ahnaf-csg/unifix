@@ -8,7 +8,9 @@ from complaints.models import Department
 
 @admin_required
 def dashboard(request):
-    """A-01 Dashboard. Placeholder until the queue and charts are built (Sprints 3-4).
+    """A-01 Dashboard (C-14). Layout preview: cards and tables arrive in Sprint 4, charts in Sprint 5.
+
+    Only the "Categories routed to…" table reads the database; nothing is computed here.
 
     Dept Admins see their own department; the Super Admin sees all departments (VR-02).
     """

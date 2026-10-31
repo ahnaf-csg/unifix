@@ -1,22 +1,106 @@
 {% extends "base.html" %}
 {% block title %}Dashboard{% endblock %}
 {% block content %}
-{# A-01 Dashboard: placeholder until Sprints 3-4 (cards, tables and charts follow) #}
-<h1 class="page-title">Dashboard</h1>
-<p class="page-sub">{% if user.is_super_admin %}All departments{% else %}{{ user.department.name }}{% endif %} · the complaint queue and charts arrive in Sprints 3 and 4.</p>
-<div class="card">
+{# A-01 Dashboard (C-14): layout preview for Update 1. Cards and tables show "–" until Sprint 4, charts until Sprint 5. #}
+{# Only the "Categories routed to…" table reads real records. #}
+<div class="page-head">
+  <div>
+    <h1 class="page-title">Dashboard</h1>
+    <p class="page-sub">{% if user.is_super_admin %}All departments{% else %}{{ user.department.name }}{% endif %} · Layout preview. Figures arrive in Sprint 4; charts in Sprint 5.</p>
+  </div>
+  <button class="btn btn-primary" type="button" disabled title="Arrives in Sprint 3">Open complaint queue</button>
+</div>
+
+<div class="row">
+  <div class="card card-stat">
+    <div class="stat-label">New</div>
+    <div class="stat-value">–</div>
+    <div class="stat-note">Arrives in Sprint 4</div>
+  </div>
+  <div class="card card-stat">
+    <div class="stat-label">In progress</div>
+    <div class="stat-value">–</div>
+    <div class="stat-note">Arrives in Sprint 4</div>
+  </div>
+  <div class="card card-stat">
+    <div class="stat-label">Overdue</div>
+    <div class="stat-value">–</div>
+    <div class="stat-note">Arrives in Sprint 4</div>
+  </div>
+  <div class="card card-stat">
+    <div class="stat-label">Resolved this week</div>
+    <div class="stat-value">–</div>
+    <div class="stat-note">Arrives in Sprint 4</div>
+  </div>
+  <div class="card card-stat">
+    <div class="stat-label">Average rating</div>
+    <div class="stat-value">–</div>
+    <div class="stat-note">Arrives in Sprint 4</div>
+  </div>
+</div>
+
+{# Column names follow A-02 (docs/04). #}
+<div class="row section">
+  <div class="card">
+    <h2>Overdue (by due date)</h2>
+    <div class="table-scroll">
+      <table>
+        <thead><tr><th>Tracking ID</th><th>Title</th><th>Category</th><th>Priority</th><th>Due date</th></tr></thead>
+        <tbody><tr><td colspan="5" class="text-muted">Arrives in Sprint 4</td></tr></tbody>
+      </table>
+    </div>
+  </div>
+  <div class="card">
+    <h2>Due in next 3 days</h2>
+    <div class="table-scroll">
+      <table>
+        <thead><tr><th>Tracking ID</th><th>Title</th><th>Category</th><th>Priority</th><th>Due date</th></tr></thead>
+        <tbody><tr><td colspan="5" class="text-muted">Arrives in Sprint 4</td></tr></tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<div class="card section">
+  <h2>Most supported</h2>
+  <div class="table-scroll">
+    <table>
+      <thead><tr><th>Tracking ID</th><th>Title</th><th>Status</th><th>Supporters</th></tr></thead>
+      <tbody><tr><td colspan="4" class="text-muted">Arrives in Sprint 4</td></tr></tbody>
+    </table>
+  </div>
+</div>
+
+<div class="row section">
+  <div class="card">
+    <h2>By status</h2>
+    <div class="chart-placeholder">Arrives in Sprint 5</div>
+  </div>
+  <div class="card">
+    <h2>By category</h2>
+    <div class="chart-placeholder">Arrives in Sprint 5</div>
+  </div>
+  <div class="card">
+    <h2>Weekly trend</h2>
+    <div class="chart-placeholder">Arrives in Sprint 5</div>
+  </div>
+</div>
+
+<div class="card section">
   <h2>Categories routed to {% if user.is_super_admin %}each department{% else %}your department{% endif %}</h2>
-  <table>
-    <tr><th>Department</th><th>Code</th><th>Categories</th></tr>
-    {% for department in departments %}
-      <tr>
-        <td>{{ department.name }}</td>
-        <td class="text-mono">{{ department.code }}</td>
-        <td>{% for category in department.categories.all %}{{ category.name }}{% if not forloop.last %}, {% endif %}{% empty %}<span class="text-muted">None yet</span>{% endfor %}</td>
-      </tr>
-    {% empty %}
-      <tr><td colspan="3" class="text-muted">No departments yet. Add them in the Django admin panel.</td></tr>
-    {% endfor %}
-  </table>
+  <div class="table-scroll">
+    <table>
+      <tr><th>Department</th><th>Code</th><th>Categories</th></tr>
+      {% for department in departments %}
+        <tr>
+          <td>{{ department.name }}</td>
+          <td class="text-mono">{{ department.code }}</td>
+          <td>{% for category in department.categories.all %}{{ category.name }}{% if not forloop.last %}, {% endif %}{% empty %}<span class="text-muted">None yet</span>{% endfor %}</td>
+        </tr>
+      {% empty %}
+        <tr><td colspan="3" class="text-muted">No departments yet. Add them in the Django admin panel.</td></tr>
+      {% endfor %}
+    </table>
+  </div>
 </div>
 {% endblock %}
