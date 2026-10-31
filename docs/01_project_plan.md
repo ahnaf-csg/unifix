@@ -19,7 +19,8 @@ The foundation (workflow states and data dictionary) is fixed during the design 
 | Sprint 1 | Project setup, custom User model, roles, login/register, profile and password change (C-15), departments and categories via Django admin, seed data (departments, categories, users) | Users can log in by role |
 | Sprint 2 | Complaint submission with media, duplicate check and "Me too", routing, student pages (home, list, detail) | End-to-end student submission |
 | Sprint 3 | Workflow methods (start review, verify with due date, reject, start work, resolve with proof photo, withdraw (C-10), add note) and `allowed_actions(user)`; admin console: A-02 queue with filters and search, A-03 detail with the 5 action buttons and Add note, console file view; S-04 Withdraw; notifications list, mark all read and bell count (C-11), latest notifications on S-01; optional gender and avatars (CR-13); NSU Navy chrome (CR-14); seed uses the real methods | Full complaint lifecycle up to Resolved |
-| Sprint 4 | Confirm/reopen, rating, student records, Super Admin (users, reassign, reports), dashboards, search | All core features |
+| Sprint 4 | Confirm fix, reopen and rate (C-09, C-17); reassign (C-13); user records A-04, A-05, SA-02, SA-03 (C-12); A-01 dashboard cards and tables (C-14); Reject reasons dropdown (FB-17) | All workflow actions and user records |
+| Sprint 5 | A-01 charts and SA-01 reports (C-14); top-bar search (C-18); polish pass | All core features |
 | P3. Testing and finalization | Test cases, bug fixes, demo script, final report, optional features if time allows | Final report and demo |
 
 Sprint length and dates are set once the semester deadlines are confirmed.

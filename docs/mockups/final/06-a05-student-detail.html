@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Rafiq Hasan · UniFix (mockup)</title>
+  <link rel="stylesheet" href="../../../static/css/unifix.css">
+  <link rel="stylesheet" href="mockup.css">
+  <script src="../../../static/js/unifix.js" defer></script>
+</head>
+<body>
+<header class="topbar">
+  <div class="topbar-left"></div>
+  <div class="topbar-center">
+    <a class="brand" href="/">
+      <img class="topbar-logo" src="../../../static/img/nsu_logo.png" alt="North South University" width="36" height="36">
+      <span>UniFix<small>Admin Console</small></span>
+    </a>
+  </div>
+    <div class="topbar-right">
+      <input class="topbar-search" type="search" aria-label="Search"
+             placeholder="Search complaints, students, tracking IDs">
+      <a class="bell" href="/notifications/"
+         aria-label="Notifications">
+        Notifications
+      </a>
+      <div class="user-menu">
+<img class="avatar" src="../../../static/img/avatars/neutral.svg" alt="" width="32" height="32">
+        <span>
+          Tanvir Ahmed
+          <small>
+            Super admin
+          </small>
+        </span>
+        <form method="post" action="/logout/">
+          <input type="hidden" name="csrfmiddlewaretoken" value="">
+          <button class="btn btn-sm" type="submit">Log out</button>
+        </form>
+      </div>
+    </div>
+</header>
+<nav class="sidebar" aria-label="Main">
+    <div class="sidebar-label">Super admin</div>
+    <a class="sidebar-link" href="/console/">Dashboard</a>
+    <a class="sidebar-link" href="/console/complaints/">Complaint queue (all)</a>
+    <a class="sidebar-link sidebar-link-active" href="/console/students/">Students</a>
+      <a class="sidebar-link" href="/console/reports/">Reports</a>
+      <a class="sidebar-link" href="/console/users/">Users</a>
+  <a class="sidebar-link" href="/notifications/">Notifications</a>
+  <a class="sidebar-link" href="/profile/">Profile</a>
+</nav>
+  <main class="main">
+<p class="mockup-label">Mockup — built in Sprint 4</p>
+<div class="breadcrumb"><a href="/console/students/">Students</a> / Rafiq Hasan</div>
+<div class="page-head">
+  <div>
+    <h1 class="page-title">Rafiq Hasan</h1>
+    <p class="page-sub"><span class="text-mono">2112345642</span> <span class="badge-closed">Active</span></p>
+  </div>
+  <div class="page-actions">
+    <a class="btn" href="/console/users/6/edit/">Edit</a>
+    <button class="btn" type="button">Suspend</button>
+    <button class="btn btn-danger" type="button">Delete</button>
+  </div>
+</div>
+<div class="row">
+  <div class="card">
+    <h2>Profile</h2>
+    <dl class="details">
+      <dt>Name</dt><dd>Rafiq Hasan</dd>
+      <dt>Student ID</dt><dd>2112345642</dd>
+      <dt>Email</dt><dd>rafiq.hasan@northsouth.edu</dd>
+      <dt>Phone</dt><dd>–</dd>
+      <dt>Account state</dt><dd>Active</dd>
+      <dt>Joined</dt><dd>27 Oct 2026</dd>
+    </dl>
+    <p class="form-help section">Delete is a soft delete and asks for confirmation; suspended and deleted accounts cannot log in (VR-11).</p>
+  </div>
+  <div class="card card-wide">
+    <div class="card-head"><h2>Complaint history</h2><span class="text-muted">6 filed · 0 rejected · supports 2</span></div>
+<div class="table-scroll">
+  <table>
+    <thead><tr><th>Tracking ID</th><th>Title</th><th>Department</th><th>Status</th><th>Reported</th></tr></thead>
+    <tbody>
+        <tr><td><a class="text-mono" href="/console/complaints/UF-0006/">UF-0006</a></td><td><a href="/console/complaints/UF-0006/">Lab PC 14 won't boot</a></td><td>IT Services</td><td><span class="badge-submitted">Submitted</span></td><td>27 Oct 2026</td></tr>
+        <tr><td><a class="text-mono" href="/console/complaints/UF-0005/">UF-0005</a></td><td><a href="/console/complaints/UF-0005/">Washroom tap not closing</a></td><td>Facilities Management</td><td><span class="badge-closed">Closed</span></td><td>7 Oct 2026</td></tr>
+        <tr><td><a class="text-mono" href="/console/complaints/UF-0004/">UF-0004</a></td><td><a href="/console/complaints/UF-0004/">Library 3rd floor Wi-Fi drops</a></td><td>IT Services</td><td><span class="badge-verified">Verified</span></td><td>22 Oct 2026</td></tr>
+        <tr><td><a class="text-mono" href="/console/complaints/UF-0003/">UF-0003</a></td><td><a href="/console/complaints/UF-0003/">Broken chair armrest</a></td><td>Facilities Management</td><td><span class="badge-verified">Verified</span></td><td>24 Oct 2026</td></tr>
+        <tr><td><a class="text-mono" href="/console/complaints/UF-0002/">UF-0002</a></td><td><a href="/console/complaints/UF-0002/">AC leaking water onto desks</a></td><td>Facilities Management</td><td><span class="badge-in-progress">In progress</span> <span class="flag-overdue">Overdue</span></td><td>15 Oct 2026</td></tr>
+        <tr><td><a class="text-mono" href="/console/complaints/UF-0001/">UF-0001</a></td><td><a href="/console/complaints/UF-0001/">Projector shows no signal</a></td><td>IT Services</td><td><span class="badge-resolved">Resolved</span></td><td>18 Oct 2026</td></tr>
+    </tbody>
+  </table>
+</div>
+  </div>
+</div>
+<div class="card section">
+  <h2>Ratings given</h2>
+  <p class="text-muted">No ratings given yet.</p>
+</div>
+  </main>
+</body>
+</html>

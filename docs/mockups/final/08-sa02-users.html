@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Users · UniFix (mockup)</title>
+  <link rel="stylesheet" href="../../../static/css/unifix.css">
+  <link rel="stylesheet" href="mockup.css">
+  <script src="../../../static/js/unifix.js" defer></script>
+</head>
+<body>
+<header class="topbar">
+  <div class="topbar-left"></div>
+  <div class="topbar-center">
+    <a class="brand" href="/">
+      <img class="topbar-logo" src="../../../static/img/nsu_logo.png" alt="North South University" width="36" height="36">
+      <span>UniFix<small>Admin Console</small></span>
+    </a>
+  </div>
+    <div class="topbar-right">
+      <input class="topbar-search" type="search" aria-label="Search"
+             placeholder="Search complaints, students, tracking IDs">
+      <a class="bell" href="/notifications/"
+         aria-label="Notifications">
+        Notifications
+      </a>
+      <div class="user-menu">
+<img class="avatar" src="../../../static/img/avatars/neutral.svg" alt="" width="32" height="32">
+        <span>
+          Tanvir Ahmed
+          <small>
+            Super admin
+          </small>
+        </span>
+        <form method="post" action="/logout/">
+          <input type="hidden" name="csrfmiddlewaretoken" value="">
+          <button class="btn btn-sm" type="submit">Log out</button>
+        </form>
+      </div>
+    </div>
+</header>
+<nav class="sidebar" aria-label="Main">
+    <div class="sidebar-label">Super admin</div>
+    <a class="sidebar-link" href="/console/">Dashboard</a>
+    <a class="sidebar-link" href="/console/complaints/">Complaint queue (all)</a>
+    <a class="sidebar-link" href="/console/students/">Students</a>
+      <a class="sidebar-link" href="/console/reports/">Reports</a>
+      <a class="sidebar-link sidebar-link-active" href="/console/users/">Users</a>
+  <a class="sidebar-link" href="/notifications/">Notifications</a>
+  <a class="sidebar-link" href="/profile/">Profile</a>
+</nav>
+  <main class="main">
+<p class="mockup-label">Mockup — built in Sprint 4</p>
+<div class="page-head">
+  <div>
+    <h1 class="page-title">Users</h1>
+    <p class="page-sub">All accounts · 15 users</p>
+  </div>
+  <a class="btn btn-primary" href="/console/users/new/">+ Add admin</a>
+</div>
+<form class="filters" method="get">
+  <div class="form-field">
+    <label for="filter-q">Search</label>
+    <input id="filter-q" type="search" name="q" placeholder="Name, student ID or email">
+  </div>
+  <div class="form-field">
+    <label for="filter-role">Role</label>
+    <select id="filter-role" name="role"><option value="">All roles</option><option>Student</option><option>Dept admin</option><option>Super admin</option></select>
+  </div>
+  <div class="form-field">
+    <label for="filter-department">Department</label>
+    <select id="filter-department" name="department"><option value="">All departments</option><option>Facilities Management</option><option>IT Services</option><option>Housekeeping</option><option>Security</option></select>
+  </div>
+  <div class="form-field">
+    <label for="filter-state">Account state</label>
+    <select id="filter-state" name="state"><option value="">Any state</option><option>Active</option><option>Suspended</option><option>Deleted</option></select>
+  </div>
+  <div class="filters-buttons">
+    <button class="btn btn-primary" type="submit">Apply</button>
+    <a href="/console/users/">Reset</a>
+  </div>
+</form>
+<div class="card">
+<div class="table-scroll">
+  <table>
+    <thead><tr><th>Name</th><th>Email</th><th>Role</th><th>Department</th><th>Account</th><th>Joined</th></tr></thead>
+    <tbody>
+        <tr><td><a href="/console/users/3/edit/">Farhan Kabir</a></td><td>it.admin@northsouth.edu</td><td>Department admin</td><td>IT Services</td><td><span class="badge-closed">Active</span></td><td>27 Oct 2026</td></tr>
+        <tr><td><a href="/console/users/5/edit/">Imran Hossain</a></td><td>sec.admin@northsouth.edu</td><td>Department admin</td><td>Security</td><td><span class="badge-closed">Active</span></td><td>27 Oct 2026</td></tr>
+        <tr><td><a href="/console/users/2/edit/">Nusrat Karim</a></td><td>fac.admin@northsouth.edu</td><td>Department admin</td><td>Facilities Management</td><td><span class="badge-closed">Active</span></td><td>27 Oct 2026</td></tr>
+        <tr><td><a href="/console/users/4/edit/">Shirin Akter</a></td><td>hk.admin@northsouth.edu</td><td>Department admin</td><td>Housekeeping</td><td><span class="badge-closed">Active</span></td><td>27 Oct 2026</td></tr>
+        <tr><td><a href="/console/students/12/">Arif Mahmud</a></td><td>arif.mahmud@northsouth.edu</td><td>Student</td><td>–</td><td><span class="badge-rejected">Suspended</span></td><td>27 Oct 2026</td></tr>
+        <tr><td><a href="/console/students/7/">Ayesha Rahman</a></td><td>ayesha.rahman@northsouth.edu</td><td>Student</td><td>–</td><td><span class="badge-closed">Active</span></td><td>27 Oct 2026</td></tr>
+        <tr><td><a href="/console/students/13/">Farzana Akter</a></td><td>farzana.akter@northsouth.edu</td><td>Student</td><td>–</td><td><span class="badge-closed">Active</span></td><td>27 Oct 2026</td></tr>
+        <tr><td><a href="/console/students/11/">Mithila Das</a></td><td>mithila.das@northsouth.edu</td><td>Student</td><td>–</td><td><span class="badge-closed">Active</span></td><td>27 Oct 2026</td></tr>
+        <tr><td><a href="/console/students/9/">Nabila Chowdhury</a></td><td>nabila.chowdhury@northsouth.edu</td><td>Student</td><td>–</td><td><span class="badge-closed">Active</span></td><td>27 Oct 2026</td></tr>
+        <tr><td><a href="/console/students/15/">Priya Saha</a></td><td>priya.saha@northsouth.edu</td><td>Student</td><td>–</td><td><span class="badge-closed">Active</span></td><td>27 Oct 2026</td></tr>
+        <tr><td><a href="/console/students/6/">Rafiq Hasan</a></td><td>rafiq.hasan@northsouth.edu</td><td>Student</td><td>–</td><td><span class="badge-closed">Active</span></td><td>27 Oct 2026</td></tr>
+        <tr><td><a href="/console/students/10/">Sakib Hossain</a></td><td>sakib.hossain@northsouth.edu</td><td>Student</td><td>–</td><td><span class="badge-closed">Active</span></td><td>27 Oct 2026</td></tr>
+        <tr><td><a href="/console/students/8/">Tahmid Islam</a></td><td>tahmid.islam@northsouth.edu</td><td>Student</td><td>–</td><td><span class="badge-closed">Active</span></td><td>27 Oct 2026</td></tr>
+        <tr><td><a href="/console/students/14/">Zubair Ahmed</a></td><td>zubair.ahmed@northsouth.edu</td><td>Student</td><td>–</td><td><span class="badge-closed">Active</span></td><td>27 Oct 2026</td></tr>
+        <tr><td><a href="/console/users/1/edit/">Tanvir Ahmed</a></td><td>superadmin@northsouth.edu</td><td>Super admin</td><td>–</td><td><span class="badge-closed">Active</span></td><td>27 Oct 2026</td></tr>
+    </tbody>
+  </table>
+</div>
+</div>
+  </main>
+</body>
+</html>

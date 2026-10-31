@@ -59,3 +59,9 @@ Demo accounts: see the README ("Demo accounts").
 | `admin/18-notifications.png` | A-06 Notifications for the Facilities admin |
 | `admin/19-phone-queue.png` | A-02 at phone width: the table scrolls inside its card |
 | `admin/20-phone-detail-actions.png` | A-03 at phone width with the Mark resolved form open |
+
+## Final mockups (CR-15)
+
+| File | Shows |
+|---|---|
+| `admin/21-profile.png` | A-07 admin Profile (Facilities admin): own avatar and optional gender (VR-16). Added with the final mockups; the index of every screen, real or mockup, is `docs/mockups/final/README.md` |

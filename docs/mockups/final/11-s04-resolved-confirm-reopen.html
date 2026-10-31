@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>UF-0001 · UniFix (mockup)</title>
+  <link rel="stylesheet" href="../../../static/css/unifix.css">
+  <link rel="stylesheet" href="mockup.css">
+  <script src="../../../static/js/unifix.js" defer></script>
+</head>
+<body>
+<header class="topbar">
+  <div class="topbar-left"></div>
+  <div class="topbar-center">
+    <a class="brand" href="/">
+      <img class="topbar-logo" src="../../../static/img/nsu_logo.png" alt="North South University" width="36" height="36">
+      <span>UniFix<small>NSU Campus Services</small></span>
+    </a>
+  </div>
+    <div class="topbar-right">
+      <input class="topbar-search" type="search" aria-label="Search"
+             placeholder="Search your complaints by tracking ID, title or room">
+      <a class="bell" href="/notifications/"
+         aria-label="Notifications, 1 unread">
+        Notifications<span class="bell-count">1</span><span class="bell-dot"></span>
+      </a>
+      <div class="user-menu">
+<img class="avatar" src="../../../static/img/avatars/neutral.svg" alt="" width="32" height="32">
+        <span>
+          Rafiq Hasan
+          <small>
+            Student · 2112345642
+          </small>
+        </span>
+        <form method="post" action="/logout/">
+          <input type="hidden" name="csrfmiddlewaretoken" value="">
+          <button class="btn btn-sm" type="submit">Log out</button>
+        </form>
+      </div>
+    </div>
+</header>
+<nav class="sidebar" aria-label="Main">
+    <div class="sidebar-label">Student</div>
+    <a class="sidebar-link" href="/student/">Home</a>
+    <a class="sidebar-link" href="/student/complaints/new/">New complaint</a>
+    <a class="sidebar-link sidebar-link-active" href="/student/complaints/">My complaints</a>
+  <a class="sidebar-link" href="/notifications/">Notifications</a>
+  <a class="sidebar-link" href="/profile/">Profile</a>
+</nav>
+  <main class="main">
+<p class="mockup-label">Mockup — built in Sprint 4</p>
+<div class="breadcrumb"><a href="/student/complaints/">My complaints</a> / UF-0001</div>
+<div class="page-head">
+  <div>
+    <h1 class="page-title">Projector shows no signal</h1>
+    <p class="page-sub">
+      <span class="text-mono">UF-0001</span>
+<span class="badge-resolved">Resolved</span>
+    </p>
+  </div>
+  <div class="page-actions">
+    <form method="post" action="/student/complaints/UF-0001/confirm/">
+      <input type="hidden" name="csrfmiddlewaretoken" value="">
+      <button class="btn btn-primary" type="submit">Confirm fix</button>
+    </form>
+    <details class="action-form" open>
+      <summary class="btn btn-danger">Reopen</summary>
+      <form method="post" action="/student/complaints/UF-0001/reopen/" novalidate>
+        <input type="hidden" name="csrfmiddlewaretoken" value="">
+        <p>Still not fixed? You can reopen until <strong>2 Nov 2026</strong> (7 days after it was resolved, VR-06).</p>
+        <div class="form-field">
+          <label for="id_reopen_reason">Reason</label>
+          <textarea name="reason" cols="40" rows="3" required id="id_reopen_reason">The projector still shows "No signal" with the lectern PC.</textarea>
+          <div class="form-help">Required. IT Services sees this reason.</div>
+        </div>
+        <button class="btn btn-danger" type="submit">Reopen complaint</button>
+      </form>
+    </details>
+  </div>
+</div>
+<div class="row">
+  <div class="card card-wide">
+    <dl class="details">
+      <dt>Category</dt><dd>Projector &amp; AV</dd>
+      <dt>Department</dt><dd>IT Services</dd>
+      <dt>Location</dt><dd>NAC 512</dd>
+      <dt>Reported</dt><dd>18 Oct 2026</dd>
+      <dt>Due date</dt><dd>29 Oct 2026</dd>
+      <dt>Students affected</dt><dd>3</dd>
+    </dl>
+      <h2 class="section">Description</h2>
+      <p class="description">The projector in NAC 512 shows &#x27;No signal&#x27; with every laptop. The HDMI cable looks damaged near the plug.</p>
+      <h2 class="section">Evidence</h2>
+  <ul class="file-grid">
+      <li>
+        <a href="img/uf-0001-photo_1.png" target="_blank" rel="noopener">
+          <img src="img/uf-0001-photo_1.png" alt="photo_1.png" loading="lazy">
+          <span>photo_1.png</span>
+        </a>
+        <span class="text-muted">474 bytes</span>
+      </li>
+  </ul>
+        <h2 class="section">Proof of fix</h2>
+  <ul class="file-grid">
+      <li>
+        <a href="img/uf-0001-after_fix.png" target="_blank" rel="noopener">
+          <img src="img/uf-0001-after_fix.png" alt="after_fix.png" loading="lazy">
+          <span>after_fix.png</span>
+        </a>
+        <span class="text-muted">359 bytes</span>
+      </li>
+  </ul>
+  </div>
+  <div class="card">
+    <h2>Timeline</h2>
+    <ol class="timeline">
+        <li>
+          <strong>Submitted</strong> <span class="text-muted">· You</span>
+          <div class="text-muted">18 Oct 2026, 20:52</div>
+        </li>
+        <li>
+          <strong>Review started</strong> <span class="text-muted">· IT Services</span>
+          <div class="text-muted">19 Oct 2026, 01:40</div>
+        </li>
+        <li>
+          <strong>Verified</strong> <span class="text-muted">· IT Services</span>
+          <div class="text-muted">19 Oct 2026, 08:52</div>
+        </li>
+        <li>
+          <strong>Me too</strong> <span class="text-muted">· A student</span>
+          <div class="text-muted">19 Oct 2026, 20:52</div>
+        </li>
+        <li>
+          <strong>Me too</strong> <span class="text-muted">· A student</span>
+          <div class="text-muted">20 Oct 2026, 20:52</div>
+        </li>
+        <li>
+          <strong>Work started</strong> <span class="text-muted">· IT Services</span>
+          <div class="text-muted">21 Oct 2026, 20:52</div>
+          <div class="timeline-note">Replacing the HDMI cable and checking the input board.</div>
+        </li>
+        <li>
+          <strong>Marked resolved</strong> <span class="text-muted">· IT Services</span>
+          <div class="text-muted">26 Oct 2026, 20:52</div>
+          <div class="timeline-note">HDMI cable replaced and tested with two laptops.</div>
+        </li>
+    </ol>
+  </div>
+</div>
+  </main>
+</body>
+</html>

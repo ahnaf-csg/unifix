@@ -88,6 +88,10 @@ Purpose: confirm that requirements, workflow, screens, data dictionary, diagrams
 | I-62 | `04` still said the bell has no count until Sprint 3; S-01 latest notifications, A-02 search and the A-03 link to A-05 had no sprint | Low | Bell count and S-01 notifications in Sprint 3; A-02 `?q=` now (top-bar search in Sprint 4); A-05 link disabled until Sprint 4 | 04 |
 | I-63 | `01` Sprint 3 row listed only "5 action buttons"; `08` showed `v0.3-sprint2` as planned and CR-12 as Accepted, and lacked FB-15, FB-16 and CR-14 | Low | `01` row lists the full Sprint 3 scope; `08` updated | 01, 08 |
 | I-64 | NSU Gold has very low contrast on white (about 1.6:1), so it cannot carry a state on its own | Low | Gold is an accent only: on navy, or beside another state cue | 04, 05, 07 |
+| I-65 | `11` user stories and the planned captions use a Sprint 5 that `01` did not have; `04` still put search in Sprint 4 | Medium | `01` splits Sprint 4 and Sprint 5; `04` search, A-01 charts and SA-01 say Sprint 5 (CR-15) | 01, 04 |
+| I-66 | A-01 cards "New" and "Resolved this week" had no definition | Medium | New = `submitted`; Resolved this week = `resolved_at` in the last 7 days (`02` §4) | 02 |
+| I-67 | A-04 "complaints count" did not say whose complaints a Dept Admin counts | Low | Counts cover the viewer's scope: own department for a Dept Admin (VR-02) | 04 |
+| I-68 | `02` §4 trend charts were "(line)", which CSS bars cannot draw without JavaScript | Low | Trend charts are columns (CR-15) | 02 |
 
 ## 3. Traceability Matrix
 
@@ -115,11 +119,10 @@ Purpose: confirm that requirements, workflow, screens, data dictionary, diagrams
 ## 4. Remaining Open Items (decided later, not inconsistencies)
 
 - Keep-in-view items in `07_decision_log.md` (Super Admin fallback, soft delete, withdraw, rating, charts, search extension, header spacing and layout density, logic gaps from hands-on testing, supporter notifications, due date after reopen, admin file access, Super Admin acting on another department, login protection).
-- 14 of 18 screens still need mockups (CR-03). Existing mockups predate CR-09: the S-01/S-02 search placeholder omits room, the SA-01 sidebar has no Students link, and class names are draft names; they are refreshed when the remaining mockups are drawn.
+- Mockups (CR-03) are done: every screen has a screenshot or a mockup, indexed in `mockups/final/README.md` (CR-15). The four first drafts (`mockups/s01`, `s02`, `a03`, `sa01`) are kept as superseded history. V-10 re-checked for every final mockup: only the buttons the rules allow for the shown status and role, and no gender on admin pages (VR-16).
 - Sprint dates depend on semester deadlines.
 - The submitted proposal (v2 PDF) predates these decisions and is superseded by this documentation set.
 - Course diagrams (use case, class, ER, sequence, activity) still to be drawn from `06`.
-- CR-12 follow-up for the next mockup update: the S-02 mockup shows one combined form, a Room value with the building, a long building label and per-file Remove links.
 
 ## 5. How to Re-run
 

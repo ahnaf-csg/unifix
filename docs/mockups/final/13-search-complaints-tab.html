@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Search · UniFix (mockup)</title>
+  <link rel="stylesheet" href="../../../static/css/unifix.css">
+  <link rel="stylesheet" href="mockup.css">
+  <script src="../../../static/js/unifix.js" defer></script>
+</head>
+<body>
+<header class="topbar">
+  <div class="topbar-left"></div>
+  <div class="topbar-center">
+    <a class="brand" href="/">
+      <img class="topbar-logo" src="../../../static/img/nsu_logo.png" alt="North South University" width="36" height="36">
+      <span>UniFix<small>Admin Console</small></span>
+    </a>
+  </div>
+    <div class="topbar-right">
+      <input class="topbar-search" type="search" aria-label="Search" value="Rafiq"
+             placeholder="Search complaints, students, tracking IDs">
+      <a class="bell" href="/notifications/"
+         aria-label="Notifications, 9 unread">
+        Notifications<span class="bell-count">9</span><span class="bell-dot"></span>
+      </a>
+      <div class="user-menu">
+<img class="avatar" src="../../../static/img/avatars/neutral.svg" alt="" width="32" height="32">
+        <span>
+          Nusrat Karim
+          <small>
+            Department admin · Facilities Management
+          </small>
+        </span>
+        <form method="post" action="/logout/">
+          <input type="hidden" name="csrfmiddlewaretoken" value="">
+          <button class="btn btn-sm" type="submit">Log out</button>
+        </form>
+      </div>
+    </div>
+</header>
+<nav class="sidebar" aria-label="Main">
+    <div class="sidebar-label">Facilities Management</div>
+    <a class="sidebar-link" href="/console/">Dashboard</a>
+    <a class="sidebar-link sidebar-link-active" href="/console/complaints/">Complaint queue</a>
+    <a class="sidebar-link" href="/console/students/">Students</a>
+  <a class="sidebar-link" href="/notifications/">Notifications</a>
+  <a class="sidebar-link" href="/profile/">Profile</a>
+</nav>
+  <main class="main">
+<p class="mockup-label">Mockup — built in Sprint 5</p>
+<div class="page-head">
+  <div>
+    <h1 class="page-title">Search results for “Rafiq”</h1>
+    <p class="page-sub">Facilities Management · complaints and students in your department (VR-14)</p>
+  </div>
+</div>
+<nav class="tab-list" aria-label="Search results">
+  <a class="tab" href="/console/complaints/?q=Rafiq" aria-current="page">Complaints (2)</a>
+  <a class="tab" href="/console/students/?q=Rafiq">Students (1)</a>
+</nav>
+<form class="filters" method="get">
+  <div class="form-field">
+    <label for="filter-q">Search</label>
+    <input id="filter-q" type="search" name="q" value="Rafiq" placeholder="Tracking ID, title, room, student name, ID or email">
+  </div>
+  <div class="form-field">
+    <label for="filter-status">Status</label>
+    <select id="filter-status" name="status">
+      <option value="open" selected>Open (default)</option>
+      <option value="all">All</option>
+        <option value="submitted">Submitted</option>
+        <option value="under_review">Under review</option>
+        <option value="verified">Verified</option>
+        <option value="rejected">Rejected</option>
+        <option value="in_progress">In progress</option>
+        <option value="resolved">Resolved</option>
+        <option value="closed">Closed</option>
+        <option value="reopened">Reopened</option>
+        <option value="withdrawn">Withdrawn</option>
+    </select>
+  </div>
+  <div class="form-field">
+    <label for="filter-category">Category</label>
+    <select id="filter-category" name="category">
+      <option value="">All categories</option>
+        <optgroup label="Facilities Management">
+            <option value="1">Air conditioning</option>
+            <option value="2">Electrical</option>
+            <option value="3">Furniture</option>
+            <option value="4">Plumbing</option>
+        </optgroup>
+    </select>
+  </div>
+  <div class="form-field">
+    <label for="filter-priority">Priority</label>
+    <select id="filter-priority" name="priority">
+      <option value="">Any priority</option>
+        <option value="low">Low</option>
+        <option value="medium">Medium</option>
+        <option value="high">High</option>
+    </select>
+  </div>
+  <div class="form-field">
+    <label for="filter-sort">Sort by</label>
+    <select id="filter-sort" name="sort">
+      <option value="due" selected>Due date</option>
+      <option value="updated">Last updated</option>
+    </select>
+  </div>
+  <div class="filters-buttons">
+    <label class="filter-check"><input type="checkbox" name="overdue" value="1"> Overdue only</label>
+    <button class="btn btn-primary" type="submit">Apply</button>
+    <a href="/console/complaints/">Reset</a>
+  </div>
+</form>
+<div class="card">
+    <div class="table-scroll">
+      <table>
+        <thead>
+          <tr><th>Tracking ID</th><th>Title</th><th>Category</th><th>Location</th><th>Status</th><th>Priority</th><th>Due</th><th>Affected</th><th>Updated</th></tr>
+        </thead>
+        <tbody>
+            <tr class="row-overdue">
+              <td><a class="text-mono" href="/console/complaints/UF-0002/">UF-0002</a></td>
+              <td>
+                <a href="/console/complaints/UF-0002/">AC leaking water onto desks</a>
+                <div class="text-muted">Rafiq Hasan</div>
+              </td>
+              <td>Air conditioning</td>
+              <td>SAC 304</td>
+              <td>
+<span class="badge-in-progress">In progress</span> <span class="flag-overdue">Overdue</span>
+</td>
+              <td><span class="pri-high">High</span></td>
+              <td>25 Oct</td>
+              <td>4</td>
+              <td>18 Oct, 20:52</td>
+            </tr>
+            <tr>
+              <td><a class="text-mono" href="/console/complaints/UF-0003/">UF-0003</a></td>
+              <td>
+                <a href="/console/complaints/UF-0003/">Broken chair armrest</a>
+                <div class="text-muted">Rafiq Hasan</div>
+              </td>
+              <td>Furniture</td>
+              <td>NAC 208</td>
+              <td>
+<span class="badge-verified">Verified</span>
+</td>
+              <td><span class="pri-medium">Medium</span></td>
+              <td>2 Nov</td>
+              <td>1</td>
+              <td>31 Oct, 10:15</td>
+            </tr>
+        </tbody>
+      </table>
+    </div>
+</div>
+  </main>
+</body>
+</html>

@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>UF-0005 · UniFix (mockup)</title>
+  <link rel="stylesheet" href="../../../static/css/unifix.css">
+  <link rel="stylesheet" href="mockup.css">
+  <script src="../../../static/js/unifix.js" defer></script>
+</head>
+<body>
+<header class="topbar">
+  <div class="topbar-left"></div>
+  <div class="topbar-center">
+    <a class="brand" href="/">
+      <img class="topbar-logo" src="../../../static/img/nsu_logo.png" alt="North South University" width="36" height="36">
+      <span>UniFix<small>NSU Campus Services</small></span>
+    </a>
+  </div>
+    <div class="topbar-right">
+      <input class="topbar-search" type="search" aria-label="Search"
+             placeholder="Search your complaints by tracking ID, title or room">
+      <a class="bell" href="/notifications/"
+         aria-label="Notifications, 1 unread">
+        Notifications<span class="bell-count">1</span><span class="bell-dot"></span>
+      </a>
+      <div class="user-menu">
+<img class="avatar" src="../../../static/img/avatars/neutral.svg" alt="" width="32" height="32">
+        <span>
+          Rafiq Hasan
+          <small>
+            Student · 2112345642
+          </small>
+        </span>
+        <form method="post" action="/logout/">
+          <input type="hidden" name="csrfmiddlewaretoken" value="">
+          <button class="btn btn-sm" type="submit">Log out</button>
+        </form>
+      </div>
+    </div>
+</header>
+<nav class="sidebar" aria-label="Main">
+    <div class="sidebar-label">Student</div>
+    <a class="sidebar-link" href="/student/">Home</a>
+    <a class="sidebar-link" href="/student/complaints/new/">New complaint</a>
+    <a class="sidebar-link sidebar-link-active" href="/student/complaints/">My complaints</a>
+  <a class="sidebar-link" href="/notifications/">Notifications</a>
+  <a class="sidebar-link" href="/profile/">Profile</a>
+</nav>
+  <main class="main">
+<p class="mockup-label">Mockup — built in Sprint 4</p>
+<div class="breadcrumb"><a href="/student/complaints/">My complaints</a> / UF-0005</div>
+<div class="page-head">
+  <div>
+    <h1 class="page-title">Washroom tap not closing</h1>
+    <p class="page-sub">
+      <span class="text-mono">UF-0005</span>
+<span class="badge-closed">Closed</span>
+    </p>
+  </div>
+  <details class="action-form" open>
+    <summary class="btn btn-primary">Rate</summary>
+    <form method="post" action="/student/complaints/UF-0005/rate/" novalidate>
+      <input type="hidden" name="csrfmiddlewaretoken" value="">
+      <div class="form-field">
+        <span class="field-label" id="stars-label">How was the service?</span>
+        <div class="rating-input" role="radiogroup" aria-labelledby="stars-label">
+          <label><input type="radio" name="stars" value="1"> 1 ★</label>
+          <label><input type="radio" name="stars" value="2"> 2 ★</label>
+          <label><input type="radio" name="stars" value="3"> 3 ★</label>
+          <label><input type="radio" name="stars" value="4"> 4 ★</label>
+          <label><input type="radio" name="stars" value="5"> 5 ★</label>
+        </div>
+        <div class="form-help">1 = poor, 5 = excellent. You can rate once (VR-10).</div>
+      </div>
+      <div class="form-field">
+        <label for="id_comment">Comment (optional)</label>
+        <textarea name="comment" cols="40" rows="3" id="id_comment"></textarea>
+      </div>
+      <button class="btn btn-primary" type="submit">Submit rating</button>
+    </form>
+  </details>
+</div>
+<div class="row">
+  <div class="card card-wide">
+    <dl class="details">
+      <dt>Category</dt><dd>Plumbing</dd>
+      <dt>Department</dt><dd>Facilities Management</dd>
+      <dt>Location</dt><dd>SAC 2F washroom</dd>
+      <dt>Reported</dt><dd>7 Oct 2026</dd>
+      <dt>Due date</dt><dd>13 Oct 2026</dd>
+      <dt>Students affected</dt><dd>1</dd>
+    </dl>
+      <h2 class="section">Description</h2>
+      <p class="description">The left tap in the second-floor men&#x27;s washroom keeps running after it is closed.</p>
+      <h2 class="section">Evidence</h2>
+  <ul class="file-grid">
+      <li>
+        <a href="img/uf-0005-photo_1.png" target="_blank" rel="noopener">
+          <img src="img/uf-0005-photo_1.png" alt="photo_1.png" loading="lazy">
+          <span>photo_1.png</span>
+        </a>
+        <span class="text-muted">474 bytes</span>
+      </li>
+  </ul>
+  </div>
+  <div class="card">
+    <h2>Timeline</h2>
+    <ol class="timeline">
+        <li>
+          <strong>Submitted</strong> <span class="text-muted">· You</span>
+          <div class="text-muted">7 Oct 2026, 20:52</div>
+        </li>
+        <li>
+          <strong>Review started</strong> <span class="text-muted">· Facilities Management</span>
+          <div class="text-muted">8 Oct 2026, 01:40</div>
+        </li>
+        <li>
+          <strong>Verified</strong> <span class="text-muted">· Facilities Management</span>
+          <div class="text-muted">8 Oct 2026, 08:52</div>
+        </li>
+        <li>
+          <strong>Work started</strong> <span class="text-muted">· Facilities Management</span>
+          <div class="text-muted">9 Oct 2026, 20:52</div>
+        </li>
+        <li>
+          <strong>Marked resolved</strong> <span class="text-muted">· Facilities Management</span>
+          <div class="text-muted">12 Oct 2026, 20:52</div>
+          <div class="timeline-note">Tap cartridge replaced.</div>
+        </li>
+        <li>
+          <strong>Fix confirmed</strong> <span class="text-muted">· You</span>
+          <div class="text-muted">13 Oct 2026, 20:52</div>
+        </li>
+    </ol>
+  </div>
+</div>
+  </main>
+</body>
+</html>

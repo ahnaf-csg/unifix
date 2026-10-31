@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>UF-0010 · UniFix (mockup)</title>
+  <link rel="stylesheet" href="../../../static/css/unifix.css">
+  <link rel="stylesheet" href="mockup.css">
+  <script src="../../../static/js/unifix.js" defer></script>
+</head>
+<body>
+<header class="topbar">
+  <div class="topbar-left"></div>
+  <div class="topbar-center">
+    <a class="brand" href="/">
+      <img class="topbar-logo" src="../../../static/img/nsu_logo.png" alt="North South University" width="36" height="36">
+      <span>UniFix<small>Admin Console</small></span>
+    </a>
+  </div>
+    <div class="topbar-right">
+      <input class="topbar-search" type="search" aria-label="Search"
+             placeholder="Search complaints, students, tracking IDs">
+      <a class="bell" href="/notifications/"
+         aria-label="Notifications">
+        Notifications
+      </a>
+      <div class="user-menu">
+<img class="avatar" src="../../../static/img/avatars/neutral.svg" alt="" width="32" height="32">
+        <span>
+          Tanvir Ahmed
+          <small>
+            Super admin
+          </small>
+        </span>
+        <form method="post" action="/logout/">
+          <input type="hidden" name="csrfmiddlewaretoken" value="">
+          <button class="btn btn-sm" type="submit">Log out</button>
+        </form>
+      </div>
+    </div>
+</header>
+<nav class="sidebar" aria-label="Main">
+    <div class="sidebar-label">Super admin</div>
+    <a class="sidebar-link" href="/console/">Dashboard</a>
+    <a class="sidebar-link sidebar-link-active" href="/console/complaints/">Complaint queue (all)</a>
+    <a class="sidebar-link" href="/console/students/">Students</a>
+      <a class="sidebar-link" href="/console/reports/">Reports</a>
+      <a class="sidebar-link" href="/console/users/">Users</a>
+  <a class="sidebar-link" href="/notifications/">Notifications</a>
+  <a class="sidebar-link" href="/profile/">Profile</a>
+</nav>
+  <main class="main">
+<p class="mockup-label">Mockup — built in Sprint 4</p>
+<div class="breadcrumb"><a href="/console/complaints/">Complaint queue</a> / UF-0010</div>
+<div class="page-head">
+  <div>
+    <h1 class="page-title">Access card not working at the admin building</h1>
+    <p class="page-sub">
+      <span class="text-mono">UF-0010</span>
+<span class="badge-submitted">Submitted</span>
+    </p>
+  </div>
+</div>
+  <div class="card action-bar" aria-label="Actions">
+      <div class="action">
+          <form method="post" action="/console/complaints/UF-0010/start_review/">
+            <input type="hidden" name="csrfmiddlewaretoken" value="">
+            <button class="btn btn-primary" type="submit">Start review</button>
+          </form>
+      </div>
+      <div class="action">
+          <button class="btn" type="button" disabled>Verify</button>
+          <div class="action-hint">Available after Start review</div>
+      </div>
+      <div class="action">
+          <button class="btn" type="button" disabled>Reject</button>
+          <div class="action-hint">Available after Start review</div>
+      </div>
+      <div class="action">
+          <button class="btn" type="button" disabled>Start work</button>
+          <div class="action-hint">Available after Verify</div>
+      </div>
+      <div class="action">
+          <button class="btn" type="button" disabled>Mark resolved</button>
+          <div class="action-hint">Available after Start work</div>
+      </div>
+  </div>
+<div class="row section">
+  <div class="card card-wide">
+    <dl class="details">
+      <dt>Category</dt><dd>Lost access card</dd>
+      <dt>Department</dt><dd>Security</dd>
+      <dt>Location</dt><dd>Admin Building</dd>
+      <dt>Reported</dt><dd>26 Oct 2026, 20:52</dd>
+      <dt>Students affected</dt><dd>1</dd>
+    </dl>
+    <h2 class="section">Description</h2>
+    <p class="description">My access card is refused at the admin building gate since yesterday.</p>
+    <h2 class="section">Evidence</h2>
+  <p class="text-muted">No files attached.</p>
+  </div>
+  <div>
+    <div class="card reporter-card">
+      <h2>Reporter</h2>
+      <div class="reporter-card-person">
+<img class="avatar" src="../../../static/img/avatars/neutral.svg" alt="" width="32" height="32">
+        <div>
+          <strong>Sakib Hossain</strong>
+          <div class="text-muted">2131234642 · sakib.hossain@northsouth.edu</div>
+        </div>
+      </div>
+      <p class="text-muted">Complaints filed: 1 · Rejected: 0</p>
+      <a href="/console/students/10/">View student record</a>
+    </div>
+      <div class="card">
+        <details class="action-form">
+          <summary class="btn">Add note</summary>
+          <form method="post" action="/console/complaints/UF-0010/note/" novalidate>
+            <input type="hidden" name="csrfmiddlewaretoken" value="">
+  <div class="form-field">
+    <label for="id_note">Note</label>
+    <textarea name="note" cols="40" rows="3" required id="id_note">
+</textarea>
+  </div>
+  <div class="form-field">
+    <label for="">Visibility</label>
+    <div id="id_visibility"><div>
+    <label for="id_visibility_0"><input type="radio" name="visibility" value="public" required id="id_visibility_0" checked>
+ Public: the student sees it</label>
+</div><div>
+    <label for="id_visibility_1"><input type="radio" name="visibility" value="internal" required id="id_visibility_1">
+ Internal: admins only</label>
+</div>
+</div>
+  </div>
+            <button class="btn btn-primary" type="submit">Add note</button>
+          </form>
+        </details>
+      </div>
+    <div class="card">
+      <details class="action-form" open>
+        <summary class="btn">Reassign</summary>
+        <form method="post" action="/console/complaints/UF-0010/reassign/" novalidate>
+          <input type="hidden" name="csrfmiddlewaretoken" value="">
+          <div class="form-field">
+            <label for="id_department">New department</label>
+            <select name="department" id="id_department">
+              <option value="">Choose a department</option>
+              <option value="1">Facilities Management</option>
+              <option value="3">Housekeeping</option>
+              <option value="2" selected>IT Services</option>
+            </select>
+            <div class="form-help">Currently: Security. The complaint returns to Submitted in the new department.</div>
+          </div>
+          <div class="form-field">
+            <label for="id_reassign_reason">Reason</label>
+            <textarea name="reason" cols="40" rows="3" required id="id_reassign_reason">The card works at other doors; the admin building reader is faulty. IT Services maintains the card readers.</textarea>
+            <div class="form-help">The student and the new department's admins are notified.</div>
+          </div>
+          <button class="btn btn-primary" type="submit">Reassign</button>
+        </form>
+      </details>
+    </div>
+    <div class="card">
+      <h2>History</h2>
+      <ol class="timeline">
+          <li>
+            <strong>Submitted</strong>
+            <span class="text-muted">· Sakib Hossain</span>
+            <div class="text-muted">26 Oct 2026, 20:52</div>
+          </li>
+      </ol>
+    </div>
+  </div>
+</div>
+  </main>
+</body>
+</html>

@@ -46,7 +46,7 @@ Tracks feedback and the changes it causes, iteration by iteration, so each phase
 | FB-14 | Oct 2026 | Team (Sprint 2 review) | Optional gender at registration (male, female, other, prefer not to say) with generic default avatars (neutral for other / prefer not to say) | CR-13 |
 | FB-15 | Oct 2026 | Team (Sprint 3 planning) | Use NSU colours: top bar and sidebar in NSU Navy with white text; NSU Gold only as a small accent | CR-14 |
 | FB-16 | Oct 2026 | Team (Sprint 3 planning) | Protect the login page against repeated guessing (reCAPTCHA checkbox first; fallback: lock login for a few minutes after 5 failed attempts) | – (keep in view in `07`; no code this sprint) |
-| FB-17 | Oct 2026 | Team (Sprint 3 build) | Sprint 4 idea: Reject reason as a dropdown (Duplicate, Invalid, Out of scope, Other) with optional details, so notifications read cleanly and reports can count reasons | – (Sprint 4 idea; decided at Sprint 4 planning) |
+| FB-17 | Oct 2026 | Team (Sprint 3 build) | Sprint 4 idea: Reject reason as a dropdown (Duplicate, Invalid, Out of scope, Other) with optional details, so notifications read cleanly and reports can count reasons | CR-15 (accepted for Sprint 4) |
 | FB-18 | Oct 2026 | Team (Sprint 3 build) | Students may miss in-app notifications; send email copies of key ones (Resolved, Rejected) | – (logged as optional feature OP-11) |
 
 ## 4. Change Requests
@@ -55,7 +55,7 @@ Tracks feedback and the changes it causes, iteration by iteration, so each phase
 |---|---|---|---|---|
 | CR-01 | FB-01 | User records with full Super Admin control, view-only for Dept Admins | C-12, VR-12, A-04, A-05, SA-02, SA-03, `User.account_state` | Done (planning) |
 | CR-02 | FB-02 | One button per workflow step with inline forms | C-05, A-03, `03_workflow.md` §2, §4 | Done (planning) |
-| CR-03 | FB-03 | Screen inventory and mockups for every page | `04_screens.md`, mockups | In progress (4 of 18 mocked) |
+| CR-03 | FB-03 | Screen inventory and mockups for every page | `04_screens.md`, mockups | Done: every screen has a screenshot or a mockup (`mockups/final/`, CR-15) |
 | CR-04 | FB-04 | Role-scoped search via list pages | C-18, VR-14, `04_screens.md` | Done (planning) |
 | CR-05 | FB-05 | Navy chrome, tinted background, accented cards | `05` §6, `unifix.css` | Done (planning) |
 | CR-06 | FB-06 | More spacing in top bar and page header | `unifix.css`, mockups | Done (keep in view) |
@@ -67,6 +67,7 @@ Tracks feedback and the changes it causes, iteration by iteration, so each phase
 | CR-12 | FB-12 | Sprint 2 pre-build doc fixes (`09` I-36 to I-52) and decisions (`07`): two-step S-02, `submit()`, limited view fields and actor naming, 5-file limit, private files via `student:attachment`, `Notification` now, seed plan | C-02, C-03, C-06, VR-01, VR-07, VR-09, NFR-03, S-01 to S-04, `Complaint.submit()`, `tracking_id`, `location`, `status_badge_class`, `Attachment.file`, `03` §0, §4, §6, `05` §3, §4, §7, `06` §4 | Done (Sprint 2) |
 | CR-13 | FB-14 | Optional gender at registration and on the profile: `User.gender` (`male`, `female`, `other`, `prefer_not_to_say` by default), `User.avatar_kind`, three SVG avatars (`static/img/avatars/`), `partials/avatar.html`. Gender-based avatars only for the user themselves; everyone else sees the neutral avatar (VR-16). Extends C-01 and C-15 | C-01, C-15, VR-16, P-02, S-06, A-03, top bar (`04` Layout), `User` (`05` §3), `06` §2–3, `diagrams/er_diagram.*` | Accepted (Sprint 3) |
 | CR-14 | FB-15 | NSU Navy `#002f6c` top bar and sidebar with white text, logo on a white tile, light blue-grey subtitle; NSU Gold `#FEC937` as an accent only; IEEE blue not used; badge colours unchanged. Replaces CR-11's white top bar | `04` Layout, P-01, `05` §6 tokens, `unifix.css` | Accepted (Sprint 3) |
+| CR-15 | FB-03, FB-17 | Final mockups of every page and state not built yet (`mockups/final/`, real chrome, seed data, `mockup.css`), indexed with the real screenshots; charts as plain CSS bars (horizontal for counts and times, columns for trends; no JavaScript); FB-17 Reject reason list (Duplicate, Invalid, Out of scope, Other, optional details) accepted for Sprint 4, model change in the Sprint 4 doc-first commit; Sprint 4/5 split; A-01 metric definitions; mockup seed additions for Sprint 4 | `00`, `01` §2, `02` §4, `04` (A-01, A-03, A-04, SA-01, search), `07`, `09`, `11`, `mockups/final/` | Accepted (before Sprint 4) |
 
 ## 5. Iteration Template
 

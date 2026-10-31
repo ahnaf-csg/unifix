@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Reports · UniFix (mockup)</title>
+  <link rel="stylesheet" href="../../../static/css/unifix.css">
+  <link rel="stylesheet" href="mockup.css">
+  <script src="../../../static/js/unifix.js" defer></script>
+</head>
+<body>
+<header class="topbar">
+  <div class="topbar-left"></div>
+  <div class="topbar-center">
+    <a class="brand" href="/">
+      <img class="topbar-logo" src="../../../static/img/nsu_logo.png" alt="North South University" width="36" height="36">
+      <span>UniFix<small>Admin Console</small></span>
+    </a>
+  </div>
+    <div class="topbar-right">
+      <input class="topbar-search" type="search" aria-label="Search"
+             placeholder="Search complaints, students, tracking IDs">
+      <a class="bell" href="/notifications/"
+         aria-label="Notifications">
+        Notifications
+      </a>
+      <div class="user-menu">
+<img class="avatar" src="../../../static/img/avatars/neutral.svg" alt="" width="32" height="32">
+        <span>
+          Tanvir Ahmed
+          <small>
+            Super admin
+          </small>
+        </span>
+        <form method="post" action="/logout/">
+          <input type="hidden" name="csrfmiddlewaretoken" value="">
+          <button class="btn btn-sm" type="submit">Log out</button>
+        </form>
+      </div>
+    </div>
+</header>
+<nav class="sidebar" aria-label="Main">
+    <div class="sidebar-label">Super admin</div>
+    <a class="sidebar-link" href="/console/">Dashboard</a>
+    <a class="sidebar-link" href="/console/complaints/">Complaint queue (all)</a>
+    <a class="sidebar-link" href="/console/students/">Students</a>
+      <a class="sidebar-link sidebar-link-active" href="/console/reports/">Reports</a>
+      <a class="sidebar-link" href="/console/users/">Users</a>
+  <a class="sidebar-link" href="/notifications/">Notifications</a>
+  <a class="sidebar-link" href="/profile/">Profile</a>
+</nav>
+  <main class="main">
+<p class="mockup-label">Mockup — built in Sprint 5</p>
+<div class="page-head">
+  <div>
+    <h1 class="page-title">Reports</h1>
+    <p class="page-sub">All departments · 1 May 2026 to 31 Oct 2026</p>
+  </div>
+</div>
+<form class="filters" method="get">
+  <div class="form-field">
+    <label for="filter-from">From</label>
+    <input id="filter-from" type="date" name="from" value="2026-05-01">
+  </div>
+  <div class="form-field">
+    <label for="filter-to">To</label>
+    <input id="filter-to" type="date" name="to" value="2026-10-31">
+  </div>
+  <div class="filters-buttons">
+    <button class="btn btn-primary" type="submit">Apply</button>
+    <a href="/console/reports/">Last 6 months</a>
+  </div>
+</form>
+<div class="row">
+  <a class="card card-stat card-link" href="/console/complaints/">
+    <div class="stat-label">Total open</div>
+    <div class="stat-value">9</div>
+    <div class="stat-note">Across 4 departments</div>
+  </a>
+  <a class="card card-stat card-link" href="/console/complaints/?overdue=1">
+    <div class="stat-label">Overdue</div>
+    <div class="stat-value">4</div>
+    <div class="stat-note">Past the due date</div>
+  </a>
+  <a class="card card-stat card-link" href="/console/reports/">
+    <div class="stat-label">Average resolution time</div>
+    <div class="stat-value">5.8 days</div>
+    <div class="stat-note">4 resolved in this period</div>
+  </a>
+  <a class="card card-stat card-link" href="/console/reports/">
+    <div class="stat-label">Average rating</div>
+    <div class="stat-value">4.0</div>
+    <div class="stat-note">1 rating</div>
+  </a>
+  <a class="card card-stat card-link" href="/console/users/?role=student">
+    <div class="stat-label">Active students</div>
+    <div class="stat-value">9</div>
+    <div class="stat-note">1 suspended</div>
+  </a>
+</div>
+<div class="card section">
+  <h2>Department scorecard</h2>
+<div class="table-scroll">
+  <table>
+    <thead><tr><th>Department</th><th>Open</th><th>Overdue</th><th>Avg days to resolve</th><th>Avg rating</th><th>Reopened</th></tr></thead>
+    <tbody>
+        <tr><td>Facilities Management</td><td>3</td><td>2</td><td>5.0</td><td>4.0</td><td>1</td></tr>
+        <tr><td>Housekeeping</td><td>0</td><td>0</td><td>–</td><td>–</td><td>0</td></tr>
+        <tr><td>IT Services</td><td>4</td><td>1</td><td>8.0</td><td>–</td><td>0</td></tr>
+        <tr><td>Security</td><td>2</td><td>1</td><td>–</td><td>–</td><td>0</td></tr>
+    </tbody>
+  </table>
+</div>
+</div>
+<div class="row section">
+  <div class="card card-wide">
+    <h2>Hotspot locations</h2>
+<div class="table-scroll">
+  <table>
+    <thead><tr><th>Location</th><th>Complaints</th><th>Top category</th><th>Last reported</th></tr></thead>
+    <tbody>
+        <tr><td>NAC 512</td><td>2</td><td>Projector &amp; AV</td><td>25 Oct</td></tr>
+        <tr><td>NAC 712</td><td>1</td><td>Lab computers</td><td>27 Oct</td></tr>
+        <tr><td>Admin Building</td><td>1</td><td>Lost access card</td><td>26 Oct</td></tr>
+        <tr><td>Library Stairs B</td><td>1</td><td>Safety hazard</td><td>25 Oct</td></tr>
+        <tr><td>NAC 208</td><td>1</td><td>Furniture</td><td>24 Oct</td></tr>
+    </tbody>
+  </table>
+</div>
+  </div>
+  <div class="card">
+    <h2>Recently suspended users</h2>
+<div class="table-scroll">
+  <table>
+    <thead><tr><th>Name</th><th>Student ID</th><th>Complaints</th></tr></thead>
+    <tbody>
+        <tr><td><a href="/console/students/12/">Arif Mahmud</a></td><td class="text-mono">2211234042</td><td>0</td></tr>
+    </tbody>
+  </table>
+</div>
+  </div>
+</div>
+<div class="row section">
+  <div class="card">
+    <h2>By department</h2>
+    <div class="chart-bars">
+  <span class="bar-label">Facilities Management</span><span class="bar-track"><span class="bar" style="width: 100%"></span></span><span class="bar-value">5</span>
+  <span class="bar-label">IT Services</span><span class="bar-track"><span class="bar" style="width: 100%"></span></span><span class="bar-value">5</span>
+  <span class="bar-label">Housekeeping</span><span class="bar-track"><span class="bar" style="width: 40%"></span></span><span class="bar-value">2</span>
+  <span class="bar-label">Security</span><span class="bar-track"><span class="bar" style="width: 40%"></span></span><span class="bar-value">2</span>
+</div>
+    <p class="form-help">Complaints submitted in the period.</p>
+  </div>
+  <div class="card">
+    <h2>Monthly trend</h2>
+    <div class="chart-columns">
+  <div class="col"><div class="col-plot"><span class="col-bar" style="height: 0%"><span class="col-value">0</span></span><span class="col-bar col-bar-alt" style="height: 0%"><span class="col-value">0</span></span></div><span class="col-label">May</span></div>
+  <div class="col"><div class="col-plot"><span class="col-bar" style="height: 0%"><span class="col-value">0</span></span><span class="col-bar col-bar-alt" style="height: 0%"><span class="col-value">0</span></span></div><span class="col-label">Jun</span></div>
+  <div class="col"><div class="col-plot"><span class="col-bar" style="height: 0%"><span class="col-value">0</span></span><span class="col-bar col-bar-alt" style="height: 0%"><span class="col-value">0</span></span></div><span class="col-label">Jul</span></div>
+  <div class="col"><div class="col-plot"><span class="col-bar" style="height: 0%"><span class="col-value">0</span></span><span class="col-bar col-bar-alt" style="height: 0%"><span class="col-value">0</span></span></div><span class="col-label">Aug</span></div>
+  <div class="col"><div class="col-plot"><span class="col-bar" style="height: 7%"><span class="col-value">1</span></span><span class="col-bar col-bar-alt" style="height: 7%"><span class="col-value">1</span></span></div><span class="col-label">Sep</span></div>
+  <div class="col"><div class="col-plot"><span class="col-bar" style="height: 85%"><span class="col-value">13</span></span><span class="col-bar col-bar-alt" style="height: 20%"><span class="col-value">3</span></span></div><span class="col-label">Oct</span></div>
+</div>
+<p class="chart-legend"><span class="legend-key"></span>Submitted <span class="legend-key legend-key-alt"></span>Resolved</p>
+  </div>
+  <div class="card">
+    <h2>Resolution time per department</h2>
+    <div class="chart-bars">
+  <span class="bar-label">Facilities Management</span><span class="bar-track"><span class="bar" style="width: 62%"></span></span><span class="bar-value">5.0 d</span>
+  <span class="bar-label">IT Services</span><span class="bar-track"><span class="bar" style="width: 100%"></span></span><span class="bar-value">8.0 d</span>
+  <span class="bar-label">Housekeeping</span><span class="bar-track"><span class="bar" style="width: 0%"></span></span><span class="bar-value">–</span>
+  <span class="bar-label">Security</span><span class="bar-track"><span class="bar" style="width: 0%"></span></span><span class="bar-value">–</span>
+</div>
+    <p class="form-help">Average days from submitted to resolved; – = nothing resolved in the period.</p>
+  </div>
+</div>
+  </main>
+</body>
+</html>
