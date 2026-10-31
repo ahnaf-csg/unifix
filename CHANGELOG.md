@@ -2,6 +2,12 @@
 
 Format: [Keep a Changelog](https://keepachangelog.com). Versions match Git tags. Reasons for changes are in `docs/08_iteration_log.md`.
 
+## update-1 (presentation branch, not merged) - 2026-10-31
+Branch `update-1` from `v0.3-sprint2`, for the instructor's Update 1. Not part of Sprint 2 and never merged into `main`.
+### Added
+- A-01 Dashboard (C-14) layout preview: five cards showing "–" (Arrives in Sprint 4), the Overdue, Due in next 3 days and Most supported tables with an empty row, three empty chart boxes (Arrives in Sprint 5) and a disabled Open complaint queue button. No figures are computed; the "Categories routed to…" table is unchanged. One CSS rule (`.chart-placeholder`).
+- 3 tests in `console/tests.py` (64 in total), `docs/walkthroughs/update-1.md` and screenshots `admin/08` to `10`.
+
 ## [Unreleased]
 ### Added
 - Sprint 2: `Complaint`, `Attachment`, `ComplaintUpdate`, `Support` (migration `complaints/0002`) and `notifications.Notification` (`notifications/0001`).

@@ -44,3 +44,13 @@ The admin console (queue, actions) arrives in Sprint 3; these show what exists n
 | `admin/05-django-admin-complaints.png` | Seeded complaints, read-only list |
 | `admin/06-django-admin-complaint-readonly.png` | One complaint with its files, history and supporters, view only |
 | `admin/07-django-admin-categories.png` | Categories and their routing departments |
+
+## Update 1 (branch `update-1`, not merged)
+
+A-01 layout preview added for Update 1 on 2026-10-31; see `docs/walkthroughs/update-1.md`. Headless Chrome, full page.
+
+| File | Shows |
+|---|---|
+| `admin/08-update1-dept-admin-dashboard.png` | A-01 Dept Admin (Facilities Management) layout preview: placeholder cards, tables and chart boxes; real category table |
+| `admin/09-update1-super-admin-dashboard.png` | A-01 Super Admin layout preview (all departments) |
+| `admin/10-update1-dept-admin-dashboard-phone.png` | A-01 Dept Admin preview at 375 px |
