@@ -53,12 +53,12 @@ Departments and categories are configured through Django's built-in admin panel 
 | Dashboard | Cards | Tables | Charts |
 |---|---|---|---|
 | Student home (S-01) | Open; Awaiting your confirmation; Closed; Issues you supported | Needs your action (confirm, reopen, rate); Recent complaints; Latest notifications | None |
-| Dept Admin dashboard (A-01) | New; In progress; Overdue; Resolved this week; Average rating | Overdue (by due date); Due in next 3 days; Most supported | Complaints by status (bar); By category (bar); Weekly trend, last 8 weeks (line) |
-| Super Admin reports (SA-01) | Total open; Overdue; Average resolution time (days); Average rating; Active students (and suspended count) | Department scorecard (open, overdue, avg days to resolve, avg rating, reopened); Hotspot locations (building + room, with top category); Recently suspended users | By department (bar); Monthly trend: submitted vs resolved (line); Average resolution time per department (bar) |
+| Dept Admin dashboard (A-01) | New; In progress; Overdue; Resolved this week; Average rating | Overdue (by due date); Due in next 3 days; Most supported | Complaints by status (bar); By category (bar); Weekly trend, last 8 weeks (columns) |
+| Super Admin reports (SA-01) | Total open; Overdue; Average resolution time (days); Average rating; Active students (and suspended count) | Department scorecard (open, overdue, avg days to resolve, avg rating, reopened); Hotspot locations (building + room, with top category); Recently suspended users | By department (bar); Monthly trend: submitted vs resolved (columns); Average resolution time per department (bar) |
 
-Charts are static (no animation): Chart.js with animation disabled, or plain CSS bars. The Super Admin's own dashboard is A-01 showing all departments.
+Charts are static (no animation, no JavaScript): plain CSS bars, horizontal for counts and times, columns for trends (CR-15). The Super Admin's own dashboard is A-01 showing all departments.
 
-**Metric definitions:** average resolution time = mean of (`resolved_at` − `created_at`) in days for complaints resolved in the selected period; average rating = mean `stars`; overdue as in `03_workflow.md` §5.
+**Metric definitions:** New = complaints in `submitted`; Resolved this week = `resolved_at` in the last 7 days; average resolution time = mean of (`resolved_at` − `created_at`) in days for complaints resolved in the selected period; average rating = mean `stars`; overdue as in `03_workflow.md` §5.
 
 ## 5. Optional Features
 

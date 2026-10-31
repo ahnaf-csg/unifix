@@ -1,6 +1,6 @@
 # 04. Screen Inventory
 
-18 screens. Each lists what it shows, its buttons, and which data it reads (R) or writes (W). URL and template names follow `05_data_dictionary.md`.
+18 screens. Each lists what it shows, its buttons, and which data it reads (R) or writes (W). URL and template names follow `05_data_dictionary.md`. Built screens have screenshots in `screenshots/`; screens and states not built yet have mockups in `mockups/final/` (index of both in `mockups/final/README.md`, CR-15).
 
 **Layout:** every signed-in page uses `base.html` (with `partials/topbar.html`, `partials/sidebar.html`, `partials/messages.html`): an NSU Navy top bar and a role-specific NSU Navy left sidebar (CR-14), with white text. Gold is a small accent only (unread dot, active login tab underline), used on navy or beside another state cue, never the only cue.
 
@@ -15,7 +15,7 @@
 - Login (P-01) and Register (P-02) use the same bar without the right zone.
 - Phone width: the centre group stays visible; the logo shrinks first, then the wordmark; search collapses to an icon; no sideways scroll.
 - The bell links to the notifications page (S-05/A-06). With unread notifications it shows their number (`bell-count`) and a gold dot (`bell-dot`); with none, no number. The count reaches every page through the context processor `notifications.context_processors.unread_count`.
-- Search stays disabled until C-18 (Sprint 4).
+- Search stays disabled until C-18 (Sprint 5).
 
 **Avatars** (CR-13, VR-16): three simple SVG drawings in `static/img/avatars/` (`male.svg`, `female.svg`, `neutral.svg`), shown by `partials/avatar.html`. A user sees the avatar for their own gender only in their own top bar and on their own profile; `other` and `prefer_not_to_say` use the neutral avatar. Every other place that shows a person (e.g. the A-03 reporter card) uses the neutral avatar.
 
@@ -29,7 +29,7 @@
 
 ## Search (top bar, every signed-in page)
 
-Search reuses the existing list pages with a `?q=` parameter instead of adding new screens. Matching is simple "contains" matching (Django `icontains`), case-insensitive.
+Built in Sprint 5 (C-18). Search reuses the existing list pages with a `?q=` parameter instead of adding new screens. Matching is simple "contains" matching (Django `icontains`), case-insensitive.
 
 | Role | What it searches | Matches on | Results shown in |
 |---|---|---|---|
@@ -123,7 +123,7 @@ Two steps on one URL, so files are uploaded only once (`03_workflow.md` §6). St
 `console:dashboard` · `console/dashboard.html`
 
 - Dept Admin: own department. Super Admin: all departments (same page).
-- Built in Sprint 4. Until then the page is a placeholder with a link to the complaint queue (A-02).
+- Built in stages: cards and tables in Sprint 4, charts in Sprint 5 (CSS bars and columns, CR-15). Until then the page is a placeholder with a link to the complaint queue (A-02).
 
 - Shows: cards (New, In progress, Overdue, Resolved this week, Average rating); Overdue table; Due in next 3 days; Most supported; charts (by status, by category, weekly trend).
 - Buttons: card or row → A-02 filtered, or A-03.
@@ -142,7 +142,7 @@ Two steps on one URL, so files are uploaded only once (`03_workflow.md` §6). St
 
 - Shows: everything in S-04 plus reporter card (`reporter-card`: neutral avatar, name, student ID, email; complaints filed, complaints rejected; link to A-05, shown disabled until Sprint 4), internal notes, full history with actor names (consecutive "Me too" entries grouped), and students affected. Evidence and proof files open through `console:attachment`.
 - Action bar (`action-bar`): **Start review · Verify · Reject · Start work · Mark resolved**, in that order, from `Complaint.allowed_actions(user)`. Only valid buttons are enabled. Each disabled button has a visible hint underneath (`action-hint`): "Done" for a step already passed, "Available after <step>" for a step still ahead, or "Not available: complaint is <status>" on a final status.
-- Start review posts straight away (no input). Every other enabled button is a `<details>`/`<summary>` block (`action-form`) that opens its inline form without JavaScript: Verify (priority, due date) · Reject (reason) · Start work (optional note) · Mark resolved (note, optional proof photo). After a failed submit the page is shown again with that form open and its errors (fields from `console/action_fields.html`); if the action is no longer possible (for example another admin acted first), the error is shown above the action bar instead.
+- Start review posts straight away (no input). Every other enabled button is a `<details>`/`<summary>` block (`action-form`) that opens its inline form without JavaScript: Verify (priority, due date) · Reject (reason; from Sprint 4 a reason from a list: Duplicate, Invalid, Out of scope, Other, plus optional details, FB-17, CR-15) · Start work (optional note) · Mark resolved (note, optional proof photo). After a failed submit the page is shown again with that form open and its errors (fields from `console/action_fields.html`); if the action is no longer possible (for example another admin acted first), the error is shown above the action bar instead.
 - **Add note** (public or internal; open statuses and Resolved, `03` §2). The Super Admin also sees **Reassign** (department, reason) from Sprint 4.
 - The Super Admin can use every action on every department's complaints (C-13).
 - R: Complaint, Attachment, ComplaintUpdate, User. W: per `03_workflow.md` section 4.
@@ -150,7 +150,7 @@ Two steps on one URL, so files are uploaded only once (`03_workflow.md` §6). St
 ### A-04 Students
 `console:student_list` · `console/student_list.html`
 
-- Shows: table (name, student ID, email, complaints count, open count, account state); search.
+- Shows: table (name, student ID, email, complaints count, open count, account state); search. Counts cover the complaints in the viewer's scope: own department for a Dept Admin (VR-02), all for the Super Admin.
 - Dept Admin sees students who filed complaints in their department, read-only. Super Admin sees all students.
 - R: User, Complaint.
 
@@ -171,6 +171,7 @@ Same as S-05 and S-06.
 
 - Shows: cards (Total open, Overdue, Average resolution time, Average rating, Active students); Department scorecard; Hotspot locations; Recently suspended users; charts (by department, monthly trend, resolution time per department).
 - Filter: date range.
+- Built in Sprint 5.
 - R: Complaint, Rating, User, Department.
 
 ### SA-02 Users
